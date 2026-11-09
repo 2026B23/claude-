@@ -1,0 +1,2091 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Claude認定資格 CCAO-F(Claude Certified Associate – Foundations)の非公式学習サイト。教科書・用語集・クイックリファレンス・オリジナル練習問題。">
+<meta name="theme-color" content="#b5532c">
+<title>CCAO-F 学習トレーナー(非公式)</title>
+<style>
+/* CCAO-F 学習トレーナー — スタイル(外部フォント・CDNなし) */
+:root {
+  --bg: #f7f5f0;
+  --surface: #ffffff;
+  --surface-2: #f1eee7;
+  --text: #22201c;
+  --muted: #6b665d;
+  --border: #e2ddd2;
+  --accent: #b5532c;
+  --accent-weak: #f6e6dd;
+  --accent-text: #ffffff;
+  --good: #2f7d4f;
+  --good-weak: #e3f2e8;
+  --bad: #b33a3a;
+  --bad-weak: #f8e4e4;
+  --warn: #8a6100;
+  --warn-weak: #fbf0d4;
+  --info: #2c5d8a;
+  --info-weak: #e3edf7;
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(0,0,0,.04), 0 2px 8px rgba(0,0,0,.04);
+  --font: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1a18;
+    --surface: #252320;
+    --surface-2: #2e2b27;
+    --text: #ece8e1;
+    --muted: #a8a196;
+    --border: #3a3631;
+    --accent: #e07a4f;
+    --accent-weak: #3b2a22;
+    --accent-text: #1b1a18;
+    --good: #6cc391;
+    --good-weak: #1f3327;
+    --bad: #ec8080;
+    --bad-weak: #3a2222;
+    --warn: #e6c062;
+    --warn-weak: #3a3220;
+    --info: #8dbbe6;
+    --info-weak: #1f2c3a;
+    --shadow: none;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.75;
+}
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, .choice:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- レイアウト ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-inner {
+  max-width: 900px; margin: 0 auto;
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 16px;
+}
+.brand {
+  font-weight: 700; color: var(--text); text-decoration: none;
+  white-space: nowrap; font-size: .95rem;
+}
+.brand .pill { margin-right: 6px; }
+.nav {
+  display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none;
+  margin-left: auto;
+}
+.nav::-webkit-scrollbar { display: none; }
+.nav a {
+  white-space: nowrap; text-decoration: none; color: var(--muted);
+  padding: 6px 10px; border-radius: 8px; font-size: .88rem;
+}
+.nav a.active, .nav a:hover { background: var(--surface-2); color: var(--text); }
+
+main { max-width: 900px; margin: 0 auto; padding: 16px 16px 40px; }
+main:focus { outline: none; }
+@media (max-width: 640px) {
+  .topbar-inner { flex-wrap: wrap; gap: 4px 12px; padding: 6px 12px; }
+  .nav { margin-left: 0; width: 100%; flex-wrap: wrap; overflow: visible; }
+  .nav a { padding: 4px 8px; }
+}
+
+.page-head { margin: 8px 0 16px; }
+.page-head h1 { font-size: 1.45rem; margin: 0 0 4px; line-height: 1.4; }
+.page-head .sub { color: var(--muted); font-size: .9rem; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.card.accent { border-color: var(--accent); }
+.card h2 { font-size: 1.15rem; margin: 0 0 10px; line-height: 1.45; }
+.card h3 { font-size: 1.02rem; margin: 18px 0 6px; line-height: 1.5; }
+.card p { margin: 0 0 10px; }
+.card p:last-child { margin-bottom: 0; }
+.card ul, .card ol { margin: 4px 0 10px; padding-left: 1.4em; }
+.card li { margin-bottom: 4px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* ---------- 部品 ---------- */
+.pill {
+  display: inline-block; font-size: .75rem; font-weight: 700; letter-spacing: .02em;
+  padding: 2px 8px; border-radius: 999px;
+  background: var(--accent); color: var(--accent-text);
+  vertical-align: middle;
+}
+.badge {
+  display: inline-block; font-size: .75rem; padding: 2px 8px; border-radius: 999px;
+  background: var(--surface-2); color: var(--muted); border: 1px solid var(--border);
+  vertical-align: middle; line-height: 1.6;
+}
+.badge.check { background: var(--warn-weak); color: var(--warn); border-color: transparent; font-weight: 700; }
+.badge.ok { background: var(--good-weak); color: var(--good); border-color: transparent; }
+.badge.domain { background: var(--accent-weak); color: var(--accent); border-color: transparent; font-weight: 700; }
+.badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+button, .btn {
+  font: inherit; font-size: .92rem;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 42px; padding: 8px 14px;
+  border-radius: 10px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text);
+  cursor: pointer; text-decoration: none; line-height: 1.4;
+}
+button:hover, .btn:hover { background: var(--surface-2); }
+button.primary, .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); font-weight: 700; }
+button.primary:hover, .btn.primary:hover { filter: brightness(1.05); }
+button.ghost, .btn.ghost { background: transparent; }
+button.small, .btn.small { min-height: 34px; padding: 4px 10px; font-size: .84rem; }
+button:disabled, .btn.disabled { opacity: .45; cursor: not-allowed; }
+button.danger { color: var(--bad); border-color: var(--bad); background: transparent; }
+
+input[type="search"], input[type="text"], select {
+  font: inherit; font-size: 1rem;
+  min-height: 42px; padding: 6px 10px;
+  border-radius: 10px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text);
+  width: 100%;
+}
+.filter-row { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; }
+@media (max-width: 560px) { .filter-row { grid-template-columns: 1fr; } }
+
+.note { font-size: .85rem; color: var(--muted); }
+.callout {
+  border-radius: 10px; padding: 10px 12px; margin: 10px 0;
+  background: var(--info-weak); color: var(--text); font-size: .92rem;
+}
+.callout.warn { background: var(--warn-weak); }
+.callout.good { background: var(--good-weak); }
+.callout.bad { background: var(--bad-weak); }
+.callout strong:first-child { margin-right: 4px; }
+
+/* ドメインバー */
+.domain-bars { display: grid; gap: 6px; margin: 8px 0; }
+.dbar { display: grid; grid-template-columns: minmax(0, 13em) 1fr 3.4em; align-items: center; gap: 8px; font-size: .86rem; }
+.dbar .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dbar .track { height: 10px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.dbar .fill { height: 100%; background: var(--accent); border-radius: 999px; }
+.dbar .fill.good { background: var(--good); }
+.dbar .fill.bad { background: var(--bad); }
+.dbar .pct { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+@media (max-width: 560px) {
+  .dbar { grid-template-columns: 1fr 3.4em; row-gap: 2px; }
+  .dbar .name { grid-column: 1 / -1; white-space: normal; }
+}
+
+/* 概要表 */
+.kv { display: grid; grid-template-columns: 8.5em 1fr; gap: 0; border-top: 1px solid var(--border); }
+.kv > div { padding: 8px 4px; border-bottom: 1px solid var(--border); font-size: .9rem; }
+.kv .k { color: var(--muted); font-weight: 700; }
+@media (max-width: 560px) {
+  .kv { grid-template-columns: 1fr; }
+  .kv .k { border-bottom: none; padding-bottom: 0; }
+}
+
+details.fold { border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; margin: 10px 0; background: var(--surface); }
+details.fold > summary { cursor: pointer; padding: 10px 0; font-weight: 700; font-size: .92rem; list-style-position: inside; }
+details.fold[open] > summary { border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+details.fold > .fold-body { padding-bottom: 10px; }
+
+/* ---------- 教科書 ---------- */
+.toc { display: grid; gap: 8px; }
+.toc a {
+  display: grid; grid-template-columns: 4.2em 1fr auto; gap: 8px; align-items: center;
+  padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);
+  text-decoration: none; color: var(--text); background: var(--surface);
+}
+.toc a:hover { background: var(--surface-2); }
+.toc .no { color: var(--accent); font-weight: 700; font-size: .9rem; }
+.toc .w { color: var(--muted); font-size: .82rem; font-variant-numeric: tabular-nums; }
+.chapter-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.chapter-tabs a {
+  white-space: nowrap; text-decoration: none; font-size: .82rem;
+  padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); background: var(--surface);
+}
+.chapter-tabs a.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 700; }
+
+.block-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 1.08rem; font-weight: 700; margin: 0 0 10px;
+}
+.block-title .icon { font-size: 1.1rem; }
+.section { padding: 12px 0; border-top: 1px dashed var(--border); }
+.section:first-of-type { border-top: none; padding-top: 4px; }
+.section h3 { margin: 0 0 6px; font-size: 1rem; }
+.section .meta { margin-top: 6px; }
+.obj-tag { font-size: .72rem; font-weight: 700; color: var(--accent); background: var(--accent-weak); padding: 1px 6px; border-radius: 6px; margin-right: 6px; vertical-align: 1px; }
+.src { font-size: .78rem; color: var(--muted); }
+.src a { color: var(--muted); }
+.example {
+  border-left: 4px solid var(--info); background: var(--info-weak);
+  border-radius: 0 10px 10px 0; padding: 10px 12px; margin: 10px 0;
+}
+.example .scene { font-weight: 700; font-size: .9rem; margin-bottom: 4px; }
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+.compare > div { border-radius: 8px; padding: 8px 10px; font-size: .9rem; }
+.compare .ng { background: var(--bad-weak); }
+.compare .ok { background: var(--good-weak); }
+.compare .lbl { font-weight: 700; font-size: .78rem; display: block; margin-bottom: 2px; }
+@media (max-width: 560px) { .compare { grid-template-columns: 1fr; } }
+.pitfall { padding: 10px 0; border-top: 1px dashed var(--border); }
+.pitfall:first-of-type { border-top: none; }
+.pitfall .wrong { font-weight: 700; color: var(--bad); }
+.pitfall .wrong::before { content: "✗ "; }
+.pitfall .right { margin-top: 4px; }
+.pitfall .right::before { content: "→ "; color: var(--good); font-weight: 700; }
+.checklist { list-style: none; padding-left: 0 !important; }
+.checklist li { padding: 6px 0 6px 30px; position: relative; border-bottom: 1px dashed var(--border); }
+.checklist li:last-child { border-bottom: none; }
+.checklist li::before { content: "☐"; position: absolute; left: 4px; top: 5px; color: var(--accent); font-size: 1.05rem; }
+table.simple { width: 100%; border-collapse: collapse; font-size: .88rem; margin: 8px 0; }
+table.simple th, table.simple td { border: 1px solid var(--border); padding: 6px 8px; text-align: left; vertical-align: top; }
+table.simple th { background: var(--surface-2); }
+.table-wrap { overflow-x: auto; }
+
+/* ---------- 用語集 ---------- */
+.term { padding: 10px 0; border-top: 1px dashed var(--border); }
+.term:first-child { border-top: none; }
+.term .t { font-weight: 700; }
+.term .t .en { font-weight: 400; color: var(--muted); font-size: .85rem; margin-left: 6px; }
+.term .d { font-size: .93rem; margin-top: 2px; }
+.term .rel { font-size: .8rem; color: var(--muted); margin-top: 4px; }
+
+/* ---------- クイックリファレンス ---------- */
+.qr { padding: 10px 0; border-top: 1px dashed var(--border); }
+.qr:first-of-type { border-top: none; }
+.qr .q { font-weight: 700; font-size: .95rem; }
+.qr .q::before { content: "こう問われたら → "; color: var(--muted); font-weight: 400; font-size: .82rem; }
+.qr .pick { margin-top: 4px; }
+.qr .pick::before { content: "✅ 選ぶ: "; font-weight: 700; color: var(--good); }
+.qr .avoid { margin-top: 2px; color: var(--muted); font-size: .9rem; }
+.qr .avoid::before { content: "⛔ 避ける: "; font-weight: 700; color: var(--bad); }
+
+/* ---------- フッター ---------- */
+footer.site-footer {
+  max-width: 900px; margin: 0 auto; padding: 18px 16px 32px;
+  font-size: .8rem; color: var(--muted); border-top: 1px solid var(--border);
+}
+footer.site-footer p { margin: 0 0 6px; }
+
+.empty { text-align: center; color: var(--muted); padding: 24px 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media print {
+  .topbar, .btn-row, .chapter-tabs { display: none; }
+  body { background: #fff; }
+  .card { box-shadow: none; break-inside: avoid; }
+}
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#/"><span class="pill">CCAO-F</span>学習トレーナー</a>
+    <nav class="nav" id="nav" aria-label="メインメニュー">
+      <a href="#/" data-route="home">ホーム</a>
+      <a href="#/textbook" data-route="textbook">教科書</a>
+      <a href="#/glossary" data-route="glossary">用語集</a>
+      <a href="#/quickref" data-route="quickref">早見表</a>
+      <a href="#/practice" data-route="practice">演習</a>
+      <a href="#/stats" data-route="stats">成績</a>
+    </nav>
+  </div>
+</header>
+
+<main id="app" tabindex="-1">
+  <noscript><div class="card">このサイトはJavaScriptを使用します。ブラウザでJavaScriptを有効にしてください。<br>
+  ファイルのプレビュー機能(エディタやストレージサービスの「プレビュー」など)ではJavaScriptが動かないことがあります。その場合は、フォルダごとPCに保存して <code>index.html</code> をChrome・Edgeなどのブラウザで開くか、簡易サーバー(README参照)経由で開いてください。</div></noscript>
+</main>
+
+<footer class="site-footer" id="footer">
+  <p><strong>非公式サイトです。</strong>Anthropic社とは関係がなく、Anthropic社による承認・監修も受けていません。</p>
+  <p>掲載している問題はすべて本サイトのオリジナルであり、実際の試験問題ではありません(実際の試験内容は受験者のNDAにより非公開です)。</p>
+  <p>試験の範囲・形式・Claudeの機能は変更されます。最新の情報は必ず公式の <a href="https://anthropic-partners.skilljar.com/claude-certified-associate-foundations-certification" target="_blank" rel="noopener">Exam Guide(Anthropic Partner Academy)</a> で確認してください。</p>
+  <p id="footer-asof"></p>
+</footer>
+
+<!-- データ(教科書と問題はデータファイルに分離。差し替えはここを編集) -->
+<script>/* data/exam.js */
+/*
+ * CCAO-F 試験メタデータ
+ * 根拠: Claude Certified Associate – Foundations Exam Guide v1.0 (Effective July 2026) [S1]
+ *       Anthropic Partner Academy 試験ページ [S2] / Pearson VUE Anthropic ページ [S4]
+ * 新ガイド(2026/11/17公開予定)が出たら、このファイルの guide / domains / objectives を差し替える。
+ * 問題・教科書は objective ID(例 "2.3")で紐付けているので、変更された目標に関係するデータを
+ * tools/validate.js で洗い出せる。
+ */
+window.CCAOF = window.CCAOF || {};
+
+CCAOF.exam = {
+  code: 'CCAO-F',
+  nameEn: 'Claude Certified Associate – Foundations',
+  nameJa: 'Claude認定アソシエイト – ファウンデーション',
+  guide: { version: '1.0', effective: '2026年7月', sourceRef: 'S1' },
+  contentAsOf: '2026-11-09',          // 本サイトの記述時点
+  items: 60,
+  minutes: 120,
+  passingScaled: 720,
+  scale: '100〜1,000',
+  passLinePct: 72,                    // 本サイト独自の目安(公式換算ではない)
+  fee: '$99 USD',
+
+  // 試験概要(ホーム画面の表示用)。status: 'confirmed' | 'check'(要確認)
+  overview: [
+    { label: '対象者', value: '業務でClaudeを生産性ツールとして使い、Projectsを構築する専門職(オペレーション、マーケティング、PM、教育、広報、一般の知識労働者など)。APIで開発するソフトウェア開発者や、エージェント型システムの設計者は対象外。', status: 'confirmed', refs: ['S1'] },
+    { label: '推奨経験', value: '業務でClaudeを日常的に使った経験、構造化された問題解決・ワークフロー設計の基礎理解、ハルシネーション・コンテキスト制約・データ機密性などAIの限界の実践的理解。必須ではない。', status: 'confirmed', refs: ['S1'] },
+    { label: '前提条件', value: '必須の前提条件・受講必須コースなし。ソフトウェア開発・APIの経験も不要。合否は試験結果のみで判定。', status: 'confirmed', refs: ['S1'] },
+    { label: '出題形式', value: '60問。単一選択(multiple-choice)と複数選択(multiple-response)。各問で選ぶ数が明示される。', status: 'confirmed', refs: ['S1'] },
+    { label: '試験時間', value: '120分', status: 'confirmed', refs: ['S1'] },
+    { label: '合格基準', value: 'スケールスコア720(100〜1,000)。他の受験者との相対評価ではなく、固定基準に対する絶対評価。', status: 'confirmed', refs: ['S1'] },
+    { label: '結果の通知', value: '合否とスケールスコア、ドメイン別の正答率。ドメイン別正答率は参考情報で、合否はトータルのスケールスコアで決まる。', status: 'confirmed', refs: ['S1'] },
+    { label: '受験料', value: '$99 USD(パートナー階層による割引がある場合はチェックアウト時に反映)。', status: 'confirmed', refs: ['S1'] },
+    { label: '言語', value: '英語・日本語。1回の登録で両方に対応し、日程予約時に言語を選ぶ。', status: 'confirmed', refs: ['S2'] },
+    { label: '受験方法', value: 'Pearson VUEのオンライン監督(OnVUE)またはテストセンター。', status: 'confirmed', refs: ['S1', 'S2'] },
+    { label: '登録の流れ', value: 'Anthropic Partner Academyで登録・支払い → 初めてのPearson受験ならPearsonのユーザー名とパスワードがメールで届く → Pearson VUEのAnthropic専用ログインで日程予約。', status: 'confirmed', refs: ['S1', 'S4'] },
+    { label: '受験資格', value: 'Pearson VUEのページでは「Claude Partner Networkの組織に開放」とされている。パートナー企業以外の受験可否は公式FAQで要確認。', status: 'check', refs: ['S4', 'S2'] },
+    { label: 'キャンセル・変更', value: 'Exam Guide v1.0では「予約の24時間前まで」、Pearson VUEのAnthropicページでは「48時間前まで」と記載が異なる。安全側の48時間前を目安に。', status: 'check', refs: ['S1', 'S4'] },
+    { label: '再受験', value: '不合格後の待機期間は1回目14日・2回目30日・3回目90日。12か月のローリング期間で同一試験は最大4回。受験ごとに受験料が必要。', status: 'confirmed', refs: ['S1', 'S4'] },
+    { label: '有効期間・更新', value: '認定から12か月。期限内なら変更点を確認し、Partner Academyの無料・監督なしの更新評価で更新できる。失効後は正規料金で再受験。内容が大きく変わった場合は再受験を求められることがある。', status: 'confirmed', refs: ['S1'] },
+    { label: '当日のルール', value: '政府発行の有効な写真付きID(登録名と完全一致)が必要。メモ・書籍・スマホ・第2モニター等は不可。試験内容の撮影・複製・開示は禁止(NDAへの同意が必要)。', status: 'confirmed', refs: ['S1'] },
+    { label: 'パートナー階層', value: 'この資格はClaude Partner Networkの階層要件にはカウントされない。', status: 'confirmed', refs: ['S2'] }
+  ],
+
+  // 更新予告
+  notices: [
+    { date: '2026-11-17', text: '新しいExam Guideの公開予定日。' },
+    { date: '2026-12-07', text: '試験内容の更新日。この日以降に受験する場合は新ガイドで準備するよう公式が案内している。本サイトは現行v1.0基準。' }
+  ],
+
+  /*
+   * ドメイン定義
+   *  pool  : 本サイトの収録問題数(90問)
+   *  mock  : 60問模試での出題数(本番配分の目安)
+   *  mini  : 30問ミニ模試での出題数
+   *  phaseA: フェーズ2-Aで作成する問題数
+   */
+  domains: [
+    {
+      id: 'D1', no: 1, weight: 14, pool: 13, mock: 8, mini: 4, phaseA: 6,
+      nameEn: 'Prompting and Task Execution',
+      nameJa: 'プロンプティングとタスク実行',
+      short: 'プロンプト',
+      objectives: [
+        { id: '1.1', en: 'Create effective prompts for business and technical tasks', ja: '業務・技術タスク向けの効果的なプロンプトを作成する' },
+        { id: '1.2', en: 'Apply task decomposition techniques to structure complex requests', ja: 'タスク分解の手法で複雑な依頼を構造化する' },
+        { id: '1.3', en: 'Iterate prompts to improve output quality', ja: 'プロンプトを反復して出力品質を高める' },
+        { id: '1.4', en: 'Adapt prompting strategies based on task type (analysis, research, drafting, brainstorming)', ja: 'タスクの種類(分析・リサーチ・起草・ブレインストーミング)に応じてプロンプト戦略を変える' }
+      ]
+    },
+    {
+      id: 'D2', no: 2, weight: 21, pool: 19, mock: 13, mini: 6, phaseA: 10,
+      nameEn: 'Output Evaluation and Validation',
+      nameJa: '出力の評価と検証',
+      short: '出力評価',
+      objectives: [
+        { id: '2.1', en: 'Evaluate Claude-generated outputs for accuracy and completeness', ja: 'Claudeの出力を正確性と網羅性の観点で評価する' },
+        { id: '2.2', en: 'Identify hallucinations, inconsistencies, and biases in responses', ja: '回答中のハルシネーション・不整合・バイアスを見つける' },
+        { id: '2.3', en: 'Apply fact-checking and validation techniques', ja: 'ファクトチェックと検証の手法を適用する' },
+        { id: '2.4', en: 'Determine when human review or additional verification is required', ja: '人間のレビューや追加検証が必要な場面を判断する' },
+        { id: '2.5', en: 'Edit, adapt, refine, and compare outputs for the intended audience', ja: '想定読者に合わせて出力を編集・調整・洗練・比較する' },
+        { id: '2.6', en: 'Organize and curate information and select appropriate output formats (artifacts, inline, structured data)', ja: '情報を整理・取捨選択し、適切な出力形式(アーティファクト・本文中・構造化データ)を選ぶ' }
+      ]
+    },
+    {
+      id: 'D3', no: 3, weight: 12, pool: 11, mock: 7, mini: 4, phaseA: 6,
+      nameEn: 'Product and Model Selection',
+      nameJa: 'プロダクトとモデルの選択',
+      short: 'モデル選択',
+      objectives: [
+        { id: '3.1', en: 'Select appropriate Claude product features (Projects, research mode, chat, artifacts)', ja: '適切なClaudeの機能(Projects・リサーチモード・チャット・アーティファクト)を選ぶ' },
+        { id: '3.2', en: 'Differentiate between Claude model types (Haiku, Sonnet, Opus)', ja: 'Claudeのモデル種別(Haiku・Sonnet・Opus)を区別する' },
+        { id: '3.3', en: 'Align model selection with task requirements (cost, speed, quality)', ja: 'タスク要件(コスト・速度・品質)に合わせてモデルを選ぶ' },
+        { id: '3.4', en: 'Understand and manage context limitations and memory considerations (when to restart, summarize, or persist)', ja: 'コンテキストの制約とメモリを理解し管理する(やり直す・要約する・残すの判断)' }
+      ]
+    },
+    {
+      id: 'D4', no: 4, weight: 16, pool: 14, mock: 10, mini: 5, phaseA: 7,
+      nameEn: 'Workflow Integration and Solution Design',
+      nameJa: 'ワークフロー統合とソリューション設計',
+      short: 'ワークフロー',
+      objectives: [
+        { id: '4.1', en: 'Apply Claude to analyze requirements and use cases', ja: 'Claudeを使って要件とユースケースを分析する' },
+        { id: '4.2', en: 'Leverage Claude for research, planning, and process optimization', ja: 'リサーチ・計画・プロセス最適化にClaudeを活用する' },
+        { id: '4.3', en: 'Use Claude to support solution design, development, and iteration', ja: 'ソリューションの設計・開発・改善の繰り返しをClaudeで支援する' },
+        { id: '4.4', en: 'Integrate Claude into existing workflows to augment or redesign them', ja: '既存のワークフローにClaudeを組み込み、補強または再設計する' },
+        { id: '4.5', en: "Communicate Claude's value and limitations to stakeholders", ja: 'Claudeの価値と限界を関係者に伝える' }
+      ]
+    },
+    {
+      id: 'D5', no: 5, weight: 12, pool: 11, mock: 7, mini: 4, phaseA: 5,
+      nameEn: 'Configuration and Knowledge Management',
+      nameJa: '構成とナレッジ管理',
+      short: '構成・ナレッジ',
+      objectives: [
+        { id: '5.1', en: 'Configure Claude Projects with instructions and knowledge sources', ja: '指示とナレッジソースでClaude Projectsを構成する' },
+        { id: '5.2', en: 'Manage uploaded knowledge and connectors (e.g., Google Drive, Gmail)', ja: 'アップロードした資料とコネクタ(Google Drive、Gmailなど)を管理する' },
+        { id: '5.3', en: 'Create effective system-level instructions', ja: '効果的なシステムレベルの指示を作成する' },
+        { id: '5.4', en: 'Inform, maintain, and update Claude configurations, knowledge sources, and instructions', ja: 'Claudeの構成・ナレッジソース・指示を周知し、保守・更新する' }
+      ]
+    },
+    {
+      id: 'D6', no: 6, weight: 15, pool: 13, mock: 9, mini: 4, phaseA: 7,
+      nameEn: 'Governance, Risk, and Responsible Use',
+      nameJa: 'ガバナンス・リスク・責任ある利用',
+      short: 'ガバナンス',
+      objectives: [
+        { id: '6.1', en: 'Identify appropriate and inappropriate use cases', ja: '適切なユースケースと不適切なユースケースを見分ける' },
+        { id: '6.2', en: 'Apply data sensitivity, regulatory, and privacy considerations', ja: 'データの機密性・規制・プライバシーへの配慮を適用する' },
+        { id: '6.3', en: 'Follow organizational AI policies and governance standards', ja: '組織のAIポリシーとガバナンス基準に従う' },
+        { id: '6.4', en: 'Understand the ethical implications of AI usage', ja: 'AI利用の倫理的な影響を理解する' }
+      ]
+    },
+    {
+      id: 'D7', no: 7, weight: 10, pool: 9, mock: 6, mini: 3, phaseA: 4,
+      nameEn: 'Troubleshooting and Optimization',
+      nameJa: 'トラブルシューティングと最適化',
+      short: 'トラブル対応',
+      objectives: [
+        { id: '7.1', en: 'Identify, diagnose, and resolve issues with underperforming prompts or poor outputs', ja: '成果の出ないプロンプトや質の低い出力の問題を特定・診断・解決する' },
+        { id: '7.2', en: 'Adjust approach based on feedback and results', ja: 'フィードバックと結果に基づいてアプローチを調整する' },
+        { id: '7.3', en: 'Optimize workflows for efficiency and effectiveness', ja: 'ワークフローを効率と効果の両面で最適化する' }
+      ]
+    }
+  ]
+};
+
+/* 問題データの受け皿(questions_a.js / questions_b.js が push する) */
+CCAOF.questions = CCAOF.questions || [];
+
+</script>
+<script>/* data/sources.js */
+/*
+ * 出典一覧。checkedAt = 本サイトが内容を確認した日。
+ * 公式ページは予告なく変わるため、更新時は checkedAt を見直す。
+ */
+window.CCAOF = window.CCAOF || {};
+(function () {
+  const SUP = 'https://support.claude.com/en/articles/';
+  const PRV = 'https://privacy.claude.com/en/articles/';
+  const d = '2026-11-09';
+  CCAOF.sources = {
+    S1: { label: 'Exam Guide v1.0(2026年7月版)', url: 'https://anthropic-partners.skilljar.com/claude-certified-associate-foundations-certification', checkedAt: d, note: 'Partner Academyの試験ページからPDFをダウンロード' },
+    S2: { label: 'Partner Academy 試験ページ', url: 'https://anthropic-partners.skilljar.com/claude-certified-associate-foundations-certification', checkedAt: d },
+    S3: { label: '公式 試験対策コース', url: 'https://anthropic-partners.skilljar.com/path/claude-certified-associate-foundations', checkedAt: d },
+    S4: { label: 'Pearson VUE Anthropicページ', url: 'https://www.pearsonvue.com/us/en/anthropic.html', checkedAt: d },
+    S5: { label: 'AI Fluency: Framework & Foundations', url: 'https://anthropic.skilljar.com/ai-fluency-framework-foundations', checkedAt: d, note: '旧Academyは2026年12月上旬に終了しacademy.claude.comへ移行予定' },
+    S6: { label: 'AI Capabilities and Limitations', url: 'https://anthropic.skilljar.com/ai-capabilities-and-limitations', checkedAt: d, note: '同上' },
+    S7: { label: 'Claude 101', url: 'https://anthropic.skilljar.com/claude-101', checkedAt: d, note: '同上' },
+
+    H_PROJECTS: { label: 'ヘルプ: What are projects?', url: SUP + '9517075-what-are-projects', checkedAt: d },
+    H_RAG: { label: 'ヘルプ: RAG for Projects', url: SUP + '11473015-retrieval-augmented-generation-rag-for-projects', checkedAt: d },
+    H_UPLOAD: { label: 'ヘルプ: Upload files to Claude', url: SUP + '8241126-upload-files-to-claude', checkedAt: d },
+    H_ARTIFACTS: { label: 'ヘルプ: What are artifacts', url: SUP + '9487310-what-are-artifacts-and-how-do-i-use-them', checkedAt: d },
+    H_MEMORY: { label: 'ヘルプ: Chat search and memory', url: SUP + '11817273-using-claude-s-chat-search-and-memory-to-build-on-previous-context', checkedAt: d },
+    H_INCOGNITO: { label: 'ヘルプ: Incognito chats', url: SUP + '12260368-use-incognito-chats', checkedAt: d },
+    H_RESEARCH: { label: 'ヘルプ: Using Research', url: SUP + '11088861-using-research-on-claude-ai', checkedAt: d },
+    H_WEBSEARCH: { label: 'ヘルプ: Web search', url: SUP + '10684626-enabling-and-using-web-search', checkedAt: d },
+    H_WHICH: { label: 'ヘルプ: Web search / extended thinking / Research の使い分け', url: SUP + '11095361-when-should-i-use-web-search-extended-thinking-and-research', checkedAt: d },
+    H_CONNECTORS: { label: 'ヘルプ: Connectors', url: SUP + '11176164-use-connectors-to-extend-claude-s-capabilities', checkedAt: d },
+    H_GWS: { label: 'ヘルプ: Google Workspace連携', url: SUP + '10166901-using-the-google-workspace-integrations', checkedAt: d },
+    H_SKILLS: { label: 'ヘルプ: What are Skills?', url: SUP + '12512176-what-are-skills', checkedAt: d },
+    H_SKILLS_USE: { label: 'ヘルプ: Use Skills in Claude', url: SUP + '12512180-use-skills-in-claude', checkedAt: d },
+    H_FILES: { label: 'ヘルプ: Create and edit files', url: SUP + '12111783-create-and-edit-files-with-claude', checkedAt: d },
+    H_MODEL: { label: 'ヘルプ: モデル・effort・thinking設定', url: SUP + '8664678-change-the-model-effort-and-thinking-settings', checkedAt: d },
+    H_CONTEXT: { label: 'ヘルプ: コンテキストウィンドウ', url: SUP + '8606394-how-large-is-the-context-window-on-paid-claude-plans', checkedAt: d },
+    H_USAGE: { label: 'ヘルプ: 使用量と長さの制限', url: SUP + '11647753-how-do-usage-and-length-limits-work', checkedAt: d },
+    H_PERSONAL: { label: 'ヘルプ: パーソナライズ機能', url: SUP + '10185728-understanding-claude-s-personalization-features', checkedAt: d },
+    H_COWORK: { label: 'ヘルプ: Get started with Claude Cowork', url: SUP + '13345190-get-started-with-claude-cowork', checkedAt: d },
+    H_ONE: { label: 'ヘルプ: Cowork and chat are one Claude', url: SUP + '16761823-claude-cowork-and-chat-are-one-claude', checkedAt: d },
+    H_CHROME: { label: 'ヘルプ: Claude in Chrome', url: SUP + '12012173-get-started-with-claude-in-chrome', checkedAt: d },
+    H_RELEASE: { label: 'ヘルプ: Release notes', url: SUP + '12138966-release-notes', checkedAt: d },
+
+    P_CONSUMER: { label: 'プライバシー: 個人向けプランの学習利用', url: PRV + '10023580', checkedAt: d },
+    P_COMMERCIAL: { label: 'プライバシー: 商用プランのデータ', url: PRV + '7996868', checkedAt: d },
+    P_RETENTION: { label: 'プライバシー: データの保存期間', url: PRV + '10023548-how-long-do-you-store-my-data', checkedAt: d },
+    P_TRAINING: { label: 'プライバシー: モデル改善設定の変更', url: PRV + '12109829-how-do-i-change-my-model-improvement-privacy-settings', checkedAt: d },
+    AUP: { label: 'Anthropic Usage Policy', url: 'https://www.anthropic.com/aup', checkedAt: d },
+
+    DOC_MODELS: { label: 'Docs: Models overview', url: 'https://docs.claude.com/en/docs/about-claude/models/overview', checkedAt: d },
+    DOC_PROMPT: { label: 'Docs: Prompt engineering', url: 'https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview', checkedAt: d },
+    DOC_HALLU: { label: 'Docs: Reduce hallucinations', url: 'https://docs.claude.com/en/docs/test-and-evaluate/strengthen-guardrails/reduce-hallucinations', checkedAt: d }
+  };
+})();
+
+</script>
+<script>/* data/textbook.js */
+/*
+ * 教科書データ(序章 + 7章)
+ * - obj    : Exam Guide v1.0 の目標番号(exam.js の objectives.id)
+ * - status : 'confirmed' | 'check'(要確認: 公式で確認できない/資料間で食い違い)
+ * - refs   : sources.js のキー
+ * - body / ok / ng / right / text はHTML可(作者が記述する信頼済みデータ)
+ * 新ガイド公開時は、変更された目標番号の節を見直す。
+ */
+window.CCAOF = window.CCAOF || {};
+CCAOF.textbook = {
+  asOf: '2026-11-09',
+  chapters: []
+};
+
+/* ===================================================================== */
+/* 序章                                                                   */
+/* ===================================================================== */
+CCAOF.textbook.chapters.push({
+  no: 0, domain: null,
+  title: 'はじめに — 試験の全体像と考え方の土台',
+  lead: 'CCAO-Fは「Claudeの機能を知っているか」よりも、<strong>業務の場面で、品質・効率・コスト・リスクのバランスがとれた判断ができるか</strong>を問う試験です。序章では、試験の狙いと、全章に共通する考え方の土台(AIの4つの性質と4Dフレームワーク)を押さえます。',
+  points: [
+    {
+      obj: '', h: 'この試験が認定するもの',
+      body: `<p>公式Exam Guideによると、この認定は「最小限の指示で、Claudeを業務・生産性タスクに適用できること」を検証します。認定者ができるとされているのは次の5つです。</p>
+<ul>
+<li>構造化された業務タスクを、最小限の指示でClaudeを使ってこなす</li>
+<li>組み込みの機能やツールを使ってワークフローを効率化する</li>
+<li>Claudeで改善できるプロセスを見つける</li>
+<li>品質・効率・コストのバランスがとれた進め方を選ぶ</li>
+<li>限界を認識し、複雑・技術的な実装はより専門的な人(Claude Architect / Developer)へ引き継ぐ(エスカレーション)</li>
+</ul>
+<p>最後の項目が重要です。<strong>Associateは何でも自分で作る人ではありません。</strong>API連携や全社規模のシステム設計は対象外で、そうした仕事は専門職に引き継ぐ判断も評価されます。</p>`,
+      status: 'confirmed', refs: ['S1']
+    },
+    {
+      obj: '', h: '想定される受験者(MQC)',
+      body: `<p>Exam Guideは合格ライン上の受験者像(MQC: Minimally Qualified Candidate)を、「Claudeを中核の生産性ツールとして日常的に使い、Projects・Artifacts・ワークフロー型の使い方に慣れ、単なる一問一答を超えて<strong>業務プロセスの見直し・タスクの自動化・プロジェクト構築</strong>まで進められる人」と説明しています。技術的な専門性は「限定的〜中程度」で、気軽にプロンプトを打つ利用者と、AIの技術者との中間に位置づけられています。</p>`,
+      status: 'confirmed', refs: ['S1']
+    },
+    {
+      obj: '', h: '出題形式と時間配分',
+      body: `<ul>
+<li>60問・120分 → <strong>1問あたり平均2分</strong>。シナリオを読む時間を含めても余裕はあるが、迷った問題に時間をかけすぎない。</li>
+<li>単一選択と複数選択が混在。<strong>複数選択は「2つ選べ」のように選ぶ数が明示</strong>される。</li>
+<li>合否はトータルのスケールスコア(100〜1,000、合格720)で決まる。他人との比較ではない絶対評価。</li>
+<li>スコアレポートにはドメイン別の正答率が載る(合否判定には使われない参考情報)。</li>
+</ul>`,
+      status: 'confirmed', refs: ['S1']
+    },
+    {
+      obj: '', h: '土台①: AIの4つの性質(AI Capabilities and Limitations)',
+      body: `<p>Anthropic Academyの無料コース「AI Capabilities and Limitations」は、AIの振る舞いを次の4つの性質で説明しています。それぞれが「得意」と「限界」の両面を持ちます。試験のシナリオで「なぜこの出力になったか」を考える手がかりになります。</p>
+<div class="table-wrap"><table class="simple">
+<tr><th>性質</th><th>意味</th><th>試験での使いどころ</th></tr>
+<tr><td>Next Token Prediction<br>(次のトークン予測)</td><td>回答は「次に来そうな語」を1つずつ予測して作られる。要約や書式変換のような定番の作業は得意だが、<strong>もっともらしいが事実でない文</strong>も作れてしまう。</td><td>ハルシネーション対策(第2章)</td></tr>
+<tr><td>Knowledge<br>(知識)</td><td>知っているのは学習データにあったこと。よく出てくる一般的な話題には強く、<strong>珍しい・最新・ニッチ・議論の分かれる話題</strong>には弱い。</td><td>資料の提供・検索・ファクトチェック(第2・5章)</td></tr>
+<tr><td>Working Memory<br>(作業記憶)</td><td>コンテキストウィンドウ=今注意を向けられる範囲。そこから外れた情報は使えず、新しい会話は前の会話を覚えていない(メモリ機能を除く)。</td><td>会話のやり直し・要約・永続化(第3章)</td></tr>
+<tr><td>Steerability<br>(操縦性)</td><td>「表にして」「100字以内」のような<strong>短く具体的で確認できる指示</strong>はよく効く。長い推論の連鎖や抽象的な依頼では指示が効きにくくなる。</td><td>プロンプト改善・診断(第1・7章)</td></tr>
+</table></div>
+<p>同コースは、予想外の出力が出たら「どの性質が関係しているかを特定し、ピンポイントで直す(やみくもに再試行しない)」という診断の考え方を勧めています。</p>`,
+      status: 'confirmed', refs: ['S6']
+    },
+    {
+      obj: '', h: '土台②: 4Dフレームワーク(AI Fluency)',
+      body: `<p>無料コース「AI Fluency: Framework & Foundations」は、人がAIと協働するための4つの能力(4D)を示しています。公式の試験対策コースでも前提コースとして推奨されています。</p>
+<div class="table-wrap"><table class="simple">
+<tr><th>能力</th><th>本サイトでの解釈</th><th>主に関係する章</th></tr>
+<tr><td>Delegation(委任)</td><td>何をAIに任せ、何を人が担うかを決める。どのツール・機能を使うかも含む。</td><td>第3章・第4章</td></tr>
+<tr><td>Description(記述)</td><td>目的・文脈・制約・形式をAIに的確に伝える。</td><td>第1章・第5章</td></tr>
+<tr><td>Discernment(識別)</td><td>出力の質・正確さ・妥当性を見極める。</td><td>第2章・第7章</td></tr>
+<tr><td>Diligence(誠実さ・責任)</td><td>倫理・安全・透明性に配慮し、成果物に責任を持つ。</td><td>第6章・第2章</td></tr>
+</table></div>
+<p class="note">「本サイトでの解釈」「主に関係する章」の対応づけは本サイト独自の整理です。</p>`,
+      status: 'confirmed', refs: ['S5', 'S3']
+    },
+    {
+      obj: '', h: 'シナリオ問題の解き方',
+      body: `<p>公式のサンプル問題の解説を読むと、正解には共通の型があります。</p>
+<ol>
+<li><strong>業務を前に進めながら、リスクを適切に抑える選択肢</strong>が正解になりやすい。「何もしない」「業務自体をやめる」は、より良い手段があれば不正解。</li>
+<li><strong>Claudeが示す自信や自己評価は、正確さの根拠にならない。</strong>根拠は一次情報との照合。</li>
+<li><strong>いつも最高性能・最高コストを選ぶのは正解ではない。</strong>タスクの要件に合わせる。</li>
+<li>見た目を整える(言い換え・フォーマット変更)だけの選択肢は、内容の正しさや安全性の問題を解決しない。</li>
+<li>ポリシーで決まっている管理策は、AIへの口頭指示(「覚えないで」など)では代わりにならない。</li>
+</ol>`,
+      status: 'confirmed', refs: ['S1']
+    }
+  ],
+  examples: [
+    {
+      obj: '', scene: '解き方の練習: 「最も適切な対応」を選ぶ',
+      body: '営業担当が、来週の顧客向け提案書の市場データ部分をClaudeに書かせた。数字がいくつも入っていて説得力がある。提出前に何をすべきか?',
+      ng: '「Claudeに『この数字は正確ですか』と確認し、はいと言われたので提出する」/「AIの数字は信用できないので市場データの節を丸ごと削る」',
+      ok: '数字ごとに出典(調査会社の公表資料・公的統計など)を確認し、確認できたものだけ出典を明記して残す。確認できないものは削除するか、正しい数値に差し替える。',
+      why: '自己評価は根拠にならず、全削除は業務価値を失う。「検証して使う」が業務を前に進めつつリスクを抑える選択です。'
+    }
+  ],
+  pitfalls: [
+    { obj: '', wrong: '最も高性能なモデルを常に使うのが最善', right: 'タスクの複雑さ・量・速度・コストに合わせて選ぶ。高性能モデルは複雑な推論に取っておく(第3章)。' },
+    { obj: '', wrong: 'リスクがあるならAIの利用をやめるのが最も安全', right: '匿名化・検証・人のレビューなど、リスクを下げながら業務を進める手段があるなら、それが正解(第6章)。' },
+    { obj: '', wrong: 'Claudeが「確信しています」と言えば正しい', right: '確信度の自己申告は正確さの根拠にならない。一次情報で確かめる(第2章)。' },
+    { obj: '', wrong: 'Associateは技術的な統合も自分で作り切るべき', right: 'API連携や全社規模のシステム設計は対象外。Claude Architect / Developerへのエスカレーションも正しい判断(第4章)。' }
+  ],
+  checkpoints: [
+    { obj: '', text: 'この認定が検証する5つの能力のうち、「限界を認識してエスカレーションする」が何を意味するか説明できる。' },
+    { obj: '', text: '60問・120分・複数選択は選ぶ数が明示される・合格720/1000(絶対評価)を言える。' },
+    { obj: '', text: 'AIの4つの性質(次のトークン予測・知識・作業記憶・操縦性)それぞれの得意と限界を1つずつ挙げられる。' },
+    { obj: '', text: '4D(Delegation / Description / Discernment / Diligence)を自分の業務の例で説明できる。' },
+    { obj: '', text: 'シナリオ問題で「自信の自己申告」「全面中止」「常に最高性能」が不正解になりやすい理由を言える。' }
+  ]
+});
+
+/* ===================================================================== */
+/* 第1章 Prompting and Task Execution (14%)                               */
+/* ===================================================================== */
+CCAOF.textbook.chapters.push({
+  no: 1, domain: 'D1',
+  title: 'プロンプティングとタスク実行',
+  lead: 'Claudeは優秀ですが、<strong>あなたの業務の文脈を何も知らない新しい同僚</strong>のような存在です。この章では、目的・文脈・制約・形式を伝える構造化されたプロンプトの書き方、複雑な依頼の分解、反復による改善、タスクの種類に応じた戦略の変え方を学びます。',
+  points: [
+    {
+      obj: '1.1', h: '効果的なプロンプトの構成要素',
+      body: `<p>業務プロンプトは、次の要素を必要に応じて組み合わせると安定します。すべてを毎回書く必要はなく、<strong>欠けると結果がぶれる要素を補う</strong>のがコツです。</p>
+<div class="table-wrap"><table class="simple">
+<tr><th>要素</th><th>内容</th><th>例</th></tr>
+<tr><td>タスク</td><td>何をしてほしいか(動詞で明確に)</td><td>「要約して」「3案出して」「比較表を作って」</td></tr>
+<tr><td>目的・背景</td><td>なぜ必要か、何に使うか</td><td>「部長が5分で判断できるように」</td></tr>
+<tr><td>読み手</td><td>誰が読むか、前提知識</td><td>「技術に詳しくない営業メンバー向け」</td></tr>
+<tr><td>入力資料</td><td>根拠にすべき資料・データ</td><td>「添付の議事録だけに基づいて」</td></tr>
+<tr><td>制約</td><td>長さ、トーン、含める/含めない事項</td><td>「400字以内」「価格には触れない」</td></tr>
+<tr><td>出力形式</td><td>形・構成</td><td>「結論→理由3つ→次のアクションの順で」「表で」</td></tr>
+<tr><td>例</td><td>望む出力のサンプル</td><td>「過去の良い報告書の例:…」</td></tr>
+<tr><td>役割</td><td>どんな立場で答えるか</td><td>「経験豊富な人事担当者として」</td></tr>
+</table></div>
+<p>資料と指示が混ざらないよう、見出しや区切り(例: <code>&lt;資料&gt;…&lt;/資料&gt;</code>のようなタグ)で分けると、Claudeが取り違えにくくなります。</p>`,
+      status: 'confirmed', refs: ['S1', 'DOC_PROMPT']
+    },
+    {
+      obj: '1.1', h: '「明確・具体的・直接的」に書く',
+      body: `<p>曖昧な依頼ほど、Claudeは「よくありがちな答え」で穴を埋めます(次のトークン予測の性質)。<strong>成功の条件を具体的に書く</strong>ことで、狙った出力に近づきます。</p>
+<ul>
+<li>「いい感じに」「わかりやすく」ではなく、何をもって良いとするかを書く(長さ・構成・読み手・トーン)。</li>
+<li>してほしくないことより、<strong>してほしいこと</strong>を書く方が伝わりやすい。</li>
+<li>分からないことは推測で埋めず「不明」と書くよう指示すると、作り話を減らせる(第2章)。</li>
+</ul>`,
+      status: 'confirmed', refs: ['DOC_PROMPT', 'S6']
+    },
+    {
+      obj: '1.2', h: 'タスク分解: 大きな依頼は工程に分ける',
+      body: `<p>「市場調査をして提案書を完成させて」のような大きな依頼を1回で頼むと、途中の誤りや方向違いに気づけません。<strong>工程ごとに分け、各工程の結果を確認してから次に進む</strong>のが基本です。</p>
+<ol>
+<li>目的と範囲を確認する(Claudeに不明点を質問させるのも有効)</li>
+<li>情報収集・整理</li>
+<li>骨子(アウトライン)の作成 → 人が確認</li>
+<li>本文の下書き</li>
+<li>推敲・読み手に合わせた調整 → 検証</li>
+</ol>
+<p>前の工程の出力を次の工程の入力にする進め方は「プロンプトチェーン」と呼ばれます。分解すると、どの工程で問題が起きたかを特定しやすくなり、トラブル対応(第7章)も楽になります。</p>`,
+      status: 'confirmed', refs: ['S1', 'DOC_PROMPT']
+    },
+    {
+      obj: '1.3', h: '反復改善: 1回で完璧を狙わない',
+      body: `<p>最初の出力は「たたき台」と考え、<strong>何が足りないかを特定して、具体的に直す</strong>ことを繰り返します。</p>
+<ul>
+<li>フィードバックは具体的に。「もっと良くして」ではなく「結論を冒頭に」「専門用語を3つ以内に」「数字の根拠を各段落に」。</li>
+<li><strong>一度に変えるのは1〜2点</strong>。何が効いたか分かるようにする。</li>
+<li>良かった出力・悪かった出力を例として示すと、意図が伝わりやすい。</li>
+<li>何度も同じ指摘をしているなら、プロンプト(またはProjectの指示)自体を書き直すサイン。うまくいったプロンプトは保存して再利用する(第5章・第7章)。</li>
+</ul>`,
+      status: 'confirmed', refs: ['S1', 'S3']
+    },
+    {
+      obj: '1.4', h: 'タスクの種類で戦略を変える',
+      body: `<p>Exam Guideは4種類のタスク(分析・リサーチ・起草・ブレインストーミング)を挙げています。求める出力の性質が違うので、頼み方も変えます。</p>
+<div class="table-wrap"><table class="simple">
+<tr><th>種類</th><th>ねらい</th><th>プロンプトのポイント</th></tr>
+<tr><td>分析</td><td>資料・データから示唆を得る</td><td>分析対象の資料を渡す/観点を指定する/結論の根拠(どのデータか)を示させる/段階を追って考えさせる</td></tr>
+<tr><td>リサーチ</td><td>情報を集めて整理する</td><td>調べる範囲と期間/信頼できる情報源の条件/出典の明示を求める/必要に応じてウェブ検索・リサーチ機能を使う/結果は検証が前提</td></tr>
+<tr><td>起草</td><td>文書を書く</td><td>読み手・目的・トーン・長さ・構成を指定/参考になる過去の文書や文体見本を渡す</td></tr>
+<tr><td>ブレインストーミング</td><td>発想を広げる</td><td>まず量と多様性を求める(「10案、方向性の違うものを」)/評価・絞り込みは別の工程で/制約は最初はゆるめに</td></tr>
+</table></div>
+<p>特に<strong>ブレインストーミングと起草の違い</strong>に注意。ブレストで最初から「最良の1案」を求めると発想が狭まり、起草で制約を書かないと使えない文書になります。</p>`,
+      status: 'confirmed', refs: ['S1']
+    }
+  ],
+  examples: [
+    {
+      obj: '1.1', scene: '会議の議事録から上司向けの報告をつくる',
+      ng: '「この議事録をまとめて」',
+      ok: '「添付の議事録だけをもとに、出席していない部長向けの報告を書いてください。目的は、来週までに部長が承認・却下を判断できるようにすることです。構成は①決定事項 ②未決事項と判断が必要な点 ③次のアクション(担当・期限)の順で、全体で400字以内。議事録にない情報は推測せず『記載なし』としてください。」',
+      why: 'タスク・目的・読み手・入力資料・形式・長さ・推測の禁止を明示しています。'
+    },
+    {
+      obj: '1.2', scene: '新サービスの社内提案書を作る',
+      body: '一度に「提案書を書いて」と頼むのではなく、(1) 想定顧客の課題の洗い出し → (2) 競合サービスとの比較表(数字は後で検証)→ (3) 提案書の骨子を作り、上司と方向性をすり合わせる → (4) 骨子に沿って本文を書く → (5) 経営会議向けに1枚要約を作る、と工程を分けます。骨子の段階で方向違いを直せるので、手戻りが減ります。'
+    },
+    {
+      obj: '1.3', scene: '出来上がった紹介文が長くて硬い',
+      ng: '「もう少し良くして」を何度も繰り返す',
+      ok: '「各段落を2文以内にし、です・ます調で、専門用語は『API』だけ残して言い換えてください」と、変えてほしい点を具体的に伝える',
+    },
+    {
+      obj: '1.4', scene: '展示会のブース企画',
+      body: '最初は「来場者が立ち止まる仕掛けを、方向性の違う案で15個」と量を求めます(ブレスト)。次に「予算50万円・2人で運営できる・当社の製品デモにつながる、の3条件で上位3案を評価して」と絞り込み(分析)。最後に選んだ案で上司向けの企画書を起草します。'
+    }
+  ],
+  pitfalls: [
+    { obj: '1.1', wrong: 'プロンプトは長ければ長いほど良い', right: '大事なのは長さではなく、目的・文脈・制約・形式の過不足。不要な情報が多いと、かえって重要な指示が埋もれる。' },
+    { obj: '1.1', wrong: '役割(「あなたは弁護士です」)を与えれば、内容の正確さも保証される', right: '役割は口調や視点を整えるのに役立つが、事実の正確さは保証しない。専門的な内容ほど検証と専門家レビューが必要。' },
+    { obj: '1.2', wrong: '複雑な仕事ほど、1つの巨大なプロンプトで一気に頼むのが効率的', right: '工程に分け、途中で確認する方が品質も効率も上がる。問題が起きた工程も特定しやすい。' },
+    { obj: '1.3', wrong: '結果が悪ければ、同じ指示で何度も再生成すればよい', right: 'まず何が悪いかを特定し、プロンプトを具体的に直す。やみくもな再試行は改善につながりにくい。' },
+    { obj: '1.4', wrong: 'ブレインストーミングでも最初から完成度の高い1案を求める', right: 'ブレストは量と多様性を先に、評価と絞り込みは別の工程で行う。' }
+  ],
+  checkpoints: [
+    { obj: '1.1', text: '業務プロンプトの構成要素(タスク・目的・読み手・入力資料・制約・形式・例・役割)を挙げ、議事録要約の例で使い分けられる。' },
+    { obj: '1.1', text: '資料と指示を区切って書く理由を説明できる。' },
+    { obj: '1.2', text: '大きな依頼を工程に分けるメリットを2つ以上言える(途中で方向修正できる/問題の工程を特定しやすい など)。' },
+    { obj: '1.3', text: '「具体的なフィードバック」と「曖昧なフィードバック」の例を対比して示せる。' },
+    { obj: '1.4', text: '分析・リサーチ・起草・ブレストで、プロンプトの何を変えるべきか説明できる。' }
+  ]
+});
+
+/* ===================================================================== */
+/* 第2章 Output Evaluation and Validation (21%)                           */
+/* ===================================================================== */
+CCAOF.textbook.chapters.push({
+  no: 2, domain: 'D2',
+  title: '出力の評価と検証',
+  lead: '配分21%で<strong>最大のドメイン</strong>です。Claudeの文章は流暢で自信に満ちて見えますが、流暢さは正しさの証明ではありません。この章では、出力の正確性と網羅性を評価し、ハルシネーション・不整合・バイアスを見つけ、リスクに応じて検証の深さと人のレビューを決め、読み手と用途に合わせて仕上げる方法を学びます。',
+  points: [
+    {
+      obj: '2.1', h: '正確性と網羅性は「別の観点」',
+      body: `<ul>
+<li><strong>正確性(accuracy)</strong>: 書かれている一つひとつの主張が事実・資料と一致しているか。</li>
+<li><strong>網羅性(completeness)</strong>: 依頼した項目・必要な観点が漏れなく含まれているか。</li>
+</ul>
+<p>この2つは独立しています。全部正しいが重要な項目が抜けている出力も、項目はそろっているが数字が間違っている出力もあり得ます。<strong>依頼時の要件をチェックリストにしておき</strong>、出力をそれと突き合わせると網羅性を確認しやすくなります。</p>`,
+      status: 'confirmed', refs: ['S1']
+    },
+    {
+      obj: '2.2', h: 'ハルシネーションが起きやすい場所',
+      body: `<p>ハルシネーション(もっともらしい作り話)は、まれなバグではなく、次のトークン予測という仕組みから自然に起こり得る現象です。特に次の箇所で起きやすいので、<strong>重点的に確認</strong>します。</p>
+<ul>
+<li>数値・統計・金額・割合</li>
+<li>固有名詞(人名・社名・製品名)、日付</li>
+<li>引用文、論文・記事のタイトル、URL</li>
+<li>法令・規程の条番号、規格番号</li>
+<li>学習データに少ない話題(最新・ニッチ・社内固有の情報)</li>
+</ul>
+<p>Exam Guideのサンプル問題の解説も、引用番号のような「具体的に見える細部」の捏造をハルシネーションの例に挙げています。</p>`,
+      status: 'confirmed', refs: ['S1', 'S6']
+    },
+    {
+      obj: '2.2', h: '不整合とバイアスの見つけ方',
+      body: `<p><strong>不整合</strong>の例: 本文と表の数字が合わない、合計が合わない、前半と後半で結論が逆、渡した資料と矛盾する、同じ会話の前の回答と食い違う。</p>
+<p><strong>バイアス</strong>の例:</p>
+<ul>
+<li>一方の立場・選択肢だけを好意的に扱い、反対の視点やリスクがない</li>
+<li>性別・年齢・国籍などのステレオタイプに基づく表現</li>
+<li>利用者の意見や質問の前提に<strong>迎合</strong>する(「この案は良いですよね?」と聞くと賛成しやすい)</li>
+<li>一般的・多数派の事例に偏り、自社や地域の事情を反映しない</li>
+</ul>
+<p>対策として、反対意見やリスクを明示的に求める、前提を置かない聞き方をする、複数の観点で比較させる、が有効です。</p>`,
+      status: 'confirmed', refs: ['S1', 'S6']
+    },
+    {
+      obj: '2.3', h: 'ファクトチェックと検証の手法',
+      body: `<ol>
+<li><strong>権威ある一次情報と照合する</strong>: 法令なら公式の条文、統計なら公表元、社内情報なら正式な社内文書。これが最も確実な方法です。</li>
+<li><strong>Claudeの自信や自己評価を根拠にしない</strong>: 「確かですか?」に「はい」と答えても検証にはなりません。Exam Guideのサンプル解説も、自己申告の確信度は正確さの信頼できる指標ではないとしています。</li>
+<li><strong>出典を求め、実在と該当箇所を確認する</strong>: 出典が付いていても、実在しない・内容が違う場合があります。ウェブ検索やリサーチ機能の回答には引用が付くので、リンク先で実際に確かめます。</li>
+<li><strong>資料に根拠づける</strong>: 渡した資料の範囲だけで答えるよう指示する、長い資料では該当箇所をそのまま引用させてから回答させる、裏付けのない主張は撤回させる。</li>
+<li><strong>「分からない」と言ってよいと伝える</strong>: 推測で埋めるより「不明」と答える方を許可すると、作り話が減ります。</li>
+<li><strong>計算は再計算する</strong>: 合計・割合などは表計算や手元の計算で確かめる。</li>
+</ol>
+<p>公式ドキュメントも、これらの手法はハルシネーションを<strong>減らすが無くすわけではない</strong>ので、重要な情報は必ず検証するよう述べています。</p>`,
+      status: 'confirmed', refs: ['S1', 'DOC_HALLU', 'H_WEBSEARCH']
+    },
+    {
+      obj: '2.4', h: '人のレビュー・追加検証が必要な場面(リスクに応じた深さ)',
+      body: `<p>すべての出力を同じ深さで検証するのは非効率です。<strong>誤りが起きたときの影響の大きさ</strong>で検証の深さを決めます。</p>
+<div class="table-wrap"><table class="simple">
+<tr><th>リスク</th><th>例</th><th>検証の目安</th></tr>
+<tr><td>低</td><td>社内ブレストのアイデア、自分用のメモ、下書きのたたき台</td><td>ざっと目を通す</td></tr>
+<tr><td>中</td><td>社内向け報告、提供資料の要約</td><td>数字・固有名詞・主張を資料と照合</td></tr>
+<tr><td>高</td><td>顧客・社外向けの文書、経営判断の材料、契約・法務・規制・医療・財務に関わる内容、個人の評価や採用に関わる内容、取り消しが難しい行動</td><td>全項目を一次情報で検証し、<strong>担当者・専門家のレビューと承認</strong>を経る</td></tr>
+</table></div>
+<p>AIを使っても、<strong>成果物の最終責任は人(あなたと組織)に残ります</strong>。高リスクの出力ほど、人の判断を工程に必ず入れます(human-in-the-loop)。</p>
+<p class="note">表のリスク区分は本サイトによる整理の例です。</p>`,
+      status: 'confirmed', refs: ['S1']
+    },
+    {
+      obj: '2.5', h: '読み手に合わせて編集・調整・比較する',
+      body: `<ul>
+<li><strong>経営層</strong>: 結論を先に、短く、判断に必要な数字とリスクだけ。</li>
+<li><strong>顧客</strong>: 平易な言葉、自社のトーン、約束できないことは書かない。</li>
+<li><strong>専門家</strong>: 根拠・前提・限界を明示。</li>
+<li><strong>現場メンバー</strong>: 具体的な手順と担当・期限。</li>
+</ul>
+<p>同じ内容から複数のバージョンを作らせて<strong>比較して選ぶ</strong>のも有効です。比較するときは、何を基準に選ぶか(正確さ・読み手への適合・長さ・トーン)を先に決めておきます。言い換えや体裁の調整は読みやすさを上げますが、<strong>内容の正しさは変わりません</strong>。検証は別に行います。</p>`,
+      status: 'confirmed', refs: ['S1']
+    },
+    {
+      obj: '2.6', h: '情報の整理と出力形式の選び方',
+      body: `<p>Exam Guideは出力形式として「アーティファクト」「インライン(会話の本文中)」「構造化データ」を挙げています。</p>
+<div class="table-wrap"><table class="simple">
+<tr><th>形式</th><th>向いている場面</th></tr>
+<tr><td>アーティファクト</td><td>単独で成り立ち、編集・再利用・共有する成果物(文書、スライド、図、ダッシュボード、小さなツールなど)</td></tr>
+<tr><td>インライン</td><td>短い回答、会話の中での説明や確認、すぐ読んで終わる内容</td></tr>
+<tr><td>構造化データ</td><td>表・CSV・JSONなど、比較・集計・別のツールへの取り込みなど後工程で使うデータ</td></tr>
+</table></div>
+<p>ヘルプセンターでは、Claudeがアーティファクトを作るのは、内容がまとまった分量(目安15行超)で、編集・再利用しそうで、会話がなくても成り立ち、後で参照しそうなとき、と説明されています。</p>
+<p>形式だけでなく<strong>取捨選択</strong>も評価対象です。読み手にとって重要な順に並べ、重複や不要な情報を削り、出典や前提を添えます。</p>`,
+      status: 'confirmed', refs: ['S1', 'H_ARTIFACTS']
+    }
+  ],
+  examples: [
+    {
+      obj: '2.3', scene: '社内規程の改定説明資料で、法律の条番号が引用されている',
+      body: '人事担当者が、就業規則改定の社員向け説明をClaudeに下書きさせた。文中に「○○法第△条により義務化」とある。',
+      ng: '文章が自然で自信のある書きぶりなので、そのまま社内ポータルに掲載する',
+      ok: '公的機関が公開している法令の原文で条番号と内容を確認し、必要なら労務の専門家に確認してから掲載する',
+      why: '条番号のような具体的な細部はハルシネーションが起きやすい箇所です。社員全員に影響する文書なのでリスクは高めです。'
+    },
+    {
+      obj: '2.2', scene: '市場規模の数字に出典がない',
+      body: 'Claudeが作った新規事業メモに「国内市場は年率18%で成長」とあるが、出典が書かれていない。',
+      ok: '出典を示すよう求め、示された調査レポートや公的統計で実在と数値を確認する。確認できなければその記述を削除するか、確認できた数字に置き換える。'
+    },
+    {
+      obj: '2.4', scene: '同じ「要約」でも検証の深さは変わる',
+      body: '(a) 自分の勉強用に業界ニュースを要約 → ざっと確認で十分。(b) 顧客に送るFAQの回答案 → 製品仕様書・料金表と全項目を照合し、担当部署のレビューを通す。誤りの影響が違うので、検証にかける手間を変えます。'
+    },
+    {
+      obj: '2.6', scene: '3社の見積もりを比較したい',
+      ng: '長い文章で各社の特徴を説明させる',
+      ok: '「価格・納期・保守条件・追加費用」を列にした表(構造化データ)で出させ、表計算に取り込んで確認する。社内稟議用の説明文は、表を確認した後で別に作る。'
+    }
+  ],
+  pitfalls: [
+    { obj: '2.3', wrong: 'Claudeに「本当に正しいですか?」と聞いて「はい」と言われたので検証済みとする', right: '自己評価は根拠にならない。一次情報と照合する。' },
+    { obj: '2.3', wrong: '出典やリンクが付いているから正しい', right: '出典が実在するか、その出典に本当にそう書いてあるかを確認する。' },
+    { obj: '2.4', wrong: 'すべての出力を同じ深さで徹底検証する(または、すべて軽く見るだけ)', right: '誤ったときの影響に応じて検証の深さと人のレビューを決める。' },
+    { obj: '2.4', wrong: 'AIが作ったものなので、誤りがあってもAIの責任', right: '成果物の責任は人と組織にある。だから重要な出力は人が確認・承認する。' },
+    { obj: '2.5', wrong: '文章をより丁寧・フォーマルに言い換えれば品質の問題は解決する', right: '体裁の改善は正確さを変えない。内容の検証は別に必要。' },
+    { obj: '2.2', wrong: '自分の案への賛成意見が返ってきたので、案の妥当性が確認できた', right: 'Claudeは質問の前提に迎合することがある。反対意見・リスクを明示的に求める。' }
+  ],
+  checkpoints: [
+    { obj: '2.1', text: '正確性と網羅性の違いを説明し、それぞれの確認方法を言える。' },
+    { obj: '2.2', text: 'ハルシネーションが起きやすい箇所を4つ以上挙げられる。' },
+    { obj: '2.2', text: '迎合(質問の前提に引きずられる)を避ける聞き方を例示できる。' },
+    { obj: '2.3', text: '自己申告の確信度が検証にならない理由と、代わりにすべきことを言える。' },
+    { obj: '2.3', text: '資料に根拠づける手法(資料の範囲だけで答えさせる、引用させる、分からないと言わせる)を説明できる。' },
+    { obj: '2.4', text: '低・中・高リスクの出力の例と、それぞれの検証の深さを示せる。' },
+    { obj: '2.6', text: 'アーティファクト・インライン・構造化データを使い分ける基準を言える。' }
+  ]
+});
+
+/* ===================================================================== */
+/* 第3章 Product and Model Selection (12%)                                */
+/* ===================================================================== */
+CCAOF.textbook.chapters.push({
+  no: 3, domain: 'D3',
+  title: 'プロダクトとモデルの選択',
+  lead: 'プロンプトを書く前の「どの機能で、どのモデルで、どのくらいの文脈を持たせて取り組むか」という判断が、成果の上限を決めます。この章では、機能の使い分け、モデルの区分とコスト・速度・品質のバランス、コンテキストとメモリの扱いを学びます。<strong>具体的な機能名・モデル名は変わりやすいため、名前より「どういう場面で何を選ぶか」の判断基準を押さえてください。</strong>',
+  points: [
+    {
+      obj: '3.1', h: '主な機能の使い分け',
+      body: `<p>Exam Guideは、チャット・Projects・リサーチモード・アーティファクトを挙げています(機能の詳細は2026年11月9日時点のヘルプセンターに基づく)。</p>
+<div class="table-wrap"><table class="simple">
+<tr><th>機能</th><th>概要</th><th>選ぶ場面</th></tr>
+<tr><td>チャット</td><td>通常の会話</td><td>単発の質問、短い作業、試しに聞いてみる</td></tr>
+<tr><td>Projects</td><td>専用のチャット履歴とナレッジ(資料)、指示を持つ独立した作業スペース</td><td>同じ資料・同じ前提で繰り返し行う業務、チームで共有する業務(第5章)</td></tr>
+<tr><td>リサーチ(Research)</td><td>ウェブや接続したツールを対象に、複数の検索を積み重ねて調べ、引用付きのレポートにまとめる</td><td>多くの情報源をまたぐ調査。ヘルプでは「5回以上のツール呼び出し・1〜3分程度」が目安</td></tr>
+<tr><td>ウェブ検索</td><td>回答に最新のウェブ情報を取り込み、引用を付ける</td><td>単純な事実確認・最新情報(1〜2回の検索で済むもの)</td></tr>
+<tr><td>拡張思考(thinking)</td><td>回答前に推論を深める</td><td>ウェブ情報は要らないが、じっくり考える必要がある問題</td></tr>
+<tr><td>アーティファクト</td><td>会話の横に開く、編集・共有できる成果物(文書・図・ダッシュボード・小さなツールなど)</td><td>単独で使う・編集する・共有する成果物(第2章 2.6)</td></tr>
+</table></div>
+<p>このほか、ファイルの作成・編集(Excel・Word・PowerPoint・PDFなど)、Skills、コネクタ(第5章)、Claude Cowork(ファイルやタスクを扱うエージェント型の作業)、Claude in Chrome(ブラウザ拡張)などがあります。</p>`,
+      status: 'confirmed', refs: ['S1', 'H_PROJECTS', 'H_RESEARCH', 'H_WHICH', 'H_ARTIFACTS', 'H_FILES', 'H_COWORK']
+    },
+    {
+      obj: '3.1', h: '機能の名前と場所は変わる(2026年11月時点の動き)',
+      body: `<p>2026年9月以降、チャットとCoworkを1つの会話にまとめた新しい体験が順次展開されています。設定画面の名前も変わっています(例: 「Code execution and file creation」→「Create and edit files」、メモリ設定は「Settings &gt; Your Claude」)。新しい体験ではウェブ検索のオン/オフの切り替えがなく、リサーチは <code>/deep-research</code> で開始すると案内されています。</p>
+<p>また、「チャットとCoworkの統合」「Projectsの新バージョン(ベータ)」が段階的に提供されており、プランや時期によって画面が異なる可能性があります。<strong>試験は特定の画面操作よりも、機能の役割と選び方を問う</strong>と考えて準備するのが安全です(12月7日の試験更新で扱いが変わる可能性があります)。</p>`,
+      status: 'check', refs: ['H_ONE', 'H_FILES', 'H_MEMORY', 'H_PROJECTS']
+    },
+    {
+      obj: '3.2', h: 'モデルの区分: Haiku・Sonnet・Opus',
+      body: `<p>Exam Guideが区別を求めているのは Haiku・Sonnet・Opus の3つの系統です。一般に次のように理解します。</p>
+<div class="table-wrap"><table class="simple">
+<tr><th>系統</th><th>特徴</th><th>向いているタスク</th></tr>
+<tr><td>Haiku</td><td>最速・軽量・低コスト</td><td>大量の定型処理(分類、短い返信の下書き、抽出)、速さが重要な場面</td></tr>
+<tr><td>Sonnet</td><td>速度と賢さのバランス</td><td>日常業務の多く(文書作成、資料分析、一般的な業務)</td></tr>
+<tr><td>Opus</td><td>高い推論能力</td><td>複雑な分析、難しい判断、長く複雑な仕事</td></tr>
+</table></div>
+<p><strong>2026年11月9日時点</strong>の公式ドキュメントでは、最新世代として Haiku 5.5・Sonnet 5.5・Opus 5.5 に加え、さらに上位の <strong>Fable 5.1</strong>(高度な推論や長期にわたる作業向け)が案内されています。速度は Haiku 5.5(最速)→ Sonnet 5.5 → Opus 5.5 → Fable 5.1(最も遅い)の順です。公式ドキュメントは「多くの作業はOpus 5.5から始める」としています。</p>
+<p class="note">モデル名・推奨は頻繁に変わります。試験対策としては、具体的なバージョン名より「速さ・コスト・能力のトレードオフ」を理解することが重要です。</p>`,
+      status: 'confirmed', refs: ['S1', 'DOC_MODELS', 'H_MODEL']
+    },
+    {
+      obj: '3.3', h: 'コスト・速度・品質に合わせて選ぶ',
+      body: `<p>Exam Guideのサンプル問題の解説は、モデル選択を「タスク要件に合わせること」と説明しています。<strong>単純で大量の作業には、速く低コストなモデル</strong>を使い、最も高性能なモデルは<strong>複雑な推論に取っておく</strong>。常に最上位モデルを使うと、コストや待ち時間(=使用量の上限)を無駄にします。</p>
+<ul>
+<li>判断の軸: タスクの複雑さ/処理量/求められる速さ/誤りの影響/使用量の上限</li>
+<li>迷ったら、まず軽めのモデルで試し、品質が足りなければ上位モデルに切り替える(あるいは重要なタスクは最初から上位モデル)。</li>
+<li>同じモデルでも、effort(思考の深さ)の設定で品質と速度・使用量のバランスを変えられる。effortを上げると回答の質は上がりやすいが、遅くなり使用量も増える。</li>
+</ul>
+<p>claude.aiでは、5時間ごとのセッション上限と週ごとの上限があり、高性能モデル・高いeffort・ファイル作成などは使用量を多く消費します。</p>`,
+      status: 'confirmed', refs: ['S1', 'H_MODEL', 'H_USAGE']
+    },
+    {
+      obj: '3.4', h: 'コンテキストの制約: やり直す・要約する・残す',
+      body: `<p>コンテキストウィンドウはClaudeの「作業記憶」です。2026年11月時点で、有料プランの最新モデルは会話で100万トークンのコンテキストに対応すると案内されています。それでも、長い会話では次の問題が起こり得ます。</p>
+<ul>
+<li>初めの方の指示や前提が守られにくくなる</li>
+<li>話題が混ざり、無関係な前の内容に引きずられる</li>
+<li>使用量を多く消費する</li>
+</ul>
+<p>ファイル作成機能がオンの場合、会話が長くなると以前のメッセージを自動で要約する「自動コンテキスト管理」が働き、多くの場合は会話を続けられます(その分、使用量は増えます)。</p>
+<div class="table-wrap"><table class="simple">
+<tr><th>判断</th><th>こんなとき</th><th>やり方</th></tr>
+<tr><td>やり直す(restart)</td><td>話題が変わった/会話が長くなり指示が守られなくなった/誤った前提が会話に残っている</td><td>新しい会話を始める</td></tr>
+<tr><td>要約する(summarize)</td><td>これまでの経緯を引き継いで続けたい</td><td>要点・決定事項・未決事項をClaudeに要約させ、新しい会話の冒頭に貼る</td></tr>
+<tr><td>残す(persist)</td><td>毎回同じ前提・資料・ルールを使う</td><td>Projectsの指示・ナレッジ、メモリ、Instructions for Claude、Skillsに保存する(第5章)</td></tr>
+</table></div>`,
+      status: 'confirmed', refs: ['S1', 'S6', 'H_CONTEXT', 'H_USAGE']
+    },
+    {
+      obj: '3.4', h: 'メモリとシークレット(インコグニート)チャット',
+      body: `<ul>
+<li><strong>メモリ</strong>: 過去の会話から得た情報を、以後の会話で生かす機能。個人向けプランでは既定でオン、Team/Enterpriseでは管理者が制御。保存内容は確認・編集・削除でき、一時停止やリセットもできる。各Projectは独自のメモリを持ち、アカウントのメモリから切り離すこともできる。</li>
+<li><strong>過去の会話の検索</strong>(有料プラン): 必要に応じて過去の会話を検索して参照する。Project内では、そのProject内の会話だけが対象。</li>
+<li><strong>シークレットチャット(Incognito)</strong>: 履歴やメモリに保存されず、モデルの学習にも使われない会話。ただし一定期間(通常30日)は保存される。</li>
+</ul>
+<p>メモリは便利ですが、<strong>確実に毎回使ってほしい前提やルールは、ProjectsやInstructions for Claudeに明示的に書く</strong>方が管理しやすく、他のメンバーとも共有できます。</p>`,
+      status: 'confirmed', refs: ['H_MEMORY', 'H_INCOGNITO']
+    }
+  ],
+  examples: [
+    {
+      obj: '3.3', scene: '問い合わせへの短い返信案を毎日数百件つくる',
+      ng: '品質を最大化するため、すべての返信に最上位モデルを使う',
+      ok: '速く低コストなモデル(Haikuなど)で下書きを作り、難しい・クレーム性の高い問い合わせだけ上位モデルと担当者の確認に回す',
+      why: '単純で量が多い作業は速さとコストが重要。高性能モデルは複雑な判断に取っておきます。'
+    },
+    {
+      obj: '3.1', scene: '競合5社の最新動向を調べて報告書にしたい',
+      body: '単発のウェブ検索ではなく、複数の情報源を横断して引用付きで整理するリサーチ機能が向いています。出力された引用は、リンク先で内容を確認してから報告書に使います(第2章)。'
+    },
+    {
+      obj: '3.4', scene: '朝から同じ会話で3つの別案件を相談していたら、回答が混乱してきた',
+      ok: '案件ごとに新しい会話に分ける。続けたい案件は、これまでの決定事項をClaudeに要約させて新しい会話に貼る。繰り返し使う資料と前提は、案件ごとのProjectにまとめる。'
+    },
+    {
+      obj: '3.1', scene: '毎月の定例報告を、同じテンプレートと同じ社内資料で作っている',
+      ok: 'Projectを作り、テンプレートと参照資料をナレッジに、書き方のルールを指示に設定する。毎回の会話で同じ説明をしなくて済み、チームでも共有できる(Team/Enterprise)。'
+    }
+  ],
+  pitfalls: [
+    { obj: '3.3', wrong: '常に最上位モデルを使えば間違いない', right: '大量・単純な作業ではコストと速度を浪費する。タスク要件に合わせて選ぶ。' },
+    { obj: '3.3', wrong: '品質が悪いので、原因を考えずにすぐ上位モデルに切り替える', right: 'まずプロンプト・資料・文脈の問題を疑う(第7章)。モデル変更は原因が能力不足のときの手段。' },
+    { obj: '3.4', wrong: 'コンテキストが大きいので、どれだけ長い会話でも同じ品質が保てる', right: '長い会話では前の指示が守られにくくなることがある。話題が変わったら新しい会話、引き継ぎは要約で。' },
+    { obj: '3.4', wrong: 'メモリがあるので、重要なルールもClaudeが覚えてくれるはず', right: '必ず守ってほしい前提やルールはProjectの指示などに明示的に書く。' },
+    { obj: '3.1', wrong: '単純な事実確認にも毎回リサーチ機能を使う', right: '単純な事実はウェブ検索、多数の情報源をまたぐ調査はリサーチ、と使い分ける。' }
+  ],
+  checkpoints: [
+    { obj: '3.1', text: 'チャット・Projects・リサーチ・ウェブ検索・アーティファクトを、それぞれどんな場面で選ぶか説明できる。' },
+    { obj: '3.2', text: 'Haiku・Sonnet・Opusの特徴(速さ・コスト・能力)を比較して説明できる。' },
+    { obj: '3.3', text: '大量・単純な作業と、複雑な分析で、選ぶモデルが違う理由を言える。' },
+    { obj: '3.4', text: '「やり直す」「要約する」「残す」をどんな場面で使い分けるか例示できる。' },
+    { obj: '3.4', text: 'メモリ・過去の会話の検索・シークレットチャットの違いを説明できる。' }
+  ]
+});
+
+/* ===================================================================== */
+/* 第4章 Workflow Integration and Solution Design (16%)                   */
+/* ===================================================================== */
+CCAOF.textbook.chapters.push({
+  no: 4, domain: 'D4',
+  title: 'ワークフロー統合とソリューション設計',
+  lead: '「私がClaudeを使う」から「私たちの業務フローがClaudeを使う」へ進むための章です。どの工程をClaudeに任せ、どの工程を人に残すかを決め、小さく試して広げ、関係者に価値と限界を正しく伝える力が問われます。',
+  points: [
+    {
+      obj: '4.1', h: '要件とユースケースを分析する',
+      body: `<p>Claudeは要件整理の相棒として使えます。ヒアリングメモや既存資料から要件を洗い出させる、<strong>曖昧な点や抜けている観点をClaudeに質問させる</strong>、利害関係者ごとの関心事を整理させる、などです。</p>
+<p>Claudeを使う業務(ユースケース)を選ぶときは、次の観点で評価します。</p>
+<ul>
+<li><strong>頻度と時間</strong>: 繰り返し発生し、時間がかかっている作業か</li>
+<li><strong>検証のしやすさ</strong>: 出力の良し悪しを人がすぐ判断できるか</li>
+<li><strong>誤りの影響</strong>: 間違えたときの被害は大きいか(大きいほど人のレビューを厚く)</li>
+<li><strong>データの扱い</strong>: 機密情報・個人情報を扱うか、組織のポリシーで許されるか(第6章)</li>
+<li><strong>Claudeの得意分野か</strong>: 要約・下書き・分類・整理・発想など</li>
+</ul>`,
+      status: 'confirmed', refs: ['S1']
+    },
+    {
+      obj: '4.2', h: 'リサーチ・計画・プロセス改善に活用する',
+      body: `<ul>
+<li><strong>リサーチ</strong>: 調査の論点出し、情報収集(リサーチ機能)、結果の整理。出典は必ず確認する。</li>
+<li><strong>計画</strong>: プロジェクト計画のたたき台、タスクの洗い出し、リスクの洗い出し、スケジュール案。</li>
+<li><strong>プロセス改善</strong>: 現在の業務手順を文章で説明して、ボトルネックや重複、自動化できそうな工程を指摘させる。</li>
+</ul>
+<p>Claudeの案は「たたき台」です。最終的な計画や判断は、現場の事情を知る人が決めます。</p>`,
+      status: 'confirmed', refs: ['S1']
+    },
+    {
+      obj: '4.3', h: 'ソリューションの設計・開発・改善を支援する',
+      body: `<p>Associateは、Claudeの組み込み機能で解決策を形にします。例: テンプレート文書、チェックリスト、アーティファクトによる簡単なツールや計算表、Projectsによる業務専用の作業スペース、Skillsによる手順の標準化。</p>
+<p>進め方は<strong>小さく作って試し、評価して改善を繰り返す</strong>のが基本です。一方で、社内システムとのAPI連携、エージェント型システムの設計、全社規模の統合といった<strong>複雑・技術的な実装は、Claude Architect / Developerなどの専門職に引き継ぐ</strong>のが、Exam Guideが想定するAssociateの役割です。</p>`,
+      status: 'confirmed', refs: ['S1']
+    },
+    {
+      obj: '4.4', h: '既存のワークフローに組み込む: 補強か再設計か',
+      body: `<ul>
+<li><strong>補強(augment)</strong>: 今の手順はそのままに、一部の作業をClaudeで速く・良くする(例: 下書き作成だけClaudeに任せる)。始めやすくリスクが小さい。</li>
+<li><strong>再設計(redesign)</strong>: Claudeがいることを前提に、手順自体を組み替える(例: 情報収集→要約→一次分類までを一連でClaudeが行い、人は判断と承認に集中する)。効果は大きいが、検証と合意形成が必要。</li>
+</ul>
+<p>どちらの場合も、業務を工程に分解して担当を決めます。</p>
+<div class="table-wrap"><table class="simple">
+<tr><th>Claudeに任せやすい</th><th>人に残すべき</th></tr>
+<tr><td>下書き、要約、分類、整理、変換、アイデア出し、比較表の作成、チェックの一次確認</td><td>最終判断・承認、責任を伴う意思決定、顧客や関係者との関係づくり、機微な対応、専門家としての確認</td></tr>
+</table></div>
+<p>そして<strong>検証の工程を明示的にフローに入れます</strong>(誰が、何を、何と照合して確認するか)。導入は、低リスクの業務でのパイロット(試行)→効果と品質の評価→手順の標準化(Projects・テンプレート・Skills)→対象の拡大、という段階を踏みます。</p>`,
+      status: 'confirmed', refs: ['S1', 'S3']
+    },
+    {
+      obj: '4.5', h: '関係者に価値と限界を伝える',
+      body: `<ul>
+<li><strong>価値は具体的に</strong>: 「作業時間が半分になった」「初稿までの時間が2日から半日に」など、測れる指標で示す。導入前に成功の指標を決めておく。</li>
+<li><strong>限界も正直に</strong>: ハルシネーションの可能性、最新情報や社内固有情報は資料を渡さないと知らないこと、機密データの扱いに制約があること、最終判断と責任は人に残ること。</li>
+<li><strong>過大な約束をしない</strong>: 「人が要らなくなる」「間違えない」とは言わない。一方で、限界ばかり強調して有効な活用まで止めるのも適切ではない。</li>
+<li>相手に合わせる: 経営層には効果とリスク管理、現場には具体的な使い方と確認手順。</li>
+</ul>`,
+      status: 'confirmed', refs: ['S1']
+    }
+  ],
+  examples: [
+    {
+      obj: '4.4', scene: '週次の営業レポート作成フローを見直す',
+      body: '現状: 各担当が数字を集計 → リーダーが文章化(3時間)→ 部長が確認。',
+      ok: 'Projectに集計表の形式・過去のレポート例・書き方ルールを設定し、リーダーは集計表を渡して下書きを作らせる。リーダーは数字を元データと照合し、所見を加えて部長に提出する。まず1チームで4週間試し、所要時間と修正の量を測ってから他チームへ広げる。',
+      why: '下書きはClaudeへ、検証と判断は人に。パイロットで効果を測ってから展開します。'
+    },
+    {
+      obj: '4.5', scene: '部長から「Claudeを入れたら問い合わせ対応の人員を減らせるか」と聞かれた',
+      ng: '「はい、AIが全部回答できるので人は不要になります」',
+      ok: '「回答の下書きにかかる時間は短くなり、担当者はより複雑な問い合わせに時間を使えます。ただし誤った回答の可能性があるため、送信前の確認は必要です。まず1か月試し、対応時間と品質を測ってからご判断いただくのはどうでしょうか」'
+    },
+    {
+      obj: '4.3', scene: '「顧客管理システムとClaudeを自動連携したい」と相談された',
+      ok: '要件(何を、どの頻度で、どんなデータで)を整理し、セキュリティとデータの扱いの論点をまとめたうえで、技術的な実装はDeveloper/Architectや情報システム部門に引き継ぐ。自分は業務側の要件定義と試行評価を担う。'
+    }
+  ],
+  pitfalls: [
+    { obj: '4.4', wrong: '効果を最大にするため、全工程を一気にAI化する', right: '低リスクの業務で試し、評価してから段階的に広げる。' },
+    { obj: '4.4', wrong: '検証は各自の判断に任せればよく、フローに書く必要はない', right: '誰が何をどう確認するかをフローに明示的に組み込む。' },
+    { obj: '4.5', wrong: '導入を後押しするため、価値を大きめに伝え限界には触れない', right: '測れる効果と、限界・リスク管理策をセットで伝える。' },
+    { obj: '4.5', wrong: 'リスクがあるので、関係者には「使わない方がよい」と伝える', right: 'リスクを管理する手段(検証・レビュー・データの扱い)と合わせて、価値を活かす提案をする。' },
+    { obj: '4.3', wrong: 'Associateがシステム間のAPI統合まで自力で設計・構築する', right: '技術的・大規模な実装は専門職へエスカレーションする。' }
+  ],
+  checkpoints: [
+    { obj: '4.1', text: 'Claudeを使う業務を選ぶ観点(頻度・検証のしやすさ・誤りの影響・データ・得意分野)を言える。' },
+    { obj: '4.3', text: 'Associateが自分で作るものと、専門職に引き継ぐものの境界を例で説明できる。' },
+    { obj: '4.4', text: '補強(augment)と再設計(redesign)の違いと、それぞれの向き不向きを説明できる。' },
+    { obj: '4.4', text: 'Claudeに任せる工程と人に残す工程を分け、検証工程をフローに入れる理由を言える。' },
+    { obj: '4.5', text: '経営層に価値と限界を伝える説明を、過大な約束をせずに組み立てられる。' }
+  ]
+});
+
+/* ===================================================================== */
+/* 第5章 Configuration and Knowledge Management (12%)                     */
+/* ===================================================================== */
+CCAOF.textbook.chapters.push({
+  no: 5, domain: 'D5',
+  title: '構成とナレッジ管理',
+  lead: '一度きちんと設定しておけば、その後のすべての会話が正しい文脈から始められます。この章では、Projectsの指示とナレッジ、コネクタ、システムレベルの指示の書き方、そして設定を正しい状態に保ち続ける保守を学びます。',
+  points: [
+    {
+      obj: '5.1', h: 'Projectsの構成: 指示とナレッジ',
+      body: `<p>Projectは、専用のチャット履歴とナレッジベースを持つ独立した作業スペースです(全プランで利用可能。無料プランは作成数に上限あり)。</p>
+<div class="table-wrap"><table class="simple">
+<tr><th>要素</th><th>役割</th><th>入れるもの</th></tr>
+<tr><td>プロジェクトの指示(instructions)</td><td>Claudeの<strong>振る舞い</strong>を決める。Project内のすべての会話に適用</td><td>役割、トーン、出力形式、守るべきルール、資料にないときの対応</td></tr>
+<tr><td>プロジェクトのナレッジ(knowledge)</td><td>Claudeが<strong>参照する事実・資料</strong></td><td>マニュアル、規程、製品仕様、テンプレート、過去の良い例</td></tr>
+</table></div>
+<p>「振る舞い・ルールは指示へ、参照する事実は資料へ」と分けると、管理と更新がしやすくなります。ナレッジがコンテキストの上限に近づくと、有料プランでは自動的にRAGモード(必要な部分を検索して使う方式)に切り替わり、容量が最大10倍程度まで広がると説明されています。</p>
+<p>Team/Enterpriseプランでは、Projectを個人・メンバー一覧・組織全体と共有でき、「閲覧可」「編集可」の権限を設定できます。</p>`,
+      status: 'confirmed', refs: ['S1', 'H_PROJECTS', 'H_RAG']
+    },
+    {
+      obj: '5.2', h: 'アップロードした資料の管理',
+      body: `<ul>
+<li><strong>何を入れるか</strong>: 正式・最新の資料だけを入れる。古い版や下書きが混ざると、Claudeがどちらを使うか分からなくなる。</li>
+<li><strong>分かりやすく</strong>: ファイル名に内容と版・日付を入れる(例: 「料金表_2026-10版」)。指示の中で「料金は『料金表_2026-10版』を参照」と名前で指定すると確実。</li>
+<li><strong>形式</strong>: PDF・Word・CSV・テキスト・Excelなどを扱える。ファイルごとのサイズ上限などの制約がある(Projectのファイルは1ファイル30MBまで、2026年11月時点)。</li>
+<li><strong>機密性</strong>: 入れてよい資料かを組織のポリシーで確認する(第6章)。共有するProjectなら、共有相手が見てよい資料か。</li>
+</ul>`,
+      status: 'confirmed', refs: ['S1', 'H_UPLOAD', 'H_PROJECTS']
+    },
+    {
+      obj: '5.2', h: 'コネクタ(Google Drive・Gmailなど)',
+      body: `<p>コネクタは、Claudeがあなたのアプリ(Google Drive、Gmail、Google Calendar、Slack、Microsoft 365、Notionなど)にアクセスし、情報を取り出したり操作したりできるようにする機能です。</p>
+<ul>
+<li>Claudeは、<strong>接続した各ユーザーが元のアプリで持っている権限</strong>を引き継ぐ。見られない情報は見られない。</li>
+<li>Googleのコネクタでは、メールの送信やファイルの共有・削除などは、既定で利用者の承認が必要。</li>
+<li>Team/Enterpriseでは、管理者(Owner)が組織として有効にするコネクタを決め、ツールごとに「常に許可/承認が必要/禁止」を設定できる。各ユーザーは個別にサインインする。</li>
+<li>アップロードとの違い: アップロードはその時点のコピー、コネクタは<strong>元の場所の最新情報</strong>を参照できる。資料が頻繁に更新される場合はコネクタが向くが、アクセス範囲が広がる点に注意。</li>
+</ul>`,
+      status: 'confirmed', refs: ['S1', 'H_CONNECTORS', 'H_GWS']
+    },
+    {
+      obj: '5.3', h: '効果的なシステムレベルの指示を書く',
+      body: `<p>「システムレベルの指示」は、個々の会話の前に常に適用される指示です。Projectの指示のほか、アカウント全体に効く「Instructions for Claude」(2026年11月時点の名称)があります。トーンや形式の調整にはSkillsを使う方法も案内されています。</p>
+<p>書き方のポイント:</p>
+<ul>
+<li><strong>目的と役割</strong>: 何のためのProjectか、Claudeはどんな立場で手伝うか。</li>
+<li><strong>具体的なルール</strong>: 出力形式、長さ、トーン、使う用語・使わない用語。</li>
+<li><strong>根拠の扱い</strong>: 「ナレッジの資料に基づいて答える」「資料にない場合は推測せずそう伝える」「出典となる資料名を示す」。</li>
+<li><strong>優先順位と例外</strong>: ルールが衝突したときにどちらを優先するか、対応してはいけない依頼(例: 個別の法的助言)とその案内先。</li>
+<li><strong>簡潔に保つ</strong>: 何でも詰め込むと重要なルールが埋もれる。事実やデータは指示に書かずナレッジへ。</li>
+</ul>`,
+      status: 'confirmed', refs: ['S1', 'H_PERSONAL', 'DOC_PROMPT']
+    },
+    {
+      obj: '5.3', h: '設定の置き場所の使い分け',
+      body: `<div class="table-wrap"><table class="simple">
+<tr><th>置き場所</th><th>効く範囲</th><th>向いている内容</th></tr>
+<tr><td>Instructions for Claude</td><td>アカウントの全会話</td><td>自分の好み(回答の言語、簡潔さなど)</td></tr>
+<tr><td>Projectの指示</td><td>そのProject内の会話</td><td>業務ごとのルール・役割・形式</td></tr>
+<tr><td>Projectのナレッジ</td><td>そのProject内の会話</td><td>業務で参照する資料・事実</td></tr>
+<tr><td>Skills</td><td>関係する作業のときだけ読み込まれる</td><td>特定の作業の手順・書式・ノウハウ(社内文書の書式など)</td></tr>
+<tr><td>メモリ</td><td>以後の会話(Projectごとに分離可能)</td><td>会話から学んだ文脈。重要なルールは明示的な指示の方が確実</td></tr>
+</table></div>
+<p>ヘルプセンターは、Projectsは常に読み込まれる静的な知識、Skillsは必要なときに動的に読み込まれる手順、と違いを説明しています。</p>`,
+      status: 'confirmed', refs: ['H_PERSONAL', 'H_SKILLS', 'H_MEMORY', 'H_PROJECTS']
+    },
+    {
+      obj: '5.4', h: '設定を周知し、保守・更新する',
+      body: `<p>設定は作って終わりではありません。業務や資料が変われば、古い設定が<strong>誤った回答の原因</strong>になります。</p>
+<ul>
+<li><strong>定期的な見直し</strong>: 資料の改定(料金・規程・製品仕様)に合わせて、ナレッジのファイルを差し替える。<strong>古い版は削除</strong>する(残すと古い情報で答える原因になる)。</li>
+<li><strong>担当者を決める</strong>: 共有Projectの指示と資料を誰が管理するかを決める。</li>
+<li><strong>変更を記録・周知する</strong>: いつ何を変えたかを残し、利用者に知らせる。</li>
+<li><strong>問題を設定に反映する</strong>: 同じ修正を何度も会話で指示しているなら、指示に書き足す(第7章)。</li>
+<li><strong>効果を確認する</strong>: 変更後に代表的な質問で試し、期待どおりに答えるか確かめる。</li>
+</ul>`,
+      status: 'confirmed', refs: ['S1', 'S3']
+    }
+  ],
+  examples: [
+    {
+      obj: '5.1', scene: '社内ヘルプデスクの回答案を作るProject',
+      body: '<strong>指示</strong>: 「あなたは社内ITヘルプデスクの回答案を作成する担当です。回答はナレッジの『社内ITマニュアル_2026-10版』に基づき、手順は番号付きで示してください。マニュアルに記載がない場合は推測せず、『情報システム部に確認が必要』と書いてください。パスワードの再設定など本人確認が必要な操作は、案内窓口だけを示してください。」<br><strong>ナレッジ</strong>: 最新版のITマニュアル、よくある質問集、回答のテンプレート。',
+      why: '振る舞い(指示)と参照資料(ナレッジ)を分け、資料にない場合の対応も決めています。'
+    },
+    {
+      obj: '5.4', scene: '料金改定後も、Projectが古い料金で回答する',
+      ng: '会話のたびに「新料金は○○です」と伝える',
+      ok: 'ナレッジから旧料金表を削除して新料金表をアップロードし、指示の参照ファイル名も更新する。変更内容をチームに周知し、代表的な質問で正しく答えるか確認する。'
+    },
+    {
+      obj: '5.2', scene: '毎週更新される案件一覧をもとに相談したい',
+      body: '毎週ファイルをアップロードし直すと古い版が残りがちです。組織で許可されていれば、元の保存場所(例: Google Drive)をコネクタで参照すると最新の情報を使えます。ただし、Claudeが参照できる範囲が広がるため、組織のポリシーと共有範囲を確認します。'
+    }
+  ],
+  pitfalls: [
+    { obj: '5.1', wrong: '振る舞いのルールも参照データも、すべてプロジェクトの指示欄に書き込む', right: 'ルールは指示へ、事実・資料はナレッジへ分ける。' },
+    { obj: '5.4', wrong: '資料を改定したら、新版を追加すれば旧版は残しておいてよい', right: '旧版は削除する。新旧が混ざると古い情報で回答する原因になる。' },
+    { obj: '5.4', wrong: '回答の誤りは、その都度会話で訂正すれば十分', right: '繰り返す問題は指示やナレッジに反映して直す。会話での訂正はその会話にしか効かない。' },
+    { obj: '5.2', wrong: 'コネクタを使えば、元のアプリで権限のない情報もClaudeが参照してくれる', right: 'Claudeは接続したユーザーの権限を引き継ぐ。権限外の情報は参照できない。' },
+    { obj: '5.3', wrong: '指示は長く詳細なほど良い', right: '重要なルールが埋もれないよう簡潔に。事実やデータはナレッジに置く。' }
+  ],
+  checkpoints: [
+    { obj: '5.1', text: 'プロジェクトの指示とナレッジの違いと、それぞれに入れるものを言える。' },
+    { obj: '5.2', text: 'アップロードとコネクタの違い(時点のコピーか最新情報か、アクセス範囲)を説明できる。' },
+    { obj: '5.2', text: 'コネクタ利用時の権限の考え方と、管理者が制御できることを言える。' },
+    { obj: '5.3', text: '良いシステムレベルの指示に含める要素(目的・役割・ルール・根拠の扱い・例外)を挙げられる。' },
+    { obj: '5.3', text: 'Instructions for Claude・Projectの指示・ナレッジ・Skills・メモリの使い分けを説明できる。' },
+    { obj: '5.4', text: '資料改定時に行う保守作業(差し替え・旧版削除・周知・動作確認)を手順で言える。' }
+  ]
+});
+
+/* ===================================================================== */
+/* 第6章 Governance, Risk, and Responsible Use (15%)                      */
+/* ===================================================================== */
+CCAOF.textbook.chapters.push({
+  no: 6, domain: 'D6',
+  title: 'ガバナンス・リスク・責任ある利用',
+  lead: '何をClaudeに持ち込んでよいか、どの用途なら適切かを判断する力の章です。この試験では「危ないからやめる」でも「便利だから何でも使う」でもなく、<strong>ポリシーとリスク管理策に沿って、業務を安全に前に進める</strong>選択肢が正解になりやすいのが特徴です。',
+  points: [
+    {
+      obj: '6.1', h: '適切な用途と不適切な用途',
+      body: `<div class="table-wrap"><table class="simple">
+<tr><th>区分</th><th>例</th><th>考え方</th></tr>
+<tr><td>適切(一般的)</td><td>文書の下書き、要約、翻訳の下訳、アイデア出し、データ分析の補助、学習</td><td>人が確認する前提で積極的に活用</td></tr>
+<tr><td>注意が必要</td><td>採用・評価・与信・医療・法的判断など、<strong>人に重大な影響を与える判断</strong></td><td>AIは補助にとどめ、判断は人が行い、説明できる状態にする</td></tr>
+<tr><td>不適切</td><td>AnthropicのUsage Policy(利用規約上の禁止用途)に反する用途、組織のAIポリシーで禁止された用途、人をだます・なりすます用途</td><td>行わない。判断に迷う場合は担当部署に確認</td></tr>
+</table></div>
+<p>Anthropicは利用上のルールとしてUsage Policyを公開しています。組織にAI利用ポリシーがある場合は、それにも従います。</p>
+<p class="note">「注意が必要」の例の分類は本サイトによる整理です。</p>`,
+      status: 'confirmed', refs: ['S1', 'AUP']
+    },
+    {
+      obj: '6.2', h: 'データの機密性・規制・プライバシー',
+      body: `<p>Claudeに渡す前に、<strong>そのデータを渡してよいか</strong>を確認します。</p>
+<ol>
+<li><strong>分類する</strong>: 公開情報/社内情報/機密情報/個人情報/規制対象のデータ(業界規制・契約上の秘密保持など)。</li>
+<li><strong>最小化する</strong>: 分析に必要な項目だけを渡す。</li>
+<li><strong>匿名化・マスキングする</strong>: 氏名・口座番号・社員番号などの識別子を削除・置換してから使う。</li>
+<li><strong>承認された環境を使う</strong>: 組織が許可したプラン・アカウント・設定で使う。</li>
+</ol>
+<p>Exam Guideのサンプル問題の解説は、規制対象の個人情報を含むデータについて、<strong>識別子を削除・匿名化してから使う</strong>ことを正解とし、「Claudeに保持しないよう指示する」ことはポリシー上の管理策を満たさない、「分析自体をやめる」は匿名化で進められるなら不要、としています。</p>`,
+      status: 'confirmed', refs: ['S1']
+    },
+    {
+      obj: '6.2', h: 'プランによるデータの扱いの違い(2026年11月時点)',
+      body: `<ul>
+<li><strong>個人向けプラン(Free・Pro・Maxなど)</strong>: 利用者が許可した場合などに、会話がモデルの改善(学習)に使われることがある。設定の「Privacy」で変更できる。シークレットチャットは学習に使われない。</li>
+<li><strong>商用プラン(Team・Enterprise、API)</strong>: 既定では入力・出力はモデルの学習に使われない(フィードバックを送った場合などを除く)。管理者が機能やコネクタを制御できる。</li>
+<li>Googleのコネクタのデータはモデルの学習に使わないとヘルプで説明されている。</li>
+</ul>
+<p>業務データは、<strong>組織が契約・承認した商用プランで扱う</strong>のが基本です。個人のアカウントに業務データを入れるのは、組織のポリシー違反になり得ます。</p>`,
+      status: 'confirmed', refs: ['P_CONSUMER', 'P_COMMERCIAL', 'P_TRAINING', 'H_GWS', 'H_INCOGNITO']
+    },
+    {
+      obj: '6.3', h: '組織のAIポリシーとガバナンス基準に従う',
+      body: `<ul>
+<li><strong>承認されたツール・プランを使う</strong>: 許可されていないAIツールの業務利用(いわゆるシャドーAI)は、情報漏えいや規程違反のリスクになる。</li>
+<li><strong>ポリシーの範囲を確認する</strong>: 入力してよい情報の区分、使ってよい用途、AI利用の開示が必要な場面、記録の残し方。</li>
+<li><strong>迷ったら確認・エスカレーション</strong>: 自己判断で例外を作らず、情報セキュリティ・法務・コンプライアンスなどの担当に確認する。</li>
+<li><strong>管理者の設定を尊重する</strong>: 管理者が無効にしているコネクタや機能を、別の手段で回避しない。</li>
+</ul>`,
+      status: 'confirmed', refs: ['S1', 'H_CONNECTORS']
+    },
+    {
+      obj: '6.4', h: 'AI利用の倫理的な影響',
+      body: `<ul>
+<li><strong>説明責任</strong>: AIを使っても、成果物と判断の責任は人にある。</li>
+<li><strong>透明性</strong>: 必要な場面(社外向けの文書、顧客対応、学術・公的な文書など)では、AIの関与を適切に開示する。組織のルールに従う。</li>
+<li><strong>公平性</strong>: 出力に含まれる偏りが、特定の人や集団に不利益を与えないか確認する(採用・評価では特に重要)。</li>
+<li><strong>正確性と誤情報</strong>: 検証していない情報を広めない(第2章)。</li>
+<li><strong>知的財産</strong>: 他者の著作物の扱い、出典の明示、生成物の利用条件に注意する。</li>
+<li><strong>人への影響</strong>: AI導入が働く人や顧客に与える影響を考え、関係者と対話する。</li>
+</ul>
+<p>AI Fluencyの4Dでいう<strong>Diligence(誠実さ・責任)</strong>にあたる領域です。</p>`,
+      status: 'confirmed', refs: ['S1', 'S5']
+    }
+  ],
+  examples: [
+    {
+      obj: '6.2', scene: '社員アンケートの自由記述を分析して、職場の課題を整理したい',
+      body: '回答データには氏名と社員番号が含まれている。会社のポリシーでは個人を特定できる人事データの外部サービスへの入力が制限されている。',
+      ng: '「社内の分析だから問題ない」とそのままアップロードする/「Claudeに分析後は忘れて」と指示してアップロードする',
+      ok: '氏名・社員番号を削除し、少人数の部署名など個人が推測できる情報も必要に応じてまとめてから、組織が承認した環境で分析する',
+      why: '識別子を除けば分析の目的は果たせます。「忘れて」という指示はポリシー上の管理策の代わりになりません。'
+    },
+    {
+      obj: '6.1', scene: '応募書類の一次選考にClaudeを使いたい',
+      ok: '評価基準をあらかじめ人が定め、Claudeは基準に沿った要点の整理にとどめる。合否の判断は採用担当が行い、偏り(特定の属性に不利になっていないか)を定期的に確認する。人事部門・法務とルールを確認してから始める。',
+      why: '人に重大な影響を与える判断は、AIに任せきりにしないことが原則です。'
+    },
+    {
+      obj: '6.3', scene: '同僚が「会社のClaudeは制限が多いので、個人の無料アカウントで顧客資料を要約している」と言っている',
+      ok: '組織が承認した環境以外で業務データを扱うことのリスクを伝え、必要な機能があれば正規の手続きで管理者に相談するよう勧める。必要に応じて、ポリシーに従って報告する。'
+    }
+  ],
+  pitfalls: [
+    { obj: '6.2', wrong: '社内向けの分析なので、個人情報をそのままアップロードしてよい', right: '社内利用でもポリシーに従い、識別子の削除・匿名化を行う。' },
+    { obj: '6.2', wrong: 'Claudeに「このデータを保持しないで」と指示すれば、ポリシー上の問題は解決する', right: '口頭の指示は管理策の代わりにならない。データ自体を匿名化・最小化する。' },
+    { obj: '6.2', wrong: 'リスクがあるデータを含むので、その分析業務自体をやめる', right: '匿名化などで安全に進められるなら、業務を止める必要はない。' },
+    { obj: '6.3', wrong: '会社のツールで不便なら、個人アカウントや未承認ツールを使ってもよい', right: '承認された環境を使い、必要な機能は正規の手続きで相談する。' },
+    { obj: '6.4', wrong: 'AIが出した評価なので、採用の判断は客観的で公平だ', right: 'AIの出力にも偏りはあり得る。人が判断し、偏りを確認する。' }
+  ],
+  checkpoints: [
+    { obj: '6.1', text: '適切な用途・注意が必要な用途・不適切な用途の例を1つずつ挙げられる。' },
+    { obj: '6.2', text: 'データを渡す前の4ステップ(分類・最小化・匿名化・承認された環境)を言える。' },
+    { obj: '6.2', text: '「保持しないで」と指示することが管理策にならない理由を説明できる。' },
+    { obj: '6.2', text: '個人向けプランと商用プランで、学習への利用の扱いがどう違うか説明できる。' },
+    { obj: '6.3', text: 'シャドーAIのリスクと、迷ったときのエスカレーション先を言える。' },
+    { obj: '6.4', text: '説明責任・透明性・公平性の観点で、AI利用の注意点を説明できる。' }
+  ]
+});
+
+/* ===================================================================== */
+/* 第7章 Troubleshooting and Optimization (10%)                           */
+/* ===================================================================== */
+CCAOF.textbook.chapters.push({
+  no: 7, domain: 'D7',
+  title: 'トラブルシューティングと最適化',
+  lead: '出力がうまくいかないとき、やみくもに再試行せず、<strong>原因を特定して的確に直し、その修正を定着させる</strong>ための章です。他の章の知識(プロンプト・モデル選択・構成・検証)を総動員する、まとめの章でもあります。',
+  points: [
+    {
+      obj: '7.1', h: '症状から原因を診断する',
+      body: `<div class="table-wrap"><table class="simple">
+<tr><th>症状</th><th>よくある原因</th><th>対処</th></tr>
+<tr><td>的外れ・一般論ばかり</td><td>目的・背景・読み手が伝わっていない</td><td>目的と読み手、成功の条件を具体的に書く(第1章)</td></tr>
+<tr><td>形式・長さが毎回違う</td><td>出力形式・長さを指定していない</td><td>構成と長さを指定し、例を示す</td></tr>
+<tr><td>事実の誤り・作り話</td><td>知らない情報(最新・社内固有)を推測で補っている</td><td>資料を渡す/ウェブ検索・リサーチを使う/分からなければ不明と答えさせる/検証する(第2章)</td></tr>
+<tr><td>古い情報で答える</td><td>ナレッジに古い資料が残っている</td><td>資料を差し替え、旧版を削除(第5章)</td></tr>
+<tr><td>指示が守られない・ぶれる</td><td>指示同士の矛盾、Projectの指示と会話の指示の衝突、指示が長すぎて埋もれている</td><td>矛盾を解消し、優先順位を明示し、簡潔にする</td></tr>
+<tr><td>長い会話の途中から質が落ちた</td><td>コンテキストが長くなり、話題が混ざった</td><td>新しい会話に切り替え、要約を引き継ぐ(第3章)</td></tr>
+<tr><td>複雑な問題で浅い答え</td><td>タスクが大きすぎる/推論が足りない</td><td>工程に分解する/effortやモデルを見直す</td></tr>
+</table></div>
+<p>AI Capabilities and Limitationsコースは、予想外の出力を見たら<strong>どの性質(次のトークン予測・知識・作業記憶・操縦性)が関係しているかを特定し、ピンポイントで直す</strong>診断を勧めています。上の表はその考え方を業務の症状に当てはめたものです。</p>`,
+      status: 'confirmed', refs: ['S1', 'S6']
+    },
+    {
+      obj: '7.1', h: '直し方の原則: 一度に一つ、比べて確かめる',
+      body: `<ul>
+<li><strong>一度に変えるのは一つ</strong>: 複数を同時に変えると、何が効いたか分からない。</li>
+<li><strong>同じ入力で比べる</strong>: 修正前後で同じ質問・同じ資料を使って出力を比較する。</li>
+<li><strong>まず安い手段から</strong>: プロンプトや資料の修正で直ることが多い。モデルの変更は、能力不足が原因と分かってから。</li>
+<li><strong>問題の工程を特定する</strong>: 複数の工程に分けていれば、どこで崩れたかを特定しやすい。</li>
+</ul>`,
+      status: 'confirmed', refs: ['S1', 'S6']
+    },
+    {
+      obj: '7.2', h: 'フィードバックと結果に基づいて調整する',
+      body: `<ul>
+<li>レビュアーや利用者からの指摘を集め、<strong>繰り返し出るパターン</strong>を見つける(例: 「いつも結論が後ろにある」「専門用語が多い」)。</li>
+<li>パターンは、個々の会話ではなく<strong>プロンプトのテンプレート・Projectの指示・ナレッジ</strong>に反映する。</li>
+<li>修正後は、成果(修正にかかる時間、差し戻しの回数、品質の評価)を測り、効果を確かめる。</li>
+<li>うまくいかないアプローチは見直す。Claudeに向かない作業だと分かったら、工程から外す判断も含む。</li>
+</ul>`,
+      status: 'confirmed', refs: ['S1']
+    },
+    {
+      obj: '7.3', h: 'ワークフローを効率と効果の両面で最適化する',
+      body: `<ul>
+<li><strong>繰り返しを仕組みにする</strong>: よく使うプロンプトはテンプレート化し、Projectの指示やSkillsにする。毎回同じ説明を書かない。</li>
+<li><strong>修正を定着させる</strong>: 会話の中で直すだけでは次の会話に引き継がれない。指示・ナレッジに反映する。</li>
+<li><strong>適切なモデル・設定を選ぶ</strong>: 単純な大量処理には速いモデル、難しい判断には高性能モデル(第3章)。</li>
+<li><strong>無駄な工程を減らす</strong>: 人が二重に確認している工程、Claudeの出力を手作業で整形し直している工程などを見直す(例: 最初から必要な形式で出力させる)。</li>
+<li><strong>効果だけでなく効率も</strong>: 品質を落とさずに時間と使用量を減らす。検証の工程は削らない。</li>
+</ul>`,
+      status: 'confirmed', refs: ['S1', 'H_SKILLS']
+    }
+  ],
+  examples: [
+    {
+      obj: '7.1', scene: '議事録の要約が毎回長すぎて、使う前に手で削っている',
+      ng: '毎回「もっと短く」と言い直す',
+      ok: '原因は長さと構成の指定がないこと。Projectの指示に「決定事項・未決事項・次のアクションの3見出し、全体300字以内」と書き、良い要約の例をナレッジに入れる。数回試して長さが安定したか確かめる。'
+    },
+    {
+      obj: '7.1', scene: '提案書づくりの長い会話で、途中から以前却下した案が混ざるようになった',
+      ok: '会話が長くなり、却下した案も文脈に残っているのが原因。決定事項と却下した案を明記した要約を作らせ、新しい会話で続ける。'
+    },
+    {
+      obj: '7.2', scene: '回答案に対して、レビュアーから同じ指摘が続く',
+      body: '「顧客向けの回答で社内用語が使われている」という指摘が1か月で12件あった。会話ごとの修正をやめ、Projectの指示に「顧客向けには社内用語を使わない。用語の言い換えは『用語対応表』を参照」と追加し、用語対応表をナレッジに入れた。翌月の同じ指摘は2件に減った。'
+    }
+  ],
+  pitfalls: [
+    { obj: '7.1', wrong: 'うまくいかないので、同じプロンプトで何度も再生成する', right: '原因を診断して、プロンプト・資料・文脈を的確に直す。' },
+    { obj: '7.1', wrong: '原因を考えず、すぐに最上位モデルに切り替える', right: 'まず指示・資料・文脈を見直す。モデルの変更は能力不足が原因の場合の手段。' },
+    { obj: '7.1', wrong: '早く直すため、指示・資料・モデルを一度に全部変える', right: '一度に一つ変え、同じ入力で比較する。' },
+    { obj: '7.3', wrong: '会話の中で正しく直せたので、それで対応完了', right: '修正をProjectの指示やテンプレートに反映して定着させる。' },
+    { obj: '7.3', wrong: '効率化のため、出力の確認工程を省く', right: '効率化は無駄な工程から。リスクに応じた検証は残す。' }
+  ],
+  checkpoints: [
+    { obj: '7.1', text: '「的外れ」「形式がぶれる」「事実の誤り」「長い会話で質が落ちる」の原因と対処を言える。' },
+    { obj: '7.1', text: '「一度に一つ変えて比べる」理由を説明できる。' },
+    { obj: '7.2', text: 'フィードバックのパターンを、会話ではなく設定に反映する理由を言える。' },
+    { obj: '7.3', text: '修正を定着させる方法(テンプレート・Projectの指示・ナレッジ・Skills)を挙げられる。' },
+    { obj: '7.3', text: '効率化してよい工程と、削ってはいけない工程を区別できる。' }
+  ]
+});
+
+/* 章番号順に並べる */
+CCAOF.textbook.chapters.sort((a, b) => a.no - b.no);
+
+</script>
+<script>/* data/glossary.js */
+/*
+ * 用語集
+ * domains: 'D1'〜'D7' または 'general'
+ * status : 'confirmed' | 'check'
+ * def はHTML可
+ */
+window.CCAOF = window.CCAOF || {};
+CCAOF.glossary = {
+  asOf: '2026-11-09',
+  terms: [
+    // ---- 試験全般 ----
+    { term: 'CCAO-F', en: 'Claude Certified Associate – Foundations', def: '業務でClaudeを生産性ツールとして使う知識労働者向けの認定試験。60問・120分・合格720/1000・$99。', domains: ['general'], status: 'confirmed', refs: ['S1'] },
+    { term: 'Exam Guide(試験ガイド)', en: 'Exam Guide', def: '試験の目的・対象者・形式・出題範囲(ブループリント)・採点・規定をまとめた公式文書。本サイトはv1.0(2026年7月版)基準。新版は2026年11月17日公開予定。', domains: ['general'], status: 'confirmed', refs: ['S1', 'S2'] },
+    { term: 'ブループリント', en: 'Blueprint / Exam Content Outline', def: '出題ドメインとその比率、ドメインごとの目標(objectives)を定めた出題範囲の設計図。試験問題はこの目標に沿って作られる。', domains: ['general'], status: 'confirmed', refs: ['S1'] },
+    { term: 'MQC', en: 'Minimally Qualified Candidate', def: '合格ライン上にいると想定される受験者像。合格点(カットスコア)はこの受験者像を基準に専門家が設定する。', domains: ['general'], status: 'confirmed', refs: ['S1'] },
+    { term: 'スケールスコア', en: 'Scaled score', def: '素点を100〜1,000の尺度に変換した得点。CCAO-Fの合格は720。本サイトの「72%」はあくまで簡易的な目安で、公式の換算式ではない。', domains: ['general'], status: 'confirmed', refs: ['S1'] },
+    { term: '複数選択問題', en: 'Multiple-response item', def: '正解を複数選ぶ問題。CCAO-Fでは各問で選ぶ数が明示される(例:「2つ選べ」)。', domains: ['general'], status: 'confirmed', refs: ['S1'] },
+    { term: 'エスカレーション', en: 'Escalation', def: '自分の役割や権限を超える仕事・判断を、より適切な担当者に引き継ぐこと。CCAO-Fでは、複雑・技術的な実装をClaude Architect / Developerに引き継ぐ判断が求められる。', domains: ['general', 'D4'], status: 'confirmed', refs: ['S1'] },
+    { term: '4Dフレームワーク', en: 'AI Fluency Framework (4D)', def: 'AIと協働するための4つの能力。Delegation(委任)・Description(記述)・Discernment(識別)・Diligence(誠実さ・責任)。Anthropic Academyの無料コース「AI Fluency」で学べる。', domains: ['general'], status: 'confirmed', refs: ['S5'] },
+    { term: 'AIの4つの性質', en: 'Next Token Prediction / Knowledge / Working Memory / Steerability', def: '無料コース「AI Capabilities and Limitations」が示す、AIの振る舞いを説明する4つの性質。それぞれに得意と限界がある。', domains: ['general'], status: 'confirmed', refs: ['S6'] },
+
+    // ---- D1 ----
+    { term: 'プロンプト', en: 'Prompt', def: 'Claudeへの指示や質問の入力。業務ではタスク・目的・読み手・入力資料・制約・出力形式・例などを組み合わせて書く。', domains: ['D1'], status: 'confirmed', refs: ['DOC_PROMPT'] },
+    { term: 'タスク分解', en: 'Task decomposition', def: '大きく複雑な依頼を、確認しやすい小さな工程に分けること。途中で方向修正でき、問題の工程を特定しやすくなる。', domains: ['D1', 'D7'], status: 'confirmed', refs: ['S1'] },
+    { term: 'プロンプトチェーン', en: 'Prompt chaining', def: '前の工程の出力を次の工程の入力にして、複数のプロンプトを順につなぐ進め方(例: 下書き→レビュー→改善)。', domains: ['D1'], status: 'confirmed', refs: ['DOC_PROMPT'] },
+    { term: 'フューショット(例示)', en: 'Few-shot / Examples', def: '望む出力の例をいくつか示して意図を伝える手法。公式ドキュメントは3〜5例程度を推奨している。', domains: ['D1'], status: 'confirmed', refs: ['DOC_PROMPT'] },
+    { term: 'ロール(役割)設定', en: 'Role prompting', def: '「経験豊富な人事担当者として」のようにClaudeの立場を指定すること。視点や口調が整うが、事実の正確さは保証しない。', domains: ['D1'], status: 'confirmed', refs: ['DOC_PROMPT'] },
+    { term: 'XMLタグ(区切り)', en: 'XML tags', def: '<code>&lt;資料&gt;…&lt;/資料&gt;</code>のように、指示と資料などを区切る書き方。Claudeが内容を取り違えにくくなる。', domains: ['D1'], status: 'confirmed', refs: ['DOC_PROMPT'] },
+    { term: '反復改善', en: 'Iteration', def: '出力を評価し、足りない点を具体的に指摘してプロンプトを直すことを繰り返すこと。一度に変えるのは1〜2点にとどめる。', domains: ['D1', 'D7'], status: 'confirmed', refs: ['S1'] },
+
+    // ---- D2 ----
+    { term: 'ハルシネーション', en: 'Hallucination', def: 'AIがもっともらしいが事実でない内容を生成すること。数値・固有名詞・日付・引用・条番号などの具体的な細部で起きやすい。', domains: ['D2'], status: 'confirmed', refs: ['S1', 'DOC_HALLU'] },
+    { term: '正確性', en: 'Accuracy', def: '出力の個々の主張が事実や資料と一致していること。網羅性とは別の観点。', domains: ['D2'], status: 'confirmed', refs: ['S1'] },
+    { term: '網羅性', en: 'Completeness', def: '依頼した項目や必要な観点が漏れなく含まれていること。要件のチェックリストと突き合わせて確認する。', domains: ['D2'], status: 'confirmed', refs: ['S1'] },
+    { term: 'ファクトチェック', en: 'Fact-checking', def: '出力の事実関係を、権威ある一次情報(公式の法令・公表統計・正式な社内文書など)と照合して確かめること。', domains: ['D2'], status: 'confirmed', refs: ['S1'] },
+    { term: '一次情報', en: 'Authoritative / primary source', def: '情報の発信元が直接公開している資料。法令の原文、統計の公表元、製品の公式仕様書など。検証の根拠として最も確実。', domains: ['D2'], status: 'confirmed', refs: ['S1'] },
+    { term: 'グラウンディング(資料への根拠づけ)', en: 'Grounding', def: '渡した資料の範囲に基づいて回答させること。資料から直接引用させる、裏付けのない主張を撤回させる、などの手法がある。', domains: ['D2', 'D5'], status: 'confirmed', refs: ['DOC_HALLU'] },
+    { term: '迎合', en: 'Sycophancy', def: '利用者の意見や質問の前提に合わせた回答をしてしまう傾向。反対意見やリスクを明示的に求めることで和らげる。', domains: ['D2'], status: 'confirmed', refs: ['S6'] },
+    { term: 'バイアス', en: 'Bias', def: '出力が特定の立場・集団・選択肢に偏ること。ステレオタイプ、一方的な視点、多数派事例への偏りなど。', domains: ['D2', 'D6'], status: 'confirmed', refs: ['S1'] },
+    { term: 'ヒューマン・イン・ザ・ループ', en: 'Human-in-the-loop', def: 'AIを使う業務の流れの中に、人の確認・判断・承認の工程を組み込むこと。高リスクの出力ほど必須。', domains: ['D2', 'D4'], status: 'confirmed', refs: ['S1'] },
+    { term: 'アーティファクト', en: 'Artifact', def: '会話の横に開く、編集・共有できる成果物。文書・コード・ウェブページ・図・ダッシュボード・小さなツールなど。まとまった分量で単独で使う内容のときに作られる。', domains: ['D2', 'D3'], status: 'confirmed', refs: ['H_ARTIFACTS'] },
+    { term: '構造化データ', en: 'Structured data', def: '表・CSV・JSONなど、項目が整理された形式のデータ。比較・集計・別ツールへの取り込みに向く。', domains: ['D2'], status: 'confirmed', refs: ['S1'] },
+
+    // ---- D3 ----
+    { term: 'Haiku', en: 'Claude Haiku', def: '最速・軽量・低コストのモデル系統。大量の定型処理や速さが重要な作業に向く。2026年11月時点の最新はHaiku 5.5。', domains: ['D3'], status: 'confirmed', refs: ['S1', 'DOC_MODELS'] },
+    { term: 'Sonnet', en: 'Claude Sonnet', def: '速度と賢さのバランスがとれたモデル系統。2026年11月時点の最新はSonnet 5.5。', domains: ['D3'], status: 'confirmed', refs: ['S1', 'DOC_MODELS'] },
+    { term: 'Opus', en: 'Claude Opus', def: '高い推論能力を持つモデル系統。複雑な分析や難しい判断に向く。2026年11月時点の最新はOpus 5.5で、公式ドキュメントは多くの作業の出発点として推奨している。', domains: ['D3'], status: 'confirmed', refs: ['S1', 'DOC_MODELS'] },
+    { term: 'Fable', en: 'Claude Fable', def: '2026年11月時点で、Opusよりさらに上位に位置づけられるモデル(Fable 5.1)。高度な推論や長期にわたる作業向けで、最も遅い。Exam Guide v1.0の目標には名前が出てこない。', domains: ['D3'], status: 'confirmed', refs: ['DOC_MODELS', 'H_MODEL'] },
+    { term: 'effort(思考の深さ)', en: 'Effort', def: 'モデルがどれだけ深く考えるかの設定(Low〜Maxなど)。上げると品質が上がりやすいが、遅くなり使用量も増える。', domains: ['D3', 'D7'], status: 'confirmed', refs: ['H_MODEL'] },
+    { term: '拡張思考', en: 'Extended thinking', def: '回答前に推論を深める機能。ウェブ情報は不要だが、じっくり考える必要がある問題に向く。', domains: ['D3'], status: 'confirmed', refs: ['H_WHICH', 'H_MODEL'] },
+    { term: 'コンテキストウィンドウ', en: 'Context window', def: 'Claudeが一度に注意を向けられる情報の範囲(作業記憶)。2026年11月時点で有料プランの最新モデルは会話で100万トークンに対応。', domains: ['D3'], status: 'confirmed', refs: ['H_CONTEXT', 'S6'] },
+    { term: 'トークン', en: 'Token', def: 'AIが文章を処理する単位。単語や文字の一部にあたる。コンテキストの大きさや使用量はトークンで数える。', domains: ['D3'], status: 'confirmed', refs: ['S6'] },
+    { term: '自動コンテキスト管理', en: 'Automatic context management', def: '会話が長くなったとき、以前のメッセージを自動で要約して会話を続けられるようにする仕組み(ファイル作成機能がオンの場合)。使用量は増える。', domains: ['D3'], status: 'confirmed', refs: ['H_USAGE'] },
+    { term: 'メモリ', en: 'Memory', def: '過去の会話から得た情報を、以後の会話で生かす機能。内容は確認・編集・削除・一時停止できる。Projectごとに独立したメモリを持つ。', domains: ['D3', 'D5'], status: 'confirmed', refs: ['H_MEMORY'] },
+    { term: 'シークレットチャット', en: 'Incognito chat', def: '履歴やメモリに保存されず、学習にも使われない会話。ただし一定期間(通常30日)はサーバーに保存される。', domains: ['D3', 'D6'], status: 'confirmed', refs: ['H_INCOGNITO'] },
+    { term: 'リサーチ', en: 'Research', def: 'ウェブや接続したツールに対して複数の検索を積み重ね、引用付きのレポートにまとめる機能(有料プラン)。多くの情報源をまたぐ調査向け。', domains: ['D3', 'D4'], status: 'confirmed', refs: ['H_RESEARCH', 'H_WHICH'] },
+    { term: 'ウェブ検索', en: 'Web search', def: '最新のウェブ情報を回答に取り込む機能。回答には引用が付く。単純な事実確認向け。', domains: ['D3'], status: 'confirmed', refs: ['H_WEBSEARCH'] },
+    { term: 'ファイルの作成・編集', en: 'Create and edit files', def: 'Excel・Word・PowerPoint・PDFなどのファイル作成や、データ分析を行う機能(旧称: Code execution and file creation)。アーティファクトやSkillsの利用にも必要。', domains: ['D3'], status: 'confirmed', refs: ['H_FILES'] },
+    { term: '使用量の上限', en: 'Usage limits', def: 'claude.aiでは5時間ごとのセッション上限と週ごとの上限がある。高性能モデル・高いeffort・ファイル作成などは多く消費する。', domains: ['D3'], status: 'confirmed', refs: ['H_USAGE'] },
+    { term: 'Claude Cowork', en: 'Claude Cowork', def: 'ファイルやタスクを扱うエージェント型の作業をClaudeと進める機能(有料プラン)。2026年9月以降、チャットとの統合が順次進んでいる。', domains: ['D3'], status: 'confirmed', refs: ['H_COWORK', 'H_ONE'] },
+
+    // ---- D4 ----
+    { term: 'ユースケース', en: 'Use case', def: 'Claudeを使う具体的な業務の場面。頻度・検証のしやすさ・誤りの影響・データの扱いなどで適否を評価する。', domains: ['D4'], status: 'confirmed', refs: ['S1'] },
+    { term: '補強', en: 'Augment', def: '既存の業務手順はそのままに、一部の作業をClaudeで効率化・高品質化すること。', domains: ['D4'], status: 'confirmed', refs: ['S1'] },
+    { term: '再設計', en: 'Redesign', def: 'Claudeを前提に業務手順そのものを組み替えること。効果は大きいが、検証と合意形成が必要。', domains: ['D4'], status: 'confirmed', refs: ['S1'] },
+    { term: 'パイロット(試行)', en: 'Pilot', def: '本格導入の前に、小さな範囲・低リスクの業務で試して効果と品質を測ること。', domains: ['D4'], status: 'confirmed', refs: ['S1'] },
+    { term: 'ステークホルダー', en: 'Stakeholder', def: '業務やプロジェクトに関わり、影響を受ける人。価値と限界を、相手に合わせて正確に伝える必要がある。', domains: ['D4'], status: 'confirmed', refs: ['S1'] },
+
+    // ---- D5 ----
+    { term: 'Projects(プロジェクト)', en: 'Projects', def: '専用のチャット履歴・ナレッジ・指示を持つ独立した作業スペース。全プランで利用でき、Team/Enterpriseでは共有もできる。', domains: ['D5', 'D3'], status: 'confirmed', refs: ['H_PROJECTS'] },
+    { term: 'プロジェクトの指示', en: 'Project instructions', def: 'Project内のすべての会話に適用される、Claudeの振る舞いに関する指示(役割・トーン・形式・ルール)。', domains: ['D5'], status: 'confirmed', refs: ['H_PROJECTS', 'H_PERSONAL'] },
+    { term: 'プロジェクトのナレッジ', en: 'Project knowledge', def: 'Projectにアップロードした文書・テキストなど、Claudeが参照する資料。最新・正式な資料だけを置き、旧版は削除する。', domains: ['D5'], status: 'confirmed', refs: ['H_PROJECTS'] },
+    { term: 'RAG(検索拡張生成)', en: 'Retrieval-Augmented Generation', def: '必要な部分を検索して取り出し、回答に使う方式。Projectのナレッジがコンテキストの上限に近づくと、有料プランでは自動的にRAGモードに切り替わる。', domains: ['D5'], status: 'confirmed', refs: ['H_RAG'] },
+    { term: 'コネクタ', en: 'Connectors', def: 'Google Drive・Gmail・Slack・Microsoft 365などのアプリにClaudeがアクセスできるようにする機能。Claudeは接続したユーザーの権限を引き継ぐ。Team/Enterpriseでは管理者が制御する。', domains: ['D5', 'D6'], status: 'confirmed', refs: ['H_CONNECTORS', 'H_GWS'] },
+    { term: 'MCP', en: 'Model Context Protocol', def: 'AIと外部のツール・データをつなぐための標準的な仕組み。独自のコネクタ(カスタムコネクタ)はリモートMCPサーバーとして接続する。設計・構築は開発者の領域。', domains: ['D5'], status: 'confirmed', refs: ['H_CONNECTORS'] },
+    { term: 'Skills', en: 'Agent Skills', def: '指示・スクリプト・資料をまとめたフォルダで、関係する作業のときだけClaudeが読み込む。社内文書の書式や作業手順の標準化に使える。', domains: ['D5', 'D7'], status: 'confirmed', refs: ['H_SKILLS', 'H_SKILLS_USE'] },
+    { term: 'Instructions for Claude', en: 'Instructions for Claude', def: 'アカウント全体の会話に適用される個人の指示(2026年11月時点の名称。Settings > Your Claude)。', domains: ['D5'], status: 'confirmed', refs: ['H_PERSONAL'] },
+    { term: 'システムレベルの指示', en: 'System-level instructions', def: '個々の会話の前に常に適用される指示の総称。Projectの指示やアカウント全体の指示など。目的・役割・ルール・根拠の扱い・例外を簡潔に書く。', domains: ['D5'], status: 'confirmed', refs: ['S1'] },
+
+    // ---- D6 ----
+    { term: 'Usage Policy(利用ポリシー)', en: 'Anthropic Usage Policy', def: 'Anthropicが定める、Claudeの禁止用途などの利用ルール。', domains: ['D6'], status: 'confirmed', refs: ['AUP'] },
+    { term: '匿名化・マスキング', en: 'Anonymization / Redaction', def: '氏名・口座番号などの識別子を削除・置換して、個人を特定できないようにすること。個人情報を含むデータを扱う際の基本的な管理策。', domains: ['D6'], status: 'confirmed', refs: ['S1'] },
+    { term: 'データ最小化', en: 'Data minimization', def: '目的に必要な最小限のデータだけを扱うこと。', domains: ['D6'], status: 'confirmed', refs: ['S1'] },
+    { term: '個人情報', en: 'Personal data / PII', def: '特定の個人を識別できる情報。組織のポリシーと法規制に従って扱う。', domains: ['D6'], status: 'confirmed', refs: ['S1'] },
+    { term: 'シャドーAI', en: 'Shadow AI', def: '組織が承認していないAIツールを業務で使うこと。情報漏えいやポリシー違反のリスクがある。', domains: ['D6'], status: 'confirmed', refs: ['S1'] },
+    { term: 'モデルの学習への利用', en: 'Model training', def: '個人向けプランでは、許可した場合などに会話が学習に使われることがある(設定で変更可能)。商用プラン(Team・Enterprise・API)では既定で学習に使われない。', domains: ['D6'], status: 'confirmed', refs: ['P_CONSUMER', 'P_COMMERCIAL'] },
+    { term: '説明責任', en: 'Accountability', def: 'AIを使っても、成果物と判断の責任は人と組織が負うという考え方。', domains: ['D6'], status: 'confirmed', refs: ['S1'] },
+    { term: '透明性', en: 'Transparency', def: '必要な場面でAIの関与を適切に開示すること。', domains: ['D6'], status: 'confirmed', refs: ['S1', 'S5'] },
+
+    // ---- D7 ----
+    { term: '根本原因', en: 'Root cause', def: '問題の表面的な症状ではなく、その元になっている原因。出力の不調では、目的不足・資料不足・指示の矛盾・長すぎる会話などがある。', domains: ['D7'], status: 'confirmed', refs: ['S3'] },
+    { term: 'テンプレート化', en: 'Templating', def: 'うまくいったプロンプトや出力形式を再利用できる形にすること。Projectの指示やSkillsにすると定着しやすい。', domains: ['D7'], status: 'confirmed', refs: ['S1'] },
+    { term: 'フィードバックループ', en: 'Feedback loop', def: '利用者やレビュアーの指摘を集めて設定に反映し、結果を測って再び改善する繰り返し。', domains: ['D7'], status: 'confirmed', refs: ['S1'] }
+  ]
+};
+
+</script>
+<script>/* data/quickref.js */
+/*
+ * クイックリファレンス(「こう問われたら → これを選ぶ / これは避ける」)
+ * pick / avoid / principles はHTML可
+ */
+window.CCAOF = window.CCAOF || {};
+CCAOF.quickref = {
+  asOf: '2026-11-09',
+  principles: [
+    '<strong>業務を前に進めつつ、リスクを抑える</strong>選択肢を選ぶ。「何もしない」「業務をやめる」は、より良い手段があれば不正解。',
+    '<strong>Claudeの自信・自己評価は根拠にならない。</strong>根拠は一次情報との照合。',
+    '<strong>常に最高性能・最高コストは正解ではない。</strong>タスクの要件(複雑さ・量・速さ・コスト)に合わせる。',
+    '<strong>体裁を整えるだけ</strong>(言い換え・フォーマル化)の選択肢は、正確さや安全性の問題を解決しない。',
+    '<strong>ポリシー上の管理策は、AIへの口頭指示で代わりにならない</strong>(「保持しないで」等)。データ自体を匿名化・最小化する。',
+    '<strong>繰り返す問題は、会話ではなく設定(Projectの指示・ナレッジ・テンプレート)で直す。</strong>',
+    '<strong>複雑・技術的な実装は専門職へエスカレーション</strong>。Associateは業務側の要件と試行評価を担う。'
+  ],
+  items: [
+    // D1
+    { domain: 'D1', trigger: '出力が一般論ばかりで的外れ', pick: '目的・読み手・成功の条件・入力資料をプロンプトに足す', avoid: '同じプロンプトで再生成を繰り返す' },
+    { domain: 'D1', trigger: '大きく複雑な依頼(調査して提案書まで)', pick: '工程に分解し、骨子など途中の成果物を確認してから次へ進む', avoid: '1つの巨大なプロンプトで一気に完成させる' },
+    { domain: 'D1', trigger: '修正を頼んでもなかなか良くならない', pick: '変えてほしい点を具体的に(長さ・構成・用語)、一度に1〜2点ずつ伝える/良い例を示す', avoid: '「もっと良くして」のような曖昧な指示' },
+    { domain: 'D1', trigger: 'ブレインストーミングをしたい', pick: 'まず量と多様性を求め、評価・絞り込みは別の工程で', avoid: '最初から完成度の高い1案だけを求める' },
+    { domain: 'D1', trigger: '資料と指示が混ざって誤解される', pick: '見出しやタグで資料と指示を区切り、「この資料だけに基づいて」と指定する', avoid: '資料を指示文の途中に貼り付けるだけ' },
+
+    // D2
+    { domain: 'D2', trigger: '出力に条番号・統計・引用など具体的な細部がある', pick: '権威ある一次情報(公式の条文・公表統計など)と照合してから使う', avoid: 'Claudeに「正しいか」を聞いて確認済みとする/自信のある書きぶりを信用する' },
+    { domain: 'D2', trigger: '出典が確認できない数字が1つある', pick: '削除するか、確認できた正しい数値に差し替える', avoid: 'もっともらしいので残す/AIの数字は信用できないとして全部削る' },
+    { domain: 'D2', trigger: '顧客向け・法務・財務・人事評価に使う出力', pick: '全項目を検証し、担当者・専門家のレビューと承認を経る', avoid: 'ブレストと同じ軽い確認で済ませる' },
+    { domain: 'D2', trigger: '社内ブレストのアイデア出し', pick: 'ざっと目を通す程度の軽い確認', avoid: '一つひとつを専門家レビューに回す' },
+    { domain: 'D2', trigger: '自分の案への意見を求めたら賛成ばかり返ってきた', pick: '反対意見・リスク・別案を明示的に求める(迎合への対策)', avoid: '賛成されたので妥当性が確認できたとみなす' },
+    { domain: 'D2', trigger: '比較・集計・別ツールに取り込みたい', pick: '表・CSVなどの構造化データで出力させる', avoid: '長い文章で説明させる' },
+    { domain: 'D2', trigger: '編集・再利用・共有する、まとまった成果物', pick: 'アーティファクト(文書・図・ツールなど)', avoid: '短い会話の回答で済ませる' },
+
+    // D3
+    { domain: 'D3', trigger: '短く単純な作業を大量に、速く安く', pick: '速く低コストなモデル(Haiku系)', avoid: 'すべてに最上位モデルを使う' },
+    { domain: 'D3', trigger: '複雑な分析・難しい判断', pick: '高い推論能力のモデル(Opus系など)や高めのeffort', avoid: 'コスト優先で最軽量モデルを使い続ける' },
+    { domain: 'D3', trigger: '多くの情報源をまたぐ調査を引用付きで', pick: 'リサーチ機能(結果の引用は確認する)', avoid: '学習済みの知識だけで答えさせる' },
+    { domain: 'D3', trigger: '単純な最新の事実確認', pick: 'ウェブ検索', avoid: '毎回リサーチ機能を使う' },
+    { domain: 'D3', trigger: '同じ資料・同じ前提で繰り返す業務', pick: 'Projects(指示とナレッジを設定)', avoid: '毎回の会話で資料と説明を貼り直す' },
+    { domain: 'D3', trigger: '長い会話で指示が守られなくなった/話題が混ざった', pick: '新しい会話に切り替え、決定事項の要約を引き継ぐ', avoid: '同じ会話でひたすら指示を繰り返す' },
+
+    // D4
+    { domain: 'D4', trigger: 'Claudeを業務に導入したい', pick: '低リスクの業務でパイロット → 効果と品質を測定 → 標準化 → 段階的に拡大', avoid: '全工程を一気にAI化する' },
+    { domain: 'D4', trigger: 'どの工程をClaudeに任せるか', pick: '下書き・要約・分類・整理はClaudeへ、最終判断・承認・責任ある意思決定は人に', avoid: '判断や承認までClaudeに任せる' },
+    { domain: 'D4', trigger: '検証をどう組み込むか', pick: '誰が何を何と照合して確認するかをフローに明記する', avoid: '各自の判断に任せる' },
+    { domain: 'D4', trigger: '経営層に効果を説明する', pick: '測れる効果(時間・品質)と限界・リスク管理策をセットで伝える', avoid: '「人が不要になる」「間違えない」と約束する' },
+    { domain: 'D4', trigger: '社内システムとのAPI連携・全社規模の統合を求められた', pick: '業務要件を整理し、技術的な実装はDeveloper/Architectや情報システム部門へ引き継ぐ', avoid: 'Associateが自力で設計・構築する' },
+
+    // D5
+    { domain: 'D5', trigger: 'Projectに何をどこへ設定するか', pick: '振る舞い・ルールは「指示」へ、参照する事実・資料は「ナレッジ」へ', avoid: 'データもルールも全部指示欄に書く' },
+    { domain: 'D5', trigger: '料金表・規程などが改定された', pick: '新版に差し替えて旧版を削除し、指示の参照名も更新、周知と動作確認', avoid: '新版を追加して旧版も残す/会話で毎回訂正する' },
+    { domain: 'D5', trigger: '資料が頻繁に更新される保存場所を参照したい', pick: '組織が許可していればコネクタで元の場所を参照(権限と範囲を確認)', avoid: '古いコピーを手でアップロードし続ける' },
+    { domain: 'D5', trigger: '良いシステムレベルの指示とは', pick: '目的・役割・具体的なルール・根拠の扱い(資料にないときは推測しない)・例外を簡潔に', avoid: '長く詳細に何でも詰め込む' },
+    { domain: 'D5', trigger: 'コネクタで見られる範囲は', pick: '接続したユーザーが元のアプリで持つ権限の範囲(管理者が組織として制御)', avoid: '権限外の情報も参照できると考える' },
+
+    // D6
+    { domain: 'D6', trigger: '個人情報を含むデータを分析したい(ポリシーで制限あり)', pick: '識別子を削除・匿名化してから、承認された環境で使う', avoid: 'そのままアップロード/「保持しないで」と指示/分析自体をやめる' },
+    { domain: 'D6', trigger: '採用・評価・与信など人に重大な影響のある判断', pick: 'AIは補助にとどめ、人が判断し、偏りを確認する', avoid: 'AIの評価で自動的に決める' },
+    { domain: 'D6', trigger: '会社のツールが不便で、個人アカウントを使いたい', pick: '承認された環境を使い、必要な機能は正規の手続きで相談する', avoid: '個人アカウントや未承認ツールに業務データを入れる' },
+    { domain: 'D6', trigger: 'ポリシー上判断に迷う用途', pick: '情報セキュリティ・法務・コンプライアンスの担当に確認する', avoid: '自己判断で例外を作る' },
+    { domain: 'D6', trigger: '社外向けにAIを使って作った文書', pick: '内容を検証し、組織のルールに従ってAIの関与を適切に開示する', avoid: '検証せず公開する' },
+
+    // D7
+    { domain: 'D7', trigger: '出力の質が悪い', pick: '症状から原因(目的不足・資料不足・矛盾・長い会話など)を診断して直す', avoid: '原因を考えずに再生成や上位モデルへの切り替え' },
+    { domain: 'D7', trigger: '直し方の進め方', pick: '一度に一つ変え、同じ入力で前後を比較する', avoid: '指示・資料・モデルを一度に全部変える' },
+    { domain: 'D7', trigger: 'レビューで同じ指摘が繰り返される', pick: 'パターンをProjectの指示・ナレッジ・テンプレートに反映し、効果を測る', avoid: '会話のたびに同じ修正を指示する' },
+    { domain: 'D7', trigger: '業務を効率化したい', pick: '繰り返しをテンプレート・Projects・Skillsにし、無駄な整形・二重作業を減らす', avoid: 'リスクに応じた検証工程まで削る' }
+  ]
+};
+
+</script>
+<script>/* data/questions_a.js */
+/* 問題データ 前半45問(フェーズ2-Aで作成予定) */
+window.CCAOF = window.CCAOF || {};
+CCAOF.questions = CCAOF.questions || [];
+
+</script>
+<script>/* data/questions_b.js */
+/* 問題データ 後半45問(フェーズ2-Bで作成予定) */
+window.CCAOF = window.CCAOF || {};
+CCAOF.questions = CCAOF.questions || [];
+
+</script>
+<!-- アプリ -->
+<script>/* js/storage.js */
+/*
+ * 学習履歴の保存(localStorage)
+ * 問題は固定ID(例 "D2-001")で記録するため、データを差し替えても履歴はずれない。
+ * 保存形式:
+ *   { version:1,
+ *     attempts:[{ id, mode, label, startedAt, finishedAt, durationSec, total, correct,
+ *                 byDomain:{D1:{correct,total}}, items:[{qid, domain, correct}] }],
+ *     qstats:{ "D2-001": { seen, correct, lastCorrect, lastAt } },
+ *     inProgress: null | { ...模試の途中状態 } }
+ */
+(function () {
+  const KEY = 'ccaof.v1';
+  const empty = () => ({ version: 1, attempts: [], qstats: {}, inProgress: null });
+
+  let memoryFallback = null; // localStorageが使えない環境(一部ブラウザのfile://等)用
+
+  function available() {
+    try {
+      const t = '__ccaof_test__';
+      localStorage.setItem(t, '1');
+      localStorage.removeItem(t);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  const canPersist = available();
+
+  function load() {
+    if (!canPersist) return memoryFallback || (memoryFallback = empty());
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return empty();
+      const data = JSON.parse(raw);
+      return Object.assign(empty(), data);
+    } catch (e) {
+      return empty();
+    }
+  }
+
+  function save(data) {
+    if (!canPersist) { memoryFallback = data; return; }
+    try {
+      localStorage.setItem(KEY, JSON.stringify(data));
+    } catch (e) {
+      alert('履歴を保存できませんでした(ブラウザの保存領域が不足している可能性があります)。');
+    }
+  }
+
+  /** 1回分の演習・模試の結果を記録する */
+  function recordAttempt(attempt) {
+    const data = load();
+    data.attempts.push(attempt);
+    attempt.items.forEach(it => {
+      const s = data.qstats[it.qid] || { seen: 0, correct: 0, lastCorrect: null, lastAt: null };
+      s.seen += 1;
+      if (it.correct) s.correct += 1;
+      s.lastCorrect = !!it.correct;
+      s.lastAt = attempt.finishedAt;
+      data.qstats[it.qid] = s;
+    });
+    save(data);
+  }
+
+  /** 直近の回答が不正解の問題ID(=復習対象) */
+  function wrongIds() {
+    const q = load().qstats;
+    return Object.keys(q).filter(id => q[id].lastCorrect === false);
+  }
+
+  /** ドメイン別の累積正答数(qstatsベースではなく全回答ベース) */
+  function domainStats() {
+    const out = {};
+    load().attempts.forEach(a => {
+      a.items.forEach(it => {
+        const d = out[it.domain] || (out[it.domain] = { correct: 0, total: 0 });
+        d.total += 1;
+        if (it.correct) d.correct += 1;
+      });
+    });
+    return out;
+  }
+
+  /** 苦手ドメイン: 回答数 minSamples 以上で正答率が threshold 未満。弱い順。 */
+  function weakDomains(minSamples, threshold) {
+    const st = domainStats();
+    return Object.keys(st)
+      .map(id => ({ id, correct: st[id].correct, total: st[id].total, acc: st[id].correct / st[id].total }))
+      .filter(d => d.total >= minSamples && d.acc < threshold)
+      .sort((a, b) => a.acc - b.acc);
+  }
+
+  function saveInProgress(obj) { const d = load(); d.inProgress = obj; save(d); }
+  function loadInProgress() { return load().inProgress; }
+  function clearInProgress() { const d = load(); d.inProgress = null; save(d); }
+
+  function exportJson() {
+    return JSON.stringify(Object.assign({ exportedAt: new Date().toISOString(), app: 'ccaof-trainer' }, load()), null, 2);
+  }
+
+  function importJson(text) {
+    const data = JSON.parse(text);
+    if (!data || !Array.isArray(data.attempts) || typeof data.qstats !== 'object') {
+      throw new Error('形式が正しくありません');
+    }
+    save({ version: 1, attempts: data.attempts, qstats: data.qstats, inProgress: null });
+  }
+
+  function reset() { save(empty()); }
+
+  window.CCAOF = window.CCAOF || {};
+  CCAOF.store = {
+    canPersist, load, save, recordAttempt, wrongIds, domainStats, weakDomains,
+    saveInProgress, loadInProgress, clearInProgress, exportJson, importJson, reset
+  };
+})();
+
+</script>
+<script>/* js/quiz.js */
+/*
+ * 出題・採点エンジン
+ * フェーズ2-Aで実装予定(章別/自由演習・ミニ模試・苦手ドメイン・復習)。
+ * フェーズ2-Bで60問模試(タイマー・見直しマーク)を追加予定。
+ */
+window.CCAOF = window.CCAOF || {};
+CCAOF.quiz = CCAOF.quiz || { ready: false };
+
+</script>
+<script>/* js/app.js */
+/*
+ * CCAO-F 学習トレーナー — 画面描画とルーティング
+ * ビルド不要。index.html を直接開いても動くよう、ハッシュルーティング(#/...)を使う。
+ */
+(function () {
+  const C = window.CCAOF;
+  const app = document.getElementById('app');
+
+  /* ---------- ユーティリティ ---------- */
+  const esc = s => String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const domainById = id => C.exam.domains.find(d => d.id === id);
+  const fmtDate = iso => {
+    const [y, m, d] = String(iso).split('-');
+    return `${y}年${Number(m)}月${Number(d)}日`;
+  };
+
+  function srcLinks(refs) {
+    if (!refs || !refs.length) return '';
+    const parts = refs.map(r => {
+      const s = C.sources && C.sources[r];
+      if (!s) return esc(r);
+      return s.url
+        ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>`
+        : esc(s.label);
+    });
+    return `<span class="src">出典: ${parts.join(' / ')}</span>`;
+  }
+
+  function statusBadge(status) {
+    return status === 'check'
+      ? '<span class="badge check" title="公式情報で確認できなかった、または資料間で食い違いがある内容です">要確認</span>'
+      : '';
+  }
+
+  function objTag(obj) {
+    return obj ? `<span class="obj-tag" title="Exam Guide v1.0 の目標番号">${esc(obj)}</span>` : '';
+  }
+
+  function domainBars(rows) {
+    return `<div class="domain-bars">${rows.map(r => `
+      <div class="dbar">
+        <div class="name" title="${esc(r.title || r.name)}">${esc(r.name)}</div>
+        <div class="track"><div class="fill ${r.cls || ''}" style="width:${Math.max(0, Math.min(100, r.pct))}%"></div></div>
+        <div class="pct">${esc(r.label)}</div>
+      </div>`).join('')}</div>`;
+  }
+
+  function setActiveNav(route) {
+    document.querySelectorAll('#nav a').forEach(a => {
+      a.classList.toggle('active', a.dataset.route === route);
+    });
+  }
+
+  /* ---------- ホーム ---------- */
+  function renderHome() {
+    const e = C.exam;
+    const qCount = C.questions.length;
+    const st = C.store.load();
+    const attempts = st.attempts.length;
+
+    const sortedDomains = [...e.domains].sort((a, b) => b.weight - a.weight);
+    const bars = domainBars(sortedDomains.map(d => ({
+      name: `${d.no}. ${d.nameJa}`, title: d.nameEn, pct: d.weight / 21 * 100, label: d.weight + '%'
+    })));
+
+    const overview = `<div class="kv">${e.overview.map(o => `
+      <div class="k">${esc(o.label)}</div>
+      <div>${esc(o.value)} ${statusBadge(o.status)}<br>${srcLinks(o.refs)}</div>`).join('')}</div>`;
+
+    const notices = e.notices.map(n => `<li><strong>${fmtDate(n.date)}</strong> — ${esc(n.text)}</li>`).join('');
+
+    app.innerHTML = `
+      <div class="page-head">
+        <h1>CCAO-F 学習トレーナー</h1>
+        <div class="sub">${esc(e.nameEn)}(${esc(e.code)})の非公式学習サイト。Exam Guide v${esc(e.guide.version)}(${esc(e.guide.effective)}版)を基準に、${fmtDate(e.contentAsOf)}時点の情報で作成しています。</div>
+      </div>
+
+      <div class="card accent">
+        <div class="badge-row"><span class="pill">お知らせ</span></div>
+        <ul style="margin-top:6px">${notices}</ul>
+        <p class="note">12月7日以降に受験する場合は、11月17日公開予定の新しいExam Guideを必ず確認してください。本サイトも公開後に差分を更新する予定です。</p>
+      </div>
+
+      <div class="card">
+        <h2>試験の概要</h2>
+        <div class="badge-row">
+          <span class="badge">${e.items}問</span><span class="badge">${e.minutes}分</span>
+          <span class="badge">合格 ${e.passingScaled} / ${e.scale}</span><span class="badge">${esc(e.fee)}</span>
+          <span class="badge">英語・日本語</span>
+        </div>
+        <h3>ドメイン配分(出題比率)</h3>
+        ${bars}
+        <p class="note">最も比率が高いのは「出力の評価と検証」(21%)。プロンプトの書き方よりも、出力を鵜呑みにせず検証・判断する力が重視されています。</p>
+        <details class="fold"><summary>試験概要の詳細(対象者・登録・再受験など)</summary><div class="fold-body">${overview}</div></details>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h2>📘 読んで学ぶ</h2>
+          <p>序章と7ドメイン(7章)の教科書です。各章に「要点・具体例・よくある誤り・確認ポイント」があります。</p>
+          <div class="btn-row">
+            <a class="btn primary" href="#/textbook">教科書を開く</a>
+            <a class="btn" href="#/glossary">用語集</a>
+            <a class="btn" href="#/quickref">クイックリファレンス</a>
+          </div>
+        </div>
+        <div class="card">
+          <h2>✍️ 解いて学ぶ</h2>
+          <p>${qCount ? `オリジナル問題 ${qCount}問を収録。` : 'オリジナル問題(全90問)はフェーズ2で追加予定です。'}章別演習・ミニ模試・60問模試・苦手ドメイン演習・間違えた問題の復習ができます。</p>
+          <div class="btn-row">
+            <a class="btn ${qCount ? 'primary' : ''}" href="#/practice">演習メニュー</a>
+            <a class="btn" href="#/stats">成績</a>
+          </div>
+          <p class="note">${attempts ? `これまでの演習・模試: ${attempts}回` : 'まだ演習の履歴はありません。'}</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>おすすめの進め方</h2>
+        <ol>
+          <li>序章で試験の全体像と「AIの4つの性質」「4D」の考え方をつかむ。</li>
+          <li>配分の大きい第2章(出力の評価と検証)・第4章・第6章から重点的に読む。</li>
+          <li>各章の「確認ポイント」で理解度を自己チェックし、章別演習で定着させる。</li>
+          <li>30問ミニ模試 → 60問模試で時間配分(1問あたり平均2分)に慣れる。</li>
+          <li>成績画面で苦手ドメインを確認し、教科書の該当章と苦手ドメイン演習を往復する。</li>
+        </ol>
+        <p class="note">公式の無料コース「Claude Certified Associate – Foundations Prep Course」(Anthropic Partner Academy)の受講と、実際にClaudeでProjectsを作って試す実践を併用してください。${srcLinks(['S3'])}</p>
+      </div>
+    `;
+  }
+
+  /* ---------- 教科書 ---------- */
+  function chapterLabel(ch) {
+    return ch.no === 0 ? '序章' : `第${ch.no}章`;
+  }
+
+  function renderTextbookToc() {
+    const tb = C.textbook;
+    const items = tb.chapters.map(ch => {
+      const d = ch.domain ? domainById(ch.domain) : null;
+      return `<a href="#/textbook/${ch.no}">
+        <span class="no">${chapterLabel(ch)}</span>
+        <span>${esc(ch.title)}</span>
+        <span class="w">${d ? d.weight + '%' : ''}</span>
+      </a>`;
+    }).join('');
+    app.innerHTML = `
+      <div class="page-head">
+        <h1>📘 教科書</h1>
+        <div class="sub">Exam Guide v${esc(C.exam.guide.version)} の目標(例: <span class="obj-tag">2.3</span>)ごとに整理しています。記述時点: ${fmtDate(tb.asOf)}</div>
+      </div>
+      <div class="callout warn"><strong>注意</strong>Claudeの機能名・画面・仕様は頻繁に変わります。本書の記述は${fmtDate(tb.asOf)}時点のものです。公式情報で確認できなかった内容や資料間で食い違いがある内容には <span class="badge check">要確認</span> を付けています。</div>
+      <div class="card"><div class="toc">${items}</div></div>
+      <div class="card">
+        <h2>各章の構成</h2>
+        <ul>
+          <li><strong>要点</strong> — 試験目標ごとに押さえるべき考え方</li>
+          <li><strong>具体例</strong> — 業務シナリオでの使い方(良い例・悪い例)</li>
+          <li><strong>よくある誤り</strong> — 選択肢に出やすい「もっともらしい誤り」</li>
+          <li><strong>確認ポイント</strong> — 読み終えたら説明できるか自己チェック</li>
+        </ul>
+      </div>`;
+  }
+
+  function renderChapter(no) {
+    const tb = C.textbook;
+    const idx = tb.chapters.findIndex(c => c.no === no);
+    if (idx < 0) { location.hash = '#/textbook'; return; }
+    const ch = tb.chapters[idx];
+    const d = ch.domain ? domainById(ch.domain) : null;
+    const prev = tb.chapters[idx - 1];
+    const next = tb.chapters[idx + 1];
+
+    const tabs = tb.chapters.map(c =>
+      `<a href="#/textbook/${c.no}" class="${c.no === no ? 'active' : ''}">${chapterLabel(c)}${c.domain ? ' ' + esc(domainById(c.domain).short) : ' はじめに'}</a>`
+    ).join('');
+
+    const objList = d ? `<details class="fold"><summary>この章の試験目標(Exam Guide v${esc(C.exam.guide.version)})</summary><div class="fold-body"><ul>${
+      d.objectives.map(o => `<li>${objTag(o.id)}${esc(o.ja)}<br><span class="note">${esc(o.en)}</span></li>`).join('')
+    }</ul>${srcLinks(['S1'])}</div></details>` : '';
+
+    const points = (ch.points || []).map(p => `
+      <div class="section">
+        <h3>${objTag(p.obj)}${esc(p.h)} ${statusBadge(p.status)}</h3>
+        <div>${p.body}</div>
+        ${p.refs && p.refs.length ? `<div class="meta">${srcLinks(p.refs)}</div>` : ''}
+      </div>`).join('');
+
+    const examples = (ch.examples || []).map(x => `
+      <div class="example">
+        <div class="scene">${objTag(x.obj)}${esc(x.scene)}</div>
+        ${x.body ? `<div>${x.body}</div>` : ''}
+        ${x.ng || x.ok ? `<div class="compare">
+          ${x.ng ? `<div class="ng"><span class="lbl">✗ よくない</span>${x.ng}</div>` : ''}
+          ${x.ok ? `<div class="ok"><span class="lbl">○ よい</span>${x.ok}</div>` : ''}
+        </div>` : ''}
+        ${x.why ? `<div class="note">${x.why}</div>` : ''}
+      </div>`).join('');
+
+    const pitfalls = (ch.pitfalls || []).map(p => `
+      <div class="pitfall">
+        <div class="wrong">${objTag(p.obj)}${esc(p.wrong)}</div>
+        <div class="right">${p.right}</div>
+      </div>`).join('');
+
+    const checks = (ch.checkpoints || []).map(c => `<li>${objTag(c.obj)}${c.text}</li>`).join('');
+
+    const qInDomain = d ? C.questions.filter(q => q.domain === d.id).length : 0;
+
+    app.innerHTML = `
+      <div class="chapter-tabs" role="navigation" aria-label="章の切り替え">${tabs}</div>
+      <div class="page-head" style="margin-top:12px">
+        <div class="badge-row">
+          ${d ? `<span class="badge domain">Domain ${d.no} · 配分 ${d.weight}%</span>` : '<span class="badge domain">序章</span>'}
+          <span class="badge">記述時点 ${fmtDate(ch.asOf || tb.asOf)}</span>
+        </div>
+        <h1>${chapterLabel(ch)} ${esc(ch.title)}</h1>
+        ${d ? `<div class="sub">${esc(d.nameEn)}</div>` : ''}
+      </div>
+      ${ch.lead ? `<div class="card"><p>${ch.lead}</p>${objList}</div>` : objList}
+
+      ${points ? `<div class="card"><div class="block-title"><span class="icon">📌</span>要点</div>${points}</div>` : ''}
+      ${examples ? `<div class="card"><div class="block-title"><span class="icon">💼</span>具体例</div>${examples}</div>` : ''}
+      ${pitfalls ? `<div class="card"><div class="block-title"><span class="icon">⚠️</span>よくある誤り</div>${pitfalls}</div>` : ''}
+      ${checks ? `<div class="card"><div class="block-title"><span class="icon">✅</span>確認ポイント</div><p class="note">次のことを自分の言葉で説明できれば、この章は合格ラインです。</p><ul class="checklist">${checks}</ul></div>` : ''}
+
+      <div class="btn-row">
+        ${prev ? `<a class="btn" href="#/textbook/${prev.no}">← ${chapterLabel(prev)}</a>` : ''}
+        ${next ? `<a class="btn primary" href="#/textbook/${next.no}">${chapterLabel(next)} →</a>` : `<a class="btn primary" href="#/quickref">クイックリファレンスへ →</a>`}
+        ${d ? (qInDomain
+          ? `<a class="btn" href="#/practice/domain/${d.id}">この章の問題を解く(${qInDomain}問)</a>`
+          : `<button class="btn" disabled title="問題はフェーズ2で追加予定">この章の問題を解く(準備中)</button>`) : ''}
+        <a class="btn ghost" href="#/textbook">目次</a>
+      </div>`;
+  }
+
+  /* ---------- 用語集 ---------- */
+  let glossaryState = { q: '', domain: '' };
+  function renderGlossary() {
+    const opts = ['<option value="">すべてのドメイン</option>']
+      .concat(C.exam.domains.map(d => `<option value="${d.id}">${d.no}. ${esc(d.nameJa)}</option>`))
+      .concat('<option value="general">共通・試験全般</option>').join('');
+    app.innerHTML = `
+      <div class="page-head">
+        <h1>📚 用語集</h1>
+        <div class="sub">${C.glossary.terms.length}語。英語の機能名と日本語の説明を併記しています。記述時点: ${fmtDate(C.glossary.asOf)}</div>
+      </div>
+      <div class="card">
+        <div class="filter-row">
+          <label><span class="sr-only">用語を検索</span><input type="search" id="g-q" placeholder="用語・説明を検索(例: ハルシネーション、Projects)" value="${esc(glossaryState.q)}"></label>
+          <label><span class="sr-only">ドメインで絞り込み</span><select id="g-d">${opts}</select></label>
+        </div>
+      </div>
+      <div class="card" id="g-list"></div>`;
+    const qEl = document.getElementById('g-q');
+    const dEl = document.getElementById('g-d');
+    dEl.value = glossaryState.domain;
+    const update = () => {
+      glossaryState = { q: qEl.value, domain: dEl.value };
+      drawGlossaryList();
+    };
+    qEl.addEventListener('input', update);
+    dEl.addEventListener('change', update);
+    drawGlossaryList();
+  }
+
+  function drawGlossaryList() {
+    const q = glossaryState.q.trim().toLowerCase();
+    const dom = glossaryState.domain;
+    const list = C.glossary.terms.filter(t => {
+      if (dom && !(t.domains || []).includes(dom)) return false;
+      if (!q) return true;
+      return [t.term, t.en, t.reading, t.def].join(' ').toLowerCase().includes(q);
+    });
+    const el = document.getElementById('g-list');
+    if (!list.length) { el.innerHTML = '<div class="empty">該当する用語がありません。</div>'; return; }
+    el.innerHTML = list.map(t => `
+      <div class="term">
+        <div class="t">${esc(t.term)}${t.en ? `<span class="en">${esc(t.en)}</span>` : ''} ${statusBadge(t.status)}</div>
+        <div class="d">${t.def}</div>
+        <div class="rel">${(t.domains || []).map(id => id === 'general' ? '共通' : `D${domainById(id).no} ${esc(domainById(id).short)}`).join(' / ')}${t.refs && t.refs.length ? ' · ' + srcLinks(t.refs) : ''}</div>
+      </div>`).join('');
+  }
+
+  /* ---------- クイックリファレンス ---------- */
+  function renderQuickref() {
+    const qr = C.quickref;
+    const groups = C.exam.domains.map(d => {
+      const items = qr.items.filter(i => i.domain === d.id);
+      if (!items.length) return '';
+      return `<div class="card">
+        <div class="badge-row"><span class="badge domain">Domain ${d.no} · ${d.weight}%</span></div>
+        <h2>${esc(d.nameJa)}</h2>
+        ${items.map(i => `<div class="qr">
+          <div class="q">${esc(i.trigger)}</div>
+          <div class="pick">${i.pick}</div>
+          ${i.avoid ? `<div class="avoid">${i.avoid}</div>` : ''}
+        </div>`).join('')}
+        <div class="btn-row"><a class="btn small ghost" href="#/textbook/${d.no}">第${d.no}章を読む</a></div>
+      </div>`;
+    }).join('');
+
+    const principles = qr.principles.map(p => `<li>${p}</li>`).join('');
+
+    app.innerHTML = `
+      <div class="page-head">
+        <h1>🗂 クイックリファレンス</h1>
+        <div class="sub">「こう問われたら、これを選ぶ」の早見表。試験直前の見直し用です。記述時点: ${fmtDate(qr.asOf)}</div>
+      </div>
+      <div class="card accent">
+        <h2>迷ったときの判断原則</h2>
+        <ul>${principles}</ul>
+        <p class="note">公式Exam Guideのサンプル問題3問(第8節)の解説から読み取れる考え方を、本サイトの言葉でまとめたものです。サンプル問題そのものは公式ガイドで確認してください。${srcLinks(['S1'])}</p>
+      </div>
+      ${groups}`;
+  }
+
+  /* ---------- 演習・成績(フェーズ2で実装) ---------- */
+  function renderComingSoon(title, body) {
+    app.innerHTML = `
+      <div class="page-head"><h1>${esc(title)}</h1></div>
+      <div class="card">
+        <p>${body}</p>
+        <div class="btn-row"><a class="btn primary" href="#/textbook">教科書を読む</a><a class="btn" href="#/">ホーム</a></div>
+      </div>`;
+  }
+
+  /* ---------- ルーター ---------- */
+  function route() {
+    const hash = location.hash.replace(/^#\/?/, '');
+    const parts = hash.split('/').filter(Boolean);
+    const top = parts[0] || 'home';
+    setActiveNav(top);
+
+    // フェーズ2の画面は quiz.js が提供する
+    if (C.quiz && C.quiz.ready && C.quiz.handles(top)) {
+      C.quiz.render(top, parts.slice(1), app);
+    } else if (top === 'home') renderHome();
+    else if (top === 'textbook') parts[1] !== undefined ? renderChapter(Number(parts[1])) : renderTextbookToc();
+    else if (top === 'glossary') renderGlossary();
+    else if (top === 'quickref') renderQuickref();
+    else if (top === 'practice') renderComingSoon('✍️ 演習', '演習機能(章別・自由演習・30問ミニ模試・苦手ドメイン・間違えた問題の復習)はフェーズ2-Aで、60問模試はフェーズ2-Bで追加予定です。');
+    else if (top === 'stats') renderComingSoon('📊 成績', 'ドメイン別成績・受験履歴はフェーズ2-Aで追加予定です。');
+    else renderHome();
+
+    // 模試中以外は先頭へスクロール
+    if (!(C.quiz && C.quiz.keepScroll)) window.scrollTo(0, 0);
+    app.focus({ preventScroll: true });
+  }
+
+  // 公開ユーティリティ(quiz.js から利用)
+  C.ui = { esc, domainById, fmtDate, srcLinks, statusBadge, objTag, domainBars, route };
+
+  document.getElementById('footer-asof').textContent =
+    `記述時点: ${fmtDate(C.exam.contentAsOf)} / 基準: Exam Guide v${C.exam.guide.version}(${C.exam.guide.effective}版)`;
+
+  window.addEventListener('hashchange', route);
+  route();
+})();
+
+</script>
+</body>
+</html>
