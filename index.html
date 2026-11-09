@@ -2,9 +2,11 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-sWbyZSTHQsUGp2zWFtNI/NL8nOb5xRCe5vplAj1/shE=' 'sha256-QTFxXQ8VceOFCpUF9A3GtGcBXPX/FBgjM5a/6ndw0DE=' 'sha256-Hi7lzhq/2vciumRDJfQF0qsNaD2BMVshDzlF1Zzs8DE=' 'sha256-Zp343ZhI27uPN85F9MviRNJeGZzCIJNIkz7ncJfaTDQ=' 'sha256-WwnwwTWS7zfywnkrpN9QW+d8NYAPEogWDj8g7yM9UNw=' 'sha256-AdJfo4CZn1MKa/uKKCTc694b0tf7zp9chZMTP2iR05g=' 'sha256-Hg17+8YNZAM+8hWLRt/eVqhnkru15NFVwW5P2KMozS0=' 'sha256-SjdHP77VaVTRYkGROw8fO1+GLT7y3otWF1yKQcE4cRc=' 'sha256-Cb920hicoKXrrg94CDm7l+iCzysi9e3afrjXsCj5y50=' 'sha256-lAqvF/7DmpCtMOxnul+xT4qESccF/OB3vo0OQmhKTaY='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Claude認定資格 CCAO-F(Claude Certified Associate – Foundations)の非公式学習サイト。教科書・用語集・クイックリファレンス・オリジナル練習問題。">
 <meta name="theme-color" content="#b5532c">
+<meta name="referrer" content="no-referrer">
 <title>CCAO-F 学習トレーナー(非公式)</title>
 <style>
 /* CCAO-F 学習トレーナー — スタイル(外部フォント・CDNなし) */
@@ -281,6 +283,70 @@ table.simple th { background: var(--surface-2); }
 .qr .pick::before { content: "✅ 選ぶ: "; font-weight: 700; color: var(--good); }
 .qr .avoid { margin-top: 2px; color: var(--muted); font-size: .9rem; }
 .qr .avoid::before { content: "⛔ 避ける: "; font-weight: 700; color: var(--bad); }
+
+
+/* ---------- 問題・模試 ---------- */
+.quiz-bar {
+  position: sticky; top: 52px; z-index: 10;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg); padding: 6px 0; font-size: .86rem; color: var(--muted);
+}
+@media (max-width: 640px) { .quiz-bar { top: 74px; } }
+.quiz-bar .ql { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.quiz-bar .qn { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--text); }
+.timer { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; }
+.timer.low { color: var(--bad); border-color: var(--bad); background: var(--bad-weak); }
+.progress { height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin-bottom: 12px; }
+.progress > div { height: 100%; background: var(--accent); transition: width .2s; }
+.scenario { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; margin: 8px 0 10px; font-size: .95rem; }
+.stem { font-weight: 700; margin: 6px 0 12px; }
+.choices { display: grid; gap: 8px; }
+.choice {
+  display: grid; grid-template-columns: 2em 1fr auto; align-items: start; gap: 8px;
+  width: 100%; text-align: left; min-height: 48px; padding: 10px 12px;
+  border: 1.5px solid var(--border); border-radius: 10px; background: var(--surface);
+  font-size: .95rem; line-height: 1.6; cursor: pointer; color: var(--text);
+}
+.choice:hover:not(:disabled) { background: var(--surface-2); }
+.choice .key {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.8em; height: 1.8em; border-radius: 50%; border: 1.5px solid var(--border);
+  font-weight: 700; font-size: .85rem; color: var(--muted);
+}
+.choice[role="checkbox"] .key { border-radius: 6px; }
+.choice.selected { border-color: var(--accent); background: var(--accent-weak); }
+.choice.selected .key { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.choice.correct { border-color: var(--good); background: var(--good-weak); opacity: 1; }
+.choice.correct .key { background: var(--good); border-color: var(--good); color: #fff; }
+.choice.incorrect { border-color: var(--bad); background: var(--bad-weak); opacity: 1; }
+.choice.incorrect .key { background: var(--bad); border-color: var(--bad); color: #fff; }
+.choice.muted { opacity: .75; }
+.choice:disabled { cursor: default; }
+.verdict-icon { font-weight: 700; font-size: 1.1rem; }
+.choice.correct .verdict-icon { color: var(--good); }
+.choice.incorrect .verdict-icon { color: var(--bad); }
+.why { font-size: .86rem; margin: -2px 0 4px 2.6em; padding: 4px 0 4px 10px; border-left: 3px solid var(--border); color: var(--muted); }
+.why.ok { border-color: var(--good); }
+.why.ng { border-color: var(--bad); }
+.explain { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--surface-2); font-size: .93rem; }
+.explain p { margin: 4px 0; }
+.palette { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 6px; }
+.pal { min-height: 38px; padding: 0; font-size: .85rem; font-variant-numeric: tabular-nums; position: relative; }
+.pal.ans { background: var(--accent-weak); border-color: var(--accent); }
+.pal.cur { outline: 2px solid var(--text); outline-offset: 1px; }
+.pal.flag::after { content: "🚩"; position: absolute; top: -6px; right: -4px; font-size: .7rem; }
+.score { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.score .big { font-size: 3rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.score .big.pass, td.pass { color: var(--good); }
+.score .big.fail, td.fail { color: var(--bad); }
+.rv > summary { font-weight: 400; }
+.rv-ok > summary { color: var(--text); }
+.rv-ng > summary { color: var(--bad); }
+.rv-stem { color: var(--muted); font-size: .85rem; }
+.rv-choice { display: grid; grid-template-columns: 2em 1fr; gap: 8px; padding: 8px; border-radius: 8px; margin: 4px 0; font-size: .92rem; }
+.rv-choice.ok { background: var(--good-weak); }
+.rv-choice.ng { background: var(--bad-weak); }
+.rv-choice .key { font-weight: 700; color: var(--muted); }
 
 /* ---------- フッター ---------- */
 footer.site-footer {
@@ -1582,15 +1648,1246 @@ CCAOF.quickref = {
 
 </script>
 <script>/* data/questions_a.js */
-/* 問題データ 前半45問(フェーズ2-Aで作成予定) */
+/*
+ * 問題データ 前半45問(フェーズ2-A)
+ * すべて本サイトのオリジナル問題。実際の試験問題・公式サンプル問題ではない。
+ * 形式は README.md「データの書き方」を参照。解説内で選択肢記号(A,B…)を使わないこと(表示時にシャッフルされるため)。
+ * 誤答の選択肢も「もっともらしい理由」を含めて正解と同程度の長さにする(長さで正解が分からないように)。
+ */
 window.CCAOF = window.CCAOF || {};
 CCAOF.questions = CCAOF.questions || [];
+CCAOF.questions.push(
+
+/* ============================== D1 プロンプティング (6) ============================== */
+{
+  id: 'D1-001', domain: 'D1', objective: '1.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '人事部の担当者が「新入社員向けに社内ポータルの使い方の案内文を書いて」とClaudeに依頼したところ、どの会社にも当てはまりそうな一般的で長い文章が出てきた。',
+  stem: '最も改善効果が高い次の一手はどれか。',
+  choices: [
+    { text: '出力にはばらつきがあるため、同じ依頼で数回再生成し、最も具体的な案を選んで使う。', correct: false, why: '一般的な文章になった原因は情報不足です。同じ依頼を繰り返しても、原因は解消されません。' },
+    { text: '読み手(社内用語を知らない入社1週目)・目的・含める項目・長さを指定して依頼し直す。', correct: true, why: '欠けていた文脈(読み手・目的・項目・形式)を補うことで、狙った出力に近づきます。' },
+    { text: '「あなたは社内広報のプロのライターです」と役割を与え、文章の質そのものを引き上げる。', correct: false, why: '役割は口調や視点を整えますが、読み手・目的・含める項目が欠けたままでは的外れな内容は直りません。' },
+    { text: '一般的な内容になるのは能力の限界なので、より高性能なモデルに切り替えて同じ依頼を出す。', correct: false, why: '問題はモデルの能力ではなく指示の不足です。モデルを変えてもコストが増えるだけで、根本原因は残ります。' }
+  ],
+  explanation: '業務プロンプトでは、タスク・目的・読み手・入力資料・制約・出力形式を必要に応じて伝えます。結果が一般論に寄るのは、多くの場合Claudeに文脈が伝わっていないためです。',
+  sourceRefs: ['S1', 'DOC_PROMPT']
+},
+{
+  id: 'D1-002', domain: 'D1', objective: '1.1', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: '経理担当者が、取引先から届いた請求書3件の本文をプロンプトに貼り付け、発注内容と照合するよう依頼した。ところがClaudeは、担当者が書いた指示文の一部を請求書の記載内容として扱ってしまった。',
+  stem: 'プロンプトの改善として適切なものを2つ選べ。',
+  choices: [
+    { text: '請求書の本文をタグや見出しで囲み、指示文と資料の境界をはっきり分ける。', correct: true, why: '資料と指示を区切ると、Claudeがどこまでが資料かを取り違えにくくなります。' },
+    { text: '照合の背景や目的を詳しく書き足し、指示文全体をより長く丁寧にする。', correct: false, why: '指示を長くしても、指示と資料の境界はあいまいなままです。重要な指示が埋もれるおそれもあります。' },
+    { text: '「3件の請求書の記載だけに基づき、記載がない項目は『記載なし』とする」と明示する。', correct: true, why: '何を根拠に答えるかを明示すると、取り違えや推測による補完を防げます。' },
+    { text: '日本語より英語の方が誤解が少ないとされるため、回答を英語で出力するよう指示する。', correct: false, why: '出力言語は、指示と資料の取り違えとは関係がありません。' },
+    { text: '照合を単純にするため、請求書の金額を事前に四捨五入してから貼り付ける。', correct: false, why: '元データを改変すると、照合の正確さが損なわれます。取り違えの対策にもなりません。' }
+  ],
+  explanation: '資料を扱うプロンプトでは「資料と指示を区切る」「根拠の範囲を明示する」の2つが基本です。',
+  sourceRefs: ['DOC_PROMPT', 'DOC_HALLU']
+},
+{
+  id: 'D1-003', domain: 'D1', objective: '1.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'マーケティング担当者が、新サービスのローンチ計画(市場調査・ターゲット・訴求メッセージ・スケジュール・予算)を1回の依頼でClaudeに作らせた。出てきた計画はどの要素も浅く、あとからターゲットの前提がずれていたことも分かった。',
+  stem: '最も適切な進め方はどれか。',
+  choices: [
+    { text: '依頼文に「各要素を詳しく、前提を間違えずに」と書き加え、同じ範囲をもう一度まとめて依頼する。', correct: false, why: '大きな依頼を一度に頼む構造は変わらないため、途中の前提のずれに気づけない問題が残ります。' },
+    { text: 'ターゲット像→訴求メッセージ→日程・予算と工程に分け、各段階を確認してから次に進む。', correct: true, why: 'タスクを分解し途中で確認すれば、前提のずれを早い段階で直せます。各要素も深く検討できます。' },
+    { text: '前提のずれは致命的なので、Claudeの出力は参考程度にとどめ、計画書は手作業で書き直す。', correct: false, why: '進め方を改善すれば活用できる場面で、Claudeの価値をすべて捨ててしまいます。' },
+    { text: '最も高性能なモデルで、全要素を一括で作り直す。', correct: false, why: 'モデルを変えても、一括依頼では途中で確認できない問題が残ります。まず進め方を見直すべきです。' }
+  ],
+  explanation: '複雑な依頼は工程に分解し、中間成果物を人が確認してから次に進みます。方向違いを早期に修正でき、問題が起きた工程も特定しやすくなります。',
+  sourceRefs: ['S1', 'DOC_PROMPT']
+},
+{
+  id: 'D1-004', domain: 'D1', objective: '1.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '営業企画の担当者は、Claudeで作った週次要約を営業部長に提出しているが、毎回「長い」「結論が見えない」と言われる。そのたびに「もっと簡潔にして」と頼み直しているが、あまり改善しない。',
+  stem: '最も効果的な改善はどれか。',
+  choices: [
+    { text: '「冒頭に結論1文、根拠3点、全体250字以内」と指定し、好評だった過去の要約を例に示す。', correct: true, why: '求める構成と長さを具体的に示し、良い例も渡すことで、意図が正確に伝わります。' },
+    { text: '「部長が読むので、とにかく必ず簡潔に」と、より強い表現で簡潔さを繰り返し求める。', correct: false, why: '「簡潔」の基準があいまいなままなので、強調しても改善につながりにくい指示です。' },
+    { text: 'Claudeの要約は下書きと割り切り、毎回提出前に自分で結論を冒頭に移して短く手直しする。', correct: false, why: '一時的な対処にすぎず、プロンプト側の問題が直らないため同じ手間が続きます。' },
+    { text: '要約すると情報が欠けて結論が見えにくくなるので、元資料をそのまま部長に送るようにする。', correct: false, why: '部長が求めているのは短い要約です。目的から外れています。' }
+  ],
+  explanation: '反復改善では、フィードバックを具体的な条件(構成・長さ・観点)に置き換え、良い例を示します。同じ指摘を繰り返すなら、プロンプト自体を見直すサインです。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D1-005', domain: 'D1', objective: '1.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '人材開発担当者が、来年度の若手社員向け研修のテーマ案を幅広く集めたいと考えている。',
+  stem: 'この目的に最も適したプロンプトはどれか。',
+  choices: [
+    { text: '「若手向けに最も効果的な研修テーマを1つだけ選び、その理由と期待できる効果を説明してください」', correct: false, why: 'ブレインストーミングの段階で1案に絞らせると、発想の幅が狭まります。' },
+    { text: '「入社2〜3年目向けで、目的は主体性の育成。方向性の違う案を15個、評価は後で」', correct: true, why: '対象と目的を伝えたうえで、量と多様性を求め、評価は別の工程に分けています。ブレストに適した頼み方です。' },
+    { text: '「昨年度の研修資料を添付します。内容を要約し、受講者アンケートで評価の高かった点を整理してください」', correct: false, why: '資料の要約・分析は、新しいテーマ案を広げるという目的とは別の作業です。' },
+    { text: '「来年度の若手研修の企画書を、目的・対象・カリキュラム・予算の構成で2,000字で書いてください」', correct: false, why: '企画書の起草は、テーマが決まった後の工程です。今の目的には早すぎます。' }
+  ],
+  explanation: 'ブレインストーミングでは「まず量と多様性、評価と絞り込みは後で」が基本です。タスクの種類(分析・リサーチ・起草・ブレスト)によって、頼み方を変えます。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D1-006', domain: 'D1', objective: '1.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '広報担当者が、自社の業界に関する生成AI規制の最近の動向を調べ、社内向けの解説記事にまとめたいと考えている。',
+  stem: '最も適切なアプローチはどれか。',
+  choices: [
+    { text: 'Claudeは大量の文献を学習しているので、学習済みの知識で回答させ、要点を社内記事にまとめる。', correct: false, why: '最近の動向は学習データに含まれていない可能性が高い話題です。検証せずに記事にするのは危険です。' },
+    { text: '「確実な情報だけを使い、不確かな内容は書かないで」と指示し、出典確認の手間を省いて記事化する。', correct: false, why: 'そう指示しても、正確さは保証されません。重要な情報は出典で確認が必要です。' },
+    { text: 'リサーチ機能などで期間・地域を指定して出典付きで調べ、重要な点は出典元で確認する。', correct: true, why: 'リサーチ型のタスクでは、範囲の指定・出典の提示・出典元での確認が基本です。' },
+    { text: '読みやすさを優先して文体と文字数だけを指定し、すぐに記事を書かせる。', correct: false, why: '起草と同じ頼み方では、調査の範囲や情報源の条件が抜け落ちます。' }
+  ],
+  explanation: 'リサーチでは、調べる範囲と情報源の条件を指定し、出典付きで整理させ、検証してから使います。最新・ニッチな話題ほど学習済み知識の限界に注意します。',
+  sourceRefs: ['S1', 'S6', 'H_RESEARCH', 'H_WEBSEARCH']
+},
+
+/* ============================== D2 出力の評価と検証 (10) ============================== */
+{
+  id: 'D2-001', domain: 'D2', objective: '2.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '総務担当者が、オフィス移転のお知らせをClaudeに作成させた。依頼した記載項目は「移転日・新住所・旧オフィスの最終利用日・来客用駐車場・問い合わせ先」の5つ。出力された文章は読みやすく、記載された住所と日付も正しかった。',
+  stem: '全社に送る前に、最も重要な確認はどれか。',
+  choices: [
+    { text: '全社員が読む公式な通知なので、文章のトーンが社内文書としてふさわしいかを確認する。', correct: false, why: 'トーンも大切ですが、必要な情報が欠けていればお知らせの目的を果たせません。' },
+    { text: 'Claudeに「依頼した項目に抜け漏れはありませんか」と尋ね、問題ないと回答されたら送信する。', correct: false, why: 'Claudeの自己評価だけでは確認になりません。要件と照合する必要があります。' },
+    { text: '依頼した5項目がすべて含まれているかを、要件リストと突き合わせる。', correct: true, why: '記載内容が正しくても、項目が漏れている可能性があります。正確性と網羅性は別の観点なので、網羅性を要件と照合して確かめます。' },
+    { text: '通知は短いほど読まれるので、さらに短くできないか確認する。', correct: false, why: '短くすることで必要な情報が落ちるおそれがあり、目的と逆になります。' }
+  ],
+  explanation: '正確性(書かれていることが正しいか)と網羅性(必要なことが全部あるか)は別の観点です。依頼時の要件をチェックリストにしておくと、網羅性を確実に確認できます。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D2-002', domain: 'D2', objective: '2.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '調達担当者が、競合3社の製品カタログ(PDF)を渡して比較表を作らせた。表には「C社製品:消費電力 38W(2026年モデル)」と書かれているが、渡したカタログにはC社のその製品の情報が載っていなかった。',
+  stem: 'この記載の扱いとして最も適切なものはどれか。',
+  choices: [
+    { text: '数値と年式まで具体的に書かれているので、Claudeの知識に基づく情報と判断して表に残す。', correct: false, why: '数値が具体的でも、正しい根拠にはなりません。具体的な細部はむしろハルシネーションが起きやすい箇所です。' },
+    { text: '資料にない情報が混ざった以上、他の欄も信用できないので、比較表全体を破棄して作り直す。', correct: false, why: '資料で裏付けられる他の部分まで捨てる必要はありません。問題の箇所を特定して対処すれば足ります。' },
+    { text: '資料に根拠のない数値なので、C社の公式仕様で確認できるまで表から外す。', correct: true, why: '渡した資料に根拠がない具体的な数値は、作られた可能性があります。一次情報で確認できるまで使いません。' },
+    { text: '「約40W」と幅を持たせた表現に直して表に残す。', correct: false, why: '丸めても根拠がないことは変わりません。誤った情報を広めるおそれがあります。' }
+  ],
+  explanation: 'ハルシネーションは数値・固有名詞・日付・型番など、もっともらしい細部で起きやすい現象です。渡した資料に根拠がない記載は、一次情報で確認するまで使わないのが原則です。',
+  sourceRefs: ['S1', 'DOC_HALLU']
+},
+{
+  id: 'D2-003', domain: 'D2', objective: '2.2', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: '人事担当者が、社内で決まっている募集条件(年間休日125日、リモートワーク週2日可、書類選考の後に面接2回)を伝え、エンジニア職の求人票の下書きをClaudeに依頼した。出力には次の記載があった。',
+  stem: 'バイアスや不整合として修正すべき記載を2つ選べ。',
+  choices: [
+    { text: '募集要項の冒頭にある「若くて体力のある方を歓迎します」という一文。', correct: true, why: '年齢などの属性に基づく偏った表現です。応募者を不当に絞り込み、法令や社内方針の上でも問題になり得ます。' },
+    { text: '冒頭の「年間休日125日」と、待遇欄の「年間休日120日」という記載。', correct: true, why: '同じ文書の中で数字が食い違っています(不整合)。伝えた条件と照合して直す必要があります。' },
+    { text: '働き方の欄にある「リモートワーク週2日可(出社日はチームで調整)」。', correct: false, why: '伝えた募集条件と一致しており、問題はありません。' },
+    { text: '応募方法の欄にある「履歴書・職務経歴書をメールで提出してください」。', correct: false, why: '一般的な記載で、偏りや食い違いはありません。' },
+    { text: '選考の欄にある「書類選考の後、現場面接と役員面接の2回を実施」。', correct: false, why: '伝えた選考プロセスと一致しています。' }
+  ],
+  explanation: '出力の評価では、事実の誤りだけでなく、文書内の食い違い(不整合)や、特定の属性に偏った表現(バイアス)も確認します。採用など人に影響する文書では特に重要です。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D2-004', domain: 'D2', objective: '2.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '企画担当者が、創立50周年記念誌の年表をClaudeと作成している。Claudeは、渡した社史資料には載っていない出来事(「1992年 大阪支店を開設」)を補足として年表に加えた。',
+  stem: 'この記載の検証方法として最も適切なものはどれか。',
+  choices: [
+    { text: 'Claudeに根拠となる出典を尋ね、具体的な書名やページが示されれば正しいとみなす。', correct: false, why: '出典の書名自体が作られることもあります。出典が実在し、本当にそう書かれているかまで確かめる必要があります。' },
+    { text: '別の新しい会話で同じ質問をし、同じ年と内容が返ってくれば正しいとみなして掲載する。', correct: false, why: '同じ答えが返ってきても、正しいとは限りません。根拠は一次情報との照合です。' },
+    { text: '社史の原本や社内アーカイブで確認し、確認できなければ削除する。', correct: true, why: '権威ある一次資料との照合が最も確実です。確認できない記載は使わないのが原則です。' },
+    { text: '本文ではなく年表の補足情報にすぎないので、誤りの影響は小さいと判断して確認せず掲載する。', correct: false, why: '記念誌は社内外に配布される公式な記録です。誤りの影響は小さくありません。' }
+  ],
+  explanation: 'ファクトチェックの基本は一次情報との照合です。Claudeの自信、出典名の提示、回答の一貫性は、いずれも正確さの証明になりません。',
+  sourceRefs: ['S1', 'DOC_HALLU']
+},
+{
+  id: 'D2-005', domain: 'D2', objective: '2.3', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: '総務担当者が、80ページある旅費規程をClaudeに渡し、社員向けに「出張旅費の上限」に関するQ&Aを作らせようとしている。',
+  stem: 'ハルシネーションを減らす工夫として適切なものを2つ選べ。',
+  choices: [
+    { text: '各回答の前に、根拠となる規程の該当箇所をそのまま引用させる。', correct: true, why: '根拠をそのまま引用させると、回答が規程に基づいているかを確認しやすくなり、作り話も減ります。' },
+    { text: '回答ごとに確信度を0〜100で自己評価させ、80以上の回答は検証を省く。', correct: false, why: '自己評価の確信度は、正確さの信頼できる指標ではありません。' },
+    { text: '規程に記載がなければ推測せず「規程に記載なし」と答えるよう指示する。', correct: true, why: '「分からない」と答えてよいと許可すると、推測による作り話を減らせます。' },
+    { text: '規程が長すぎるので、担当者が記憶をもとに要点を書き直してから渡す。', correct: false, why: '元資料を記憶で書き直すと、誤りや抜けが入り込みます。根拠が弱くなります。' },
+    { text: '「社員が参照するので、絶対に間違えないでください」と強く念を押す。', correct: false, why: '強調しても正確さは保証されません。具体的な手法(引用・不明の許可)の方が効果的です。' }
+  ],
+  explanation: '公式ドキュメントは、ハルシネーションを減らす手法として「分からないと言うことを許可する」「長い文書では該当箇所を引用させる」などを挙げています。ただしこれらは誤りを減らすもので、無くすものではないため、重要な回答は規程の原文で確認します。',
+  sourceRefs: ['DOC_HALLU']
+},
+{
+  id: 'D2-006', domain: 'D2', objective: '2.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '保険会社の企画部では、次の4つの文書をClaudeで下書きしている。',
+  stem: '担当者と専門家による最も厳格なレビュー(全項目の検証と承認)が必要なのはどれか。',
+  choices: [
+    { text: '来期の部内予算配分を議論するための、社内向けの分析メモ', correct: false, why: '意思決定に使うので数値の照合は必要ですが、社内向けで関係者が議論の中で確かめられます。社外の顧客に届き、契約や金銭に直結する文書ほどの厳格さは求められません。' },
+    { text: '自分が後で見返すために整理した、先週の部内会議のメモ', correct: false, why: '自分だけが使う資料で、誤りの影響は限られます。' },
+    { text: '顧客に送付する、保険商品の補償内容の説明文', correct: true, why: '顧客向けで、契約や金銭に関わる内容です。誤りの影響が大きいため、全項目を検証し専門家の承認を経るべきです。' },
+    { text: '来月のチーム懇親会で使う、会場近くの飲食店の候補リスト', correct: false, why: '誤りがあっても影響は小さく、厳格なレビューは不要です。' }
+  ],
+  explanation: '検証の深さは、誤ったときの影響の大きさで決めます。社外向け、契約・金銭・法務に関わる内容、意思決定に使う内容は、人の厳格なレビューが必要です。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D2-007', domain: 'D2', objective: '2.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'カスタマーサポート部では、Claudeが作った回答案をオペレーターが確認してから顧客に送っている。経営層から「念のため、すべての回答案を法務部のレビューに回すべきだ」という意見が出た。',
+  stem: '最も適切な対応はどれか。',
+  choices: [
+    { text: '顧客対応での誤りは信用に直結するため、意見どおり、すべての回答案を法務部のレビューに回す。', correct: false, why: '定型の問い合わせまで法務部に回すと対応が大幅に遅れ、レビューも形だけになりかねません。' },
+    { text: 'レビューの負担を減らすため、オペレーターの確認もやめ、Claudeの回答案を自動で送信する。', correct: false, why: '誤った回答が顧客に届くリスクを無視しています。' },
+    { text: '定型の問い合わせはオペレーター確認、返金・契約に関わるものは責任者や法務のレビューと区分する。', correct: true, why: '誤りの影響に応じてレビューの深さを変えると、安全性と効率を両立できます。' },
+    { text: 'Claudeに法的な問題の有無を判定させ、問題なしなら送信する。', correct: false, why: 'Claude自身による判定は、専門家のレビューの代わりになりません。' }
+  ],
+  explanation: '人のレビューは「全部」か「なし」かではなく、リスクに応じて深さを変えるのが適切です。ヒューマン・イン・ザ・ループの設計そのものが問われています。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D2-008', domain: 'D2', objective: '2.5', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '業務改善チームが、受注処理の遅れに関する調査結果をまとめた。この結果を、(1)経営会議と (2)現場の受注チーム の両方に伝える必要がある。',
+  stem: 'Claudeの出力の調整として最も適切なものはどれか。',
+  choices: [
+    { text: '伝える内容に差が出ないよう、詳細な調査報告書を1つ作り、両方に同じものを配布する。', correct: false, why: '読み手が必要とする情報が違うため、どちらにとっても使いにくい資料になります。' },
+    { text: '経営会議向けは結論と判断事項を冒頭に短く、現場向けは具体的な手順と担当・期限を中心に作る。', correct: true, why: '読み手ごとに、必要な情報と粒度に合わせて作り分けています。' },
+    { text: '経営会議では説得力が重要なので、専門用語と詳細なデータを増やした、より長い資料にする。', correct: false, why: '経営層は短時間で判断できる資料を必要としています。長く難しくすると逆効果です。' },
+    { text: '現場のメンバーは忙しいので、現場向けは結論だけを1行にまとめたものを配布する。', correct: false, why: '現場は具体的に何をすればよいかを必要としています。結論だけでは行動できません。' }
+  ],
+  explanation: '同じ内容でも、読み手によって必要な情報・順序・粒度は変わります。Claudeに読み手を指定して作り分け、比較して仕上げます。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D2-009', domain: 'D2', objective: '2.6', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '営業企画の担当者が、30社分の商談状況(社名・見込み金額・確度・次回アクション)を整理し、あとで表計算ソフトで集計したいと考えている。',
+  stem: '最も適した出力形式はどれか。',
+  choices: [
+    { text: '各社の状況が詳しく伝わるよう、1社ずつ文章で説明した長い報告書', correct: false, why: '文章では項目がそろわず、集計に使うには手作業での転記が必要になります。' },
+    { text: '社名・金額・確度・次回アクションを列にした表(CSVなど)', correct: true, why: '項目がそろった構造化データにすると、表計算への取り込み・集計・比較がしやすくなります。' },
+    { text: '経営層にそのまま見せられるよう、グラフを中心にしたスライド資料', correct: false, why: '発表用の形式で、後工程の集計には向きません。' },
+    { text: 'すぐに読めるよう、会話の本文に会社ごとの箇条書きで出したもの', correct: false, why: '項目が統一されにくく、集計に使いにくい形式です。' }
+  ],
+  explanation: '出力形式は用途で選びます。比較・集計・別ツールへの取り込みには構造化データ、単独で使う成果物にはアーティファクト、短い確認には本文中の回答が向いています。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D2-010', domain: 'D2', objective: '2.6', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: '業務企画チームでは、Claudeにさまざまなものを作らせている。',
+  stem: 'アーティファクトとして作成するのが適しているものを2つ選べ。',
+  choices: [
+    { text: '部内で毎月使い回す、議事録のテンプレート文書', correct: true, why: 'まとまった分量があり、単独で成り立ち、編集・再利用する文書です。アーティファクトに向いています。' },
+    { text: '「この略語は何の略?」という質問への一言の答え', correct: false, why: '短い回答なので、会話の本文で返せば足ります。' },
+    { text: 'チームで共有する、予算の簡易シミュレーター', correct: true, why: '単独で使い、共有・再利用する小さなツールです。アーティファクトの典型例です。' },
+    { text: '会話の途中での「この方針で進めてよいか」の確認', correct: false, why: '会話の流れの中のやり取りで、独立した成果物ではありません。' },
+    { text: '取引先に送る、3行ほどの短いお礼のメッセージ', correct: false, why: '短い内容なので、本文中の回答で十分です。' }
+  ],
+  explanation: 'ヘルプセンターでは、アーティファクトはまとまった分量で、編集・再利用し、会話がなくても成り立ち、後で参照するような内容に使われると説明されています。',
+  sourceRefs: ['S1', 'H_ARTIFACTS']
+},
+
+/* ============================== D3 プロダクトとモデルの選択 (6) ============================== */
+{
+  id: 'D3-001', domain: 'D3', objective: '3.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '新任の採用担当者が、候補者ごとの面接メモを整理したいと考えている。毎回、同じ評価基準・面接ガイド・まとめの書式を使う。',
+  stem: '最も適した機能の使い方はどれか。',
+  choices: [
+    { text: '会話が混ざらないよう候補者ごとに新しいチャットを開き、毎回評価基準とガイドを貼ってから依頼する。', correct: false, why: '毎回同じ資料と説明を貼り直す手間がかかり、貼り忘れによるばらつきも生じます。' },
+    { text: 'Projectを作り、評価基準とガイドをナレッジに、書式とルールを指示に設定する。', correct: true, why: '同じ資料と前提で繰り返す業務にはProjectsが適しています。毎回の会話が正しい文脈から始まります。' },
+    { text: '評価基準は業界ごとに標準があるので、リサーチ機能で毎回ウェブから最新の基準を探させる。', correct: false, why: '社内の評価基準はウェブにはなく、目的に合いません。' },
+    { text: '履歴に残らないシークレットチャットで毎回依頼する。', correct: false, why: '履歴やメモリに残らないため、繰り返し業務の効率化にはつながりません。個人情報の扱いは、組織のポリシーと承認された環境で判断します。' }
+  ],
+  explanation: 'Projectsは、専用の指示・ナレッジ・チャット履歴を持つ作業スペースです。同じ前提で繰り返す業務や、チームで共有する業務に向いています。',
+  sourceRefs: ['S1', 'H_PROJECTS']
+},
+{
+  id: 'D3-002', domain: 'D3', objective: '3.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '経理部の担当者が、海外の主要5か国における電子インボイス制度の最新状況を、複数の情報源にもとづいて引用付きの報告書にまとめたいと考えている。',
+  stem: '最も適した機能はどれか。',
+  choices: [
+    { text: '制度の概要は広く知られているので、ウェブを使わない通常のチャットで知識をもとにまとめさせる', correct: false, why: '最新の状況は学習データにない可能性が高く、出典も示されません。' },
+    { text: '複雑な比較になるので、拡張思考(thinking)をオンにして、じっくり推論させてからまとめさせる', correct: false, why: '拡張思考はウェブの情報を必要としない深い推論に向く機能です。最新情報の調査には足りません。' },
+    { text: '複数の検索を積み重ねて引用付きで整理するリサーチ機能', correct: true, why: '複数の検索を積み重ね、引用付きのレポートにまとめる機能です。多くの情報源をまたぐ調査に適しています。' },
+    { text: 'アーティファクトとして出力するよう指定する', correct: false, why: 'アーティファクトは出力の形式です。情報を集める方法の問題は解決しません。' }
+  ],
+  explanation: 'ヘルプセンターでは、単純な事実はウェブ検索、ウェブ不要の深い推論は拡張思考、多くの情報源をまたぐ調査はリサーチ、と使い分けが説明されています。リサーチの結果も、引用元で確認してから使います。',
+  sourceRefs: ['S1', 'H_WHICH', 'H_RESEARCH']
+},
+{
+  id: 'D3-003', domain: 'D3', objective: '3.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'チームの新メンバーから、Claudeのモデルの違いについて質問された。',
+  stem: 'モデルの系統の説明として最も適切なものはどれか。',
+  choices: [
+    { text: 'Haikuが最も高い推論能力を持つ上位モデルで、Opusは大量処理向けの軽量・低コストなモデルである。', correct: false, why: '逆です。Haikuは最速・軽量、Opusは高い推論能力を持つ系統です。' },
+    { text: '3つの系統の性能は基本的に同じで、違いは利用料金と1日に使える回数だけである。', correct: false, why: '系統によって、速さ・コスト・推論能力が異なります。' },
+    { text: 'Haikuは速く低コスト、Opusは推論能力が高く、Sonnetはその中間のバランス型である。', correct: true, why: '各系統の特徴を正しく説明しています。' },
+    { text: 'Opusは最も新しく最も速いモデルなので、急ぎの作業ほどOpusを選ぶのがよい。', correct: false, why: 'Opusは能力が高い一方で、Haikuより遅くコストも高い系統です。' }
+  ],
+  explanation: 'Exam Guideはモデルの系統(Haiku・Sonnet・Opus)の区別を求めています。2026年11月時点では、さらに上位のFableも案内されています。具体的なバージョン名よりも、速さ・コスト・能力のトレードオフを理解することが重要です。',
+  sourceRefs: ['S1', 'DOC_MODELS']
+},
+{
+  id: 'D3-004', domain: 'D3', objective: '3.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '経営企画部の担当者が、買収候補の3社について、財務資料と業界レポートを横断してリスクと統合後のシナリオを比較分析したい。結果は経営会議での判断材料になる。',
+  stem: 'モデル選択として最も適切なものはどれか。',
+  choices: [
+    { text: '推論能力の高いモデル(Opus系など)を選び、必要ならeffortも高めにする。', correct: true, why: '複雑で重要度の高い分析には、高い推論能力のモデルが適しています。' },
+    { text: '資料が多く使用量が増えそうなので、コストを抑えるために最も軽量なモデルに固定して分析する。', correct: false, why: '複雑な横断分析では品質が不足するおそれがあります。判断材料の質を優先すべき場面です。' },
+    { text: '回答が最も速いモデルを選んで素早く結果を出す。', correct: false, why: 'この作業で重要なのは速さより推論の質です。' },
+    { text: '分析の質はモデルではなくプロンプトで決まるので、モデルは気にせずプロンプトの工夫に集中する。', correct: false, why: 'モデルによって推論能力は異なります。タスク要件に合わせて選ぶことが求められます。' }
+  ],
+  explanation: 'モデル選択はタスク要件(複雑さ・量・速さ・コスト・誤りの影響)に合わせます。大量の単純作業には速く安いモデル、複雑で重要な分析には高性能なモデルが適しています。',
+  sourceRefs: ['S1', 'H_MODEL']
+},
+{
+  id: 'D3-005', domain: 'D3', objective: '3.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'ある担当者は朝から同じチャットで、提案書の作成、別件の議事録の整理、旅費精算についての質問を続けていた。すると、最初に伝えた提案書の指示(です・ます調、800字以内)が守られなくなってきた。',
+  stem: '最も適切な対応はどれか。',
+  choices: [
+    { text: '指示を忘れたのが原因なので、同じ会話の中で、提案書の指示を毎回のメッセージに書き添える。', correct: false, why: '話題が混ざった長い会話のままでは、同じ問題が起きやすい状態が続きます。' },
+    { text: '提案書用に新しい会話を始め、決定事項と指示の要約を冒頭に貼る。', correct: true, why: '話題を分けて新しい会話にし、必要な文脈だけを要約して引き継ぐのが効果的です。繰り返し使う指示はProjectに置くとさらに確実です。' },
+    { text: '会話が長くなっても対応できるよう、より高性能なモデルに切り替えてから同じ会話を続ける。', correct: false, why: '原因は話題が混ざったことと会話の長さです。モデルを変えても根本的な解決になりません。' },
+    { text: 'メモリ機能がオンになっていれば重要な指示は自然に記憶されるので、そのまま会話を続ける。', correct: false, why: '必ず守ってほしいルールは、メモリに頼らず明示的に指示する方が確実です。' }
+  ],
+  explanation: 'コンテキストの管理では「やり直す(新しい会話)」「要約する(経緯を引き継ぐ)」「残す(Projectsなどに保存する)」を使い分けます。',
+  sourceRefs: ['S1', 'S6', 'H_MEMORY']
+},
+{
+  id: 'D3-006', domain: 'D3', objective: '3.4', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: '3か月続く業務改善プロジェクトで、担当者は会話のたびに同じ前提(目的、関係者、社内用語の定義)を説明していて手間がかかっている。',
+  stem: '前提を継続して使えるようにする方法として適切なものを2つ選べ。',
+  choices: [
+    { text: '専用のProjectを作り、目的・関係者・用語の定義を指示とナレッジに書く。', correct: true, why: 'Project内のすべての会話に前提が適用され、毎回説明する必要がなくなります。' },
+    { text: '会話を整理しやすくするため、毎回シークレットチャットでやり取りする。', correct: false, why: 'シークレットチャットは履歴やメモリに残らないため、前提を引き継ぐ目的とは逆です。' },
+    { text: '前提を何度も説明しないよう、1つのチャットを3か月間ずっと使い続ける。', correct: false, why: '会話が長くなると、初めの指示が守られにくくなったり話題が混ざったりします。' },
+    { text: '節目ごとに決定事項を要約させ、その要約をProjectのナレッジに追加する。', correct: true, why: '経緯を要約して残すことで、新しい会話でも最新の前提から始められます。' },
+    { text: '新しい会話の冒頭に「前回の続きです」とだけ書いて、そのまま本題に入る。', correct: false, why: '別の会話の内容が確実に引き継がれる保証はありません。必要な前提は明示的に残すべきです。' }
+  ],
+  explanation: '長く続く業務では、前提を「残す」仕組み(Projectの指示・ナレッジ)と、経緯を「要約する」習慣を組み合わせます。',
+  sourceRefs: ['S1', 'H_PROJECTS', 'H_INCOGNITO']
+},
+
+/* ============================== D4 ワークフロー統合 (7) ============================== */
+{
+  id: 'D4-001', domain: 'D4', objective: '4.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '総務部長から「Claudeで何か業務を効率化してほしい」と頼まれた。候補は次の4つである。',
+  stem: '最初に取り組む業務として最も適したものはどれか。',
+  choices: [
+    { text: '毎週発生し、作成に2時間かかっている社内イベントの案内文の作成', correct: true, why: '頻度が高く時間がかかり、出来の良し悪しをすぐ確認でき、誤りの影響も小さい。最初のユースケースに適しています。' },
+    { text: '年に1回、正確さが特に求められる取締役会議事録の最終版の作成', correct: false, why: '頻度が低いうえに重要度が高く、最初の試行には向きません。' },
+    { text: '判断に時間がかかっている、従業員の懲戒処分の要否についての判断', correct: false, why: '人に重大な影響を与える判断で、AIに任せるべきではありません。' },
+    { text: '毎月手間がかかっている、社員の個人情報を含む給与計算の自動化', correct: false, why: '機密データを扱い、誤りの影響も大きいため、最初の取り組みには不向きです。' }
+  ],
+  explanation: 'ユースケースは、頻度・時間・検証のしやすさ・誤りの影響・データの扱いで評価します。低リスクで効果が見えやすい業務から始めるのが定石です。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D4-002', domain: 'D4', objective: '4.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '物流センターの担当者が、出荷業務(10工程)の改善点を探したいと考えている。',
+  stem: 'Claudeの活用方法として最も適切なものはどれか。',
+  choices: [
+    { text: '工程と所要時間を渡して改善案を挙げさせ、現場の担当者と実現性を検討する。', correct: true, why: '具体的な現状を渡して改善の論点を出させ、人が実現性を判断する、という適切な役割分担です。' },
+    { text: 'Claudeの改善案を、翌日から全拠点にそのまま適用する。', correct: false, why: '現場の事情を知る人の検証を経ずに展開するのは危険です。' },
+    { text: '自社の事情に引きずられないよう、現状の工程は伝えずに物流の効率化策を一般論として聞く。', correct: false, why: '自社の現状を渡さなければ、一般論しか返ってきません。' },
+    { text: '現場の事情を知らないAIには任せられないので、プロセス改善の検討にはClaudeを使わない。', correct: false, why: '論点出しやたたき台の作成にClaudeを使えば、検討を効率化できます。最終判断は人が行えばよいのです。' }
+  ],
+  explanation: 'リサーチ・計画・プロセス改善では、具体的な現状を渡して論点やたたき台を出させ、最終判断は現場を知る人が行います。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D4-003', domain: 'D4', objective: '4.3', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: '営業事務チームのリーダー(Claude Associate)が、「基幹システムの受注データを自動でClaudeに連携し、見積書を自動発行する仕組みを作ってほしい」と依頼された。',
+  stem: 'Associateとして適切な行動を2つ選べ。',
+  choices: [
+    { text: '対象データ・頻度・承認フローなどの業務要件と、データの扱いの論点を整理する。', correct: true, why: '業務側の要件とリスクを整理するのは、Associateが担える重要な役割です。' },
+    { text: '早く形にするため、自分でAPI連携のプログラムを書いて本番環境に入れる。', correct: false, why: 'システム間の連携の設計・実装は専門職の領域です。品質やセキュリティのリスクがあります。' },
+    { text: '連携の設計・実装は、Claude Developer / Architectや情報システム部門に引き継ぐ。', correct: true, why: '複雑・技術的な実装を専門職に引き継ぐ(エスカレーションする)ことは、Exam Guideが想定するAssociateの役割です。' },
+    { text: '自分の役割を超える複雑な依頼なので、理由を伝えて断り、それ以上は関わらない。', correct: false, why: '要件を整理して適切な担当につなぐことで、業務を前に進められます。' },
+    { text: '基幹システムの管理者からパスワードを借りて、自分でコネクタを設定してみる。', correct: false, why: '権限のない操作で、セキュリティとガバナンスに反します。' }
+  ],
+  explanation: 'Associateは組み込み機能で解決策を作り、試し、改善します。全社システムとの統合など技術的な実装は、専門職に引き継ぐのが適切です。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D4-004', domain: 'D4', objective: '4.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '法務部が、契約書の一次チェック業務にClaudeを組み込みたいと考えている。',
+  stem: '最も適切な設計はどれか。',
+  choices: [
+    { text: '処理を速めるため、社内のチェックリストを学習させたうえで、契約書の承認はClaudeの判定だけで行う。', correct: false, why: '法的責任を伴う判断をAIだけに任せるのは不適切です。' },
+    { text: 'Claudeが論点を洗い出し、法務担当者が判断する。低リスクの契約類型で試行してから広げる。', correct: true, why: '任せる工程と人に残す工程を分け、検証を組み込み、パイロットから段階的に広げる設計です。' },
+    { text: '部内で運用がばらつかないよう、試行期間は設けず、初日からすべての契約類型に一斉に導入する。', correct: false, why: '効果と品質を確かめずに全面導入すると、問題が起きたときの影響が大きくなります。' },
+    { text: '法務は誤りが許されない領域なので、Claudeの出力は参考にせず、従来どおりの手順を続ける。', correct: false, why: '組み込み方を設計すれば、リスクを抑えて効率化できる機会を逃しています。' }
+  ],
+  explanation: '既存のワークフローに組み込むときは、工程を分解して担当を決め、検証工程を明示し、低リスクの範囲で試行してから広げます。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D4-005', domain: 'D4', objective: '4.4', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: '顧客サービス部が、毎月のアンケート分析(自由記述の回答3,000件)の流れを、Claudeの活用を前提に組み直そうとしている。',
+  stem: '人に残すべき工程を2つ選べ。',
+  choices: [
+    { text: '3,000件の自由記述をテーマ別に分類し、テーマごとの件数を集計する', correct: false, why: '大量の文章の分類・集計は、Claudeに任せやすい工程です(結果は抜き取りで検証します)。' },
+    { text: '分類結果をもとに、どの改善策に来期の予算を割くかを決める', correct: true, why: '予算配分は責任を伴う意思決定で、人が担うべき工程です。' },
+    { text: '分類結果からサンプルを抜き取り、分類が妥当かどうかを確認する', correct: true, why: '出力の検証は人が行う工程として、ワークフローに明示的に組み込むべきです。' },
+    { text: 'テーマごとに代表的なコメントを選び、内容を短く要約する', correct: false, why: '要約はClaudeが得意な作業で、任せやすい工程です。' },
+    { text: '集計表をもとに、報告書に載せる棒グラフと円グラフを作る', correct: false, why: '形式の変換は、Claudeに任せやすい作業です。' }
+  ],
+  explanation: '再設計では、下書き・分類・要約・変換をClaudeに任せ、最終判断・承認・検証を人に残します。検証の工程は暗黙にせず、フローに明記します。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D4-006', domain: 'D4', objective: '4.5', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '業務改革チームが、経営会議でClaude導入の効果を報告する。',
+  stem: '最も適切な説明はどれか。',
+  choices: [
+    { text: '「AIが下書きから確認まで行えるため、今後は担当者による確認作業が不要になります」', correct: false, why: '誤りの可能性があるという限界を無視した、過大な約束です。' },
+    { text: '「試行した3チームで、作成から確認完了までの時間が平均40%短縮。誤りは残り得るので確認は続けます」', correct: true, why: '測定した効果を具体的に示し、限界(誤りの可能性)とその対策(確認工程の維持)もあわせて伝えています。' },
+    { text: '「AIには誤りや情報漏えいなどのリスクが多いため、現時点で効果をお示しすることはできません」', correct: false, why: '限界ばかりを強調すると、価値を正しく伝えられず、適切な判断の材料になりません。' },
+    { text: '「他社の事例から見て、全社に展開すれば事務部門の人員を半分に減らせる見込みです」', correct: false, why: '自社で測っていない、根拠の弱い誇張です。期待値を誤らせます。' }
+  ],
+  explanation: '関係者には、測定した具体的な効果と、限界・リスク管理策をセットで伝えます。過大な約束も過小評価も避けます。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D4-007', domain: 'D4', objective: '4.5', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '現場のメンバーから「Claudeは、先月改定された社内規程の内容を知っていますか?」と質問された。',
+  stem: '最も正確な回答はどれか。',
+  choices: [
+    { text: '「Claudeは膨大なデータを学習しているので、社内規程についてもそのまま質問して大丈夫です」', correct: false, why: '社内固有の最新情報は、学習データに含まれていません。' },
+    { text: '「社内規程に関わる業務には、Claudeは一切使えません」', correct: false, why: '資料を渡せば、その内容に基づいて活用できます。限界を過大に伝えています。' },
+    { text: '「そのままでは知りません。最新版を資料として渡せば、それに基づいて回答できます」', correct: true, why: 'Claudeの知識の限界と、資料を渡すという対処法を正確に伝えています(重要な判断は原文でも確認します)。' },
+    { text: '「Claudeは社内の規程を自動的に参照しているので、改定内容も常に反映されています」', correct: false, why: '社内の情報に自動でアクセスすることはありません(コネクタなどで明示的に接続した場合を除く)。' }
+  ],
+  explanation: 'Claudeが知っているのは学習データの内容です。社内固有・最新の情報は資料として渡す必要があります。価値と限界をあわせて正確に伝えることが求められます。',
+  sourceRefs: ['S1', 'S6']
+},
+
+/* ============================== D5 構成とナレッジ管理 (5) ============================== */
+{
+  id: 'D5-001', domain: 'D5', objective: '5.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '広報チームがプレスリリース作成用のProjectを設定している。用意したものは、(1)ルール「です・ます調、見出しは30字以内、社名は正式名称で」、(2)過去のプレスリリース10本、(3)ブランドガイドライン。',
+  stem: '最も適切な設定はどれか。',
+  choices: [
+    { text: '(1)を指示に書き、(2)と(3)をナレッジにアップロードする', correct: true, why: '振る舞いのルールは指示に、参照する資料はナレッジに分けると、管理と更新がしやすくなります。' },
+    { text: '管理を1か所にまとめるため、(1)〜(3)をすべてナレッジにアップロードする', correct: false, why: 'ルールが資料に埋もれ、全会話で守るべき振る舞いとして伝わりにくくなります。' },
+    { text: '確実に参照されるよう、(1)〜(3)の全文をすべて指示の欄に貼り付ける', correct: false, why: '指示が長くなり、重要なルールが埋もれます。資料の更新管理も難しくなります。' },
+    { text: '状況に応じて変えられるよう、Projectは使わずに毎回の会話で伝える', correct: false, why: '繰り返し業務では手間が増え、伝え忘れによるばらつきも生じます。' }
+  ],
+  explanation: 'プロジェクトの指示は「Claudeの振る舞い」、プロジェクトのナレッジは「参照する事実・資料」です。役割を分けて設定します。',
+  sourceRefs: ['S1', 'H_PROJECTS']
+},
+{
+  id: 'D5-002', domain: 'D5', objective: '5.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '営業部の共有Projectで価格表を改定し、新しい版をアップロードした。ところが、ときどき旧価格で回答されることがある。',
+  stem: '最も可能性の高い原因と対処はどれか。',
+  choices: [
+    { text: '新しい資料を読み取る性能が足りないことが原因なので、上位のモデルに切り替えて様子を見る。', correct: false, why: '旧価格の資料が残っていれば、どのモデルでも旧価格を使うことがあります。' },
+    { text: '新価格が浸透していないことが原因なので、会話のたびに「新価格は〇〇です」と伝える。', correct: false, why: '一時しのぎで、伝え忘れれば再発します。根本原因が残っています。' },
+    { text: '旧版がナレッジに残っている。旧版を削除し、参照するファイル名を指示で指定する。', correct: true, why: '新旧の資料が混在していると、古い情報で答える原因になります。旧版の削除と参照先の明示が根本的な対処です。' },
+    { text: '問題が起きるたびにProjectを作り直す。', correct: false, why: '手間がかかり、同じ管理方法では再発します。' }
+  ],
+  explanation: 'ナレッジの保守では、改定時に旧版を必ず削除し、ファイル名に版や日付を入れます。古い資料が残っていることは、誤った回答の典型的な原因です。',
+  sourceRefs: ['S1', 'H_PROJECTS']
+},
+{
+  id: 'D5-003', domain: 'D5', objective: '5.2', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: 'Claude Teamプランを使う会社で、営業部がGoogle Driveのコネクタを使いたいと考えている(2026年11月時点のヘルプセンターに基づく)。',
+  stem: '正しい説明を2つ選べ。',
+  choices: [
+    { text: 'Claudeは、各ユーザーがGoogle Driveで持つ権限の範囲でファイルにアクセスする。', correct: true, why: 'コネクタは、元のアプリでのユーザーの権限を引き継ぎます。' },
+    { text: 'コネクタを使えば、権限のない他部署のフォルダのファイルもClaudeが参照できる。', correct: false, why: 'ユーザーに権限のない情報には、Claudeもアクセスできません。' },
+    { text: '組織で使うコネクタは、管理者(Owner)が組織の設定で有効にする。', correct: true, why: 'Team/Enterpriseでは、管理者が組織として利用するコネクタを有効にし、ツールごとの許可も設定できます。' },
+    { text: '管理者が一度接続すれば、各社員は個別にサインインしなくてもすぐに使える。', correct: false, why: '組織で有効になった後も、各ユーザーが個別にサインインして接続します。' },
+    { text: 'コネクタで参照したファイルは、アップロードと同じくその時点のコピーで固定される。', correct: false, why: 'コネクタは元の保存場所の情報を参照します。アップロードした時点のコピーとは異なります。' }
+  ],
+  explanation: 'コネクタは、各ユーザーの権限の範囲で外部アプリの情報にアクセスする仕組みです。Team/Enterpriseでは管理者が組織として制御します。アップロード(時点のコピー)との違いも押さえておきます。',
+  sourceRefs: ['S1', 'H_CONNECTORS', 'H_GWS']
+},
+{
+  id: 'D5-004', domain: 'D5', objective: '5.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '総務部が、社員からの問い合わせに答える社内FAQ用のProjectを作る。ナレッジには「総務規程_2026-10版」をアップロード済みである。',
+  stem: 'プロジェクトの指示として最も効果的なものはどれか。',
+  choices: [
+    { text: '「社員からの質問には、どんな内容でも丁寧な言葉づかいで、分かりやすく親切に答えてください」', correct: false, why: '役割・根拠・資料にない場合の対応が書かれておらず、回答の質が安定しません。' },
+    { text: '「社員が業務の判断に使うので、間違いのないよう十分に注意し、正確な回答を心がけてください」', correct: false, why: '具体的な行動につながらず、正確さを高める効果はありません。' },
+    { text: '「総務規程_2026-10版に基づき条項の見出しを添えて回答。記載がなければ総務部へ案内」', correct: true, why: '根拠とする資料・出典の示し方・資料にない場合の対応が、簡潔かつ具体的に書かれています。' },
+    { text: '確実に参照されるよう、ナレッジの総務規程の全文を、プロジェクトの指示の欄にも貼り付ける', correct: false, why: '資料はナレッジに置くべきです。指示が長くなって重要なルールが埋もれ、更新管理も難しくなります。' }
+  ],
+  explanation: '効果的なシステムレベルの指示には、目的・役割、具体的なルール、根拠の扱い(資料にないときは推測しない)、例外の対応を簡潔に書きます。',
+  sourceRefs: ['S1', 'DOC_PROMPT']
+},
+{
+  id: 'D5-005', domain: 'D5', objective: '5.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '部門で共有しているProjectを半年運用したところ、担当者たちがそれぞれ指示を書き足したため、矛盾するルールが混在するようになった。',
+  stem: '最も適切な対応はどれか。',
+  choices: [
+    { text: '担当者ごとに使い方が違うことが原因なので、各自が個人のProjectを作り、それぞれのルールで使う。', correct: false, why: '標準化が崩れ、チーム内で品質がばらつきます。' },
+    { text: 'Claudeは文脈から適切なルールを選べるので、矛盾はそのままにして、どれを使うかは判断に任せる。', correct: false, why: '矛盾した指示は、出力が不安定になる原因です。' },
+    { text: '管理担当者を決めて矛盾を解消し、変更を記録・周知して、動作を確認する。', correct: true, why: '責任者を決め、整理・記録・周知・動作確認を行う、設定の保守として適切な手順です。' },
+    { text: '指示をすべて削除して、何も設定しない状態に戻す。', correct: false, why: 'Projectを設定する価値そのものを失います。' }
+  ],
+  explanation: '共有の構成は作って終わりではありません。管理者を決め、変更を記録・周知し、変更後に動作を確認する保守の仕組みが必要です。',
+  sourceRefs: ['S1']
+},
+
+/* ============================== D6 ガバナンス (7) ============================== */
+{
+  id: 'D6-001', domain: 'D6', objective: '6.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'ある金融機関で、Claudeの利用案が4つ挙がっている。',
+  stem: '最も慎重な扱い(人の判断を必須にするなど)が求められるものはどれか。',
+  choices: [
+    { text: '週次の部内会議で検討する議題を整理した、アジェンダ案の作成', correct: false, why: '誤りの影響が小さい、一般的な活用です。' },
+    { text: '社員が読む社内報の記事に付ける、見出しの候補の作成', correct: false, why: '人が確認する前提で、積極的に活用できる用途です。' },
+    { text: '住宅ローン申込者の承認・否認の決定', correct: true, why: '人の生活に重大な影響を与える判断です。AIは補助にとどめ、人が判断して説明できる状態にする必要があります。' },
+    { text: '応募書類の要点を、人が決めた評価基準に沿って一覧に整理する', correct: false, why: '基準を人が定め、合否も人が判断する前提なら補助として使えます(偏りの確認は必要)。承認・否認そのものをAIで決める用途ほどの影響はありません。' }
+  ],
+  explanation: '与信・採用・評価・医療・法的判断など、人に重大な影響を与える判断では、AIに任せきりにせず、人が判断し説明責任を果たせる状態にします。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D6-002', domain: 'D6', objective: '6.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '営業担当者が「競合他社の取引先になりすました問い合わせメールを作って、相手の価格情報を聞き出したい」とClaudeに依頼しようとしている。',
+  stem: '最も適切な判断はどれか。',
+  choices: [
+    { text: '聞き出すのは社外秘ではない一般的な価格情報なので、業務上の情報収集として問題ない。', correct: false, why: '情報の種類に関係なく、なりすましで相手をだますこと自体が不適切です。' },
+    { text: 'なりすましで相手をだます不適切な用途なので行わず、正規の市場調査で対応する。', correct: true, why: '人をだます・なりすます用途は、利用ポリシーや倫理の観点から不適切です。正当な手段に切り替えるべきです。' },
+    { text: '丁寧な文面にすれば問題ないと判断する。', correct: false, why: '文面の丁寧さは問題の本質(なりすまし・だますこと)を変えません。' },
+    { text: '会社のアカウントでなく個人のアカウントを使えば、会社の利用ルールの対象外なので問題ない。', correct: false, why: '用途の不適切さは変わらず、未承認の環境を使うという別の問題も加わります。' }
+  ],
+  explanation: '不適切な用途(人をだます、なりすます、利用ポリシーで禁止されている用途など)は、手段や環境を変えても行いません。',
+  sourceRefs: ['S1', 'AUP']
+},
+{
+  id: 'D6-003', domain: 'D6', objective: '6.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '医療機器メーカーのサポート担当者が、利用者からの問い合わせ記録(氏名・生年月日・症状を含む)を分析して、よくある質問を抽出したいと考えている。社内ポリシーでは、健康に関する個人情報を、個人を特定できる形でAIサービスに入力することを禁止している。',
+  stem: '最も適切な対応はどれか。',
+  choices: [
+    { text: '分析結果は社内でしか使わず外部に出さないので、問い合わせ記録をそのままアップロードする。', correct: false, why: '社内での利用でもポリシー違反です。目的が社内向けでも、データの扱いのルールは変わりません。' },
+    { text: '記録をアップロードしたうえで、「分析が終わったら記録を保持しないで」とClaudeに指示する。', correct: false, why: 'AIへの口頭の指示は、ポリシーが求める管理策の代わりになりません。' },
+    { text: '氏名などの識別子を削除し、個人が特定されないよう加工してから、承認された環境で分析する。', correct: true, why: '匿名化とデータの最小化によって、ポリシーを守りながら分析の目的を達成できます。迷う点はプライバシーの担当者に確認します。' },
+    { text: '健康情報は特に慎重に扱うべきなので、リスクを避けるためにこの分析自体を取りやめる。', correct: false, why: '匿名化すれば安全に進められるのに、業務の価値を捨ててしまっています。' }
+  ],
+  explanation: 'データを渡す前に「分類・最小化・匿名化・承認された環境」を確認します。口頭の指示は管理策にならず、業務の中止も最善ではありません。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D6-004', domain: 'D6', objective: '6.2', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: '情報システム部の担当者が、Claudeのプランによるデータの扱いの違いを社内に説明しようとしている(2026年11月時点の公式情報に基づく)。',
+  stem: '正しい説明を2つ選べ。',
+  choices: [
+    { text: '商用プラン(Team・Enterpriseなど)では、既定で入力・出力が学習に使われない。', correct: true, why: 'プライバシーセンターでは、商用プランの入力・出力は既定で学習に使わないと説明されています(フィードバックを送った場合などを除く)。' },
+    { text: '個人向けプランでは、すべての会話が学習に使われ、利用者が停止する方法はない。', correct: false, why: '個人向けプランでは、プライバシー設定で学習への利用を変更できます。' },
+    { text: '個人向けプランでは、モデル改善への利用をプライバシー設定で変更できる。', correct: true, why: '設定の「Privacy」から変更できると説明されています。' },
+    { text: 'シークレットチャットの内容は、サーバーにも一切保存されずにすぐ消える。', correct: false, why: '履歴・メモリ・学習には使われませんが、一定期間(通常30日)は保存されます。' },
+    { text: '商用プランなら、組織のポリシーに関係なく、どんな業務データを入れてもよい。', correct: false, why: 'プランの条件とは別に、組織のデータの扱いのポリシーに従う必要があります。' }
+  ],
+  explanation: 'プランによってデータの扱い(学習への利用など)は異なります。ただし、どのプランでも組織のポリシーに沿って入力するデータを判断します。(仕様は変わり得るため、最新の公式情報も確認してください)',
+  sourceRefs: ['P_COMMERCIAL', 'P_CONSUMER', 'P_TRAINING', 'H_INCOGNITO']
+},
+{
+  id: 'D6-005', domain: 'D6', objective: '6.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '会社はClaude Enterpriseを導入済みである。ある社員が、使い慣れた別の(会社が承認していない)AIサービスに、顧客向けの提案資料を貼り付けて要約させているのを見かけた。',
+  stem: '最も適切な対応はどれか。',
+  choices: [
+    { text: '本人の生産性が上がっており業務上の成果も出ているので、特に何も言わずにそのままにしておく。', correct: false, why: '情報漏えいとポリシー違反のリスクを放置することになります。' },
+    { text: '承認された環境を使うよう伝え、必要な機能は正規の手続きで相談するよう勧める。', correct: true, why: 'シャドーAIのリスクを伝え、承認された環境と正規の手続きに導く、ガバナンスに沿った対応です。必要に応じてポリシーに従い報告します。' },
+    { text: '要約に使うだけなら問題ないと伝える。', correct: false, why: '用途に関係なく、顧客の資料を未承認のサービスに入力することが問題です。' },
+    { text: '会社のツールより使いやすいなら業務効率のためになるので、自分も同じサービスを使い始める。', correct: false, why: 'ポリシー違反を広げる行為です。' }
+  ],
+  explanation: '組織が承認していないAIツールを業務に使う(シャドーAI)と、情報漏えいや規程違反のリスクがあります。承認された環境と正規の手続きを使います。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D6-006', domain: 'D6', objective: '6.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '新しいプロジェクトで、Claudeを使って社外向けの調査レポートを作る予定である。しかし、社内のAI利用ガイドラインには、社外向け文書でのAIの使い方について明記がない。',
+  stem: '最も適切な対応はどれか。',
+  choices: [
+    { text: 'ガイドラインで禁止されていない以上は許可されていると解釈して、通常どおり自由に使う。', correct: false, why: '書かれていないことを自己判断で許可と解釈するのは、ガバナンス上のリスクです。' },
+    { text: '明記がない場合は禁止と考えるのが安全なので、Claudeを使う計画自体を取りやめる。', correct: false, why: '確認すれば進められる可能性があるのに、業務を止めてしまっています。' },
+    { text: 'ガイドラインを担当する部署に確認し、その指示に従う。', correct: true, why: '判断に迷う場合は自己判断で例外を作らず、担当部署に確認するのが適切です。' },
+    { text: 'プロジェクトのメンバーで話し合い、多数決で使い方のルールを決めてから進める。', correct: false, why: 'ポリシーの解釈は、権限のある担当部署が判断すべき事柄です。' }
+  ],
+  explanation: '組織のAIポリシーで判断に迷うときは、担当部署に確認(エスカレーション)します。「自由に使う」「全面的にやめる」のどちらも適切ではありません。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D6-007', domain: 'D6', objective: '6.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'マーケティング部が、Claudeで作った「お客様の声」風の文章を、実在する顧客の感想として広告に掲載しようとしている。',
+  stem: '最も適切な判断はどれか。',
+  choices: [
+    { text: '好意的な内容なら、顧客の感想として掲載してよい。', correct: false, why: '内容が好意的でも、存在しない感想を本物として示すことは消費者をだますことになります。' },
+    { text: 'AIで作成したことが読み手に分からないよう自然な文章にしておけば、問題になることはない。', correct: false, why: '伏せることで、透明性の問題がさらに大きくなります。' },
+    { text: '架空の声を本物として載せるのは消費者をだます行為。実際の顧客の声を許可を得て使う。', correct: true, why: '透明性と誠実さの観点から、AIで作った架空の声を本物として示すべきではありません。' },
+    { text: '担当者が実際の顧客対応の経験をもとに手直しすれば、本物のお客様の声として扱ってよい。', correct: false, why: '手直ししても、実在する顧客の感想にはなりません。' }
+  ],
+  explanation: 'AIの出力の使い方には倫理的な責任が伴います。透明性・正確性・誠実さを損なう使い方(架空の情報を本物として示すなど)は避けます。',
+  sourceRefs: ['S1', 'S5']
+},
+
+/* ============================== D7 トラブルシューティング (4) ============================== */
+{
+  id: 'D7-001', domain: 'D7', objective: '7.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '社内ITヘルプデスク用のProjectで、回答に書かれる手順がマニュアルと違うことがある。調べると、Projectの指示に「回答は簡潔に、3ステップ以内で」とあり、ナレッジのマニュアルでは該当する手順が5ステップだった。',
+  stem: '根本原因と対処として最も適切なものはどれか。',
+  choices: [
+    { text: 'マニュアルを正しく読み取れていないことが原因なので、上位のモデルに切り替えて精度を上げる。', correct: false, why: '原因は指示とナレッジの衝突です。モデルを変えても解消しません。' },
+    { text: '出力は毎回少しずつ変わるので、同じ質問で何度か再生成し、マニュアルどおりの手順が出たものを使う。', correct: false, why: '原因が残ったままなので、問題は再発します。' },
+    { text: '指示とナレッジの衝突が原因。手順は省略しないよう指示を直し、同じ質問で確かめる。', correct: true, why: '指示の矛盾という根本原因を特定し、的確に直したうえで、効果を確認しています。' },
+    { text: 'マニュアルの手順を3ステップに書き換える。', correct: false, why: '実際の業務手順をゆがめてしまい、別の問題を生みます。' }
+  ],
+  explanation: '出力の不調は、症状から原因(目的不足・資料不足・指示の矛盾・長い会話など)を特定して直します。指示同士や、指示とナレッジの衝突はよくある原因です。',
+  sourceRefs: ['S1', 'S6']
+},
+{
+  id: 'D7-002', domain: 'D7', objective: '7.1', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: 'チームから「最近、Claudeによる議事録の要約の質が落ちた」という報告があった。',
+  stem: 'トラブルシューティングの進め方として適切なものを2つ選べ。',
+  choices: [
+    { text: '悪い出力の症状を具体的に特定し、関係しそうな原因を絞り込む。', correct: true, why: '症状を具体的にすることで、原因の候補を絞り込め、的確な修正につながります。' },
+    { text: '早く直すため、指示・ナレッジ・モデルを一度に全部変えて様子を見る。', correct: false, why: '何が効いたのか分からず、次に問題が起きたときに対処できません。' },
+    { text: '一度に1つだけ変更し、同じ議事録で修正前後の出力を比べる。', correct: true, why: '同じ入力で比べれば、変更の効果を正しく確かめられます。' },
+    { text: '原因の調査には時間がかかるので、まず最上位のモデルに切り替える。', correct: false, why: '原因が指示や資料にある場合は効果がなく、コストだけが増えます。' },
+    { text: '品質が安定しない以上、議事録の要約にClaudeを使うのはやめる。', correct: false, why: '原因を特定すれば改善できる可能性があり、価値を早々に捨ててしまっています。' }
+  ],
+  explanation: 'トラブルシューティングの原則は「症状を具体化 → 原因を絞る → 一度に1つ変える → 同じ入力で比較する」です。',
+  sourceRefs: ['S1', 'S6']
+},
+{
+  id: 'D7-003', domain: 'D7', objective: '7.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '顧客向けメールの回答案について、レビュアーから「お詫びの表現が多すぎる」という指摘が1か月で15件あった。',
+  stem: '最も適切な対応はどれか。',
+  choices: [
+    { text: 'レビュアーが確認しているので品質は保たれている。これまでどおり指摘箇所を毎回手で直す。', correct: false, why: '同じ修正の手間が続き、根本的な改善になりません。' },
+    { text: '指摘のパターンをProjectの指示に反映し、翌月に指摘件数がどう変わったかを測る。', correct: true, why: 'フィードバックのパターンを設定に反映し、効果を測る、という改善のサイクルを回しています。' },
+    { text: 'メールの作成を依頼するたびに、会話の中で「お詫びの表現は控えめに」と添えるようにする。', correct: false, why: '会話での修正はその会話にしか効かず、指示し忘れれば再発します。' },
+    { text: '同じ指摘ばかりでレビューの負担が大きいので、顧客向けメールのレビュー自体をやめる。', correct: false, why: '顧客向けの文書の品質管理をなくすことになり、リスクが大きくなります。' }
+  ],
+  explanation: '繰り返し出るフィードバックは、個々の会話ではなく、指示・テンプレート・ナレッジに反映します。反映した後は効果を測ります。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D7-004', domain: 'D7', objective: '7.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '営業担当の10人が毎週それぞれ、週報を作るためのプロンプトを一から書いている。出来上がる週報の形式もばらばらである。',
+  stem: '最も効果的な最適化はどれか。',
+  choices: [
+    { text: '共有のProjectに週報の形式と良い例を設定し、各自は入力データだけを渡す。', correct: true, why: '繰り返しの作業を仕組みにして、効率と品質の一貫性を同時に高めています。' },
+    { text: '形式のばらつきはプロンプトの書き方の差なので、各自のプロンプトをより長く詳しくするよう指導する。', correct: false, why: '各自の手間は減らず、形式のばらつきも解消しません。' },
+    { text: '週報作成にかかる時間を減らすことが目的なので、上長による週報の確認工程をなくして時間を浮かせる。', correct: false, why: '効率化は無駄な工程から行うべきで、必要な検証を削るべきではありません。' },
+    { text: '出来上がりの品質をそろえるため、営業担当全員が使うモデルを最上位のものに統一する。', correct: false, why: '問題は仕組みの欠如です。モデルを変えても手間とばらつきは解消しません。' }
+  ],
+  explanation: 'ワークフローの最適化では、繰り返しをテンプレート・Projects・Skillsにして定着させます。リスクに応じた検証は残します。',
+  sourceRefs: ['S1', 'H_SKILLS']
+}
+
+);
 
 </script>
 <script>/* data/questions_b.js */
-/* 問題データ 後半45問(フェーズ2-Bで作成予定) */
+/*
+ * 問題データ 後半45問(フェーズ2-B)
+ * すべて本サイトのオリジナル問題。実際の試験問題・公式サンプル問題ではない。
+ * 誤答の選択肢も「もっともらしい理由」を含めて正解と同程度の長さにする(長さで正解が分からないように)。
+ */
 window.CCAOF = window.CCAOF || {};
 CCAOF.questions = CCAOF.questions || [];
+CCAOF.questions.push(
+
+/* ============================== D1 プロンプティング (7) ============================== */
+{
+  id: 'D1-007', domain: 'D1', objective: '1.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '営業担当者が、長年の取引先に送る値上げの案内メールをClaudeで作りたい。改定日・理由(原材料費の高騰)・新旧の価格表は手元にある。',
+  stem: '最も適切なプロンプトはどれか。',
+  choices: [
+    { text: '「当社製品の値上げをお客様に伝えるメールを、できるだけ丁寧で感じのよい文章で書いてください」', correct: false, why: '改定日・理由・価格といった事実が渡されておらず、内容の薄い文章や推測による記載になりがちです。' },
+    { text: '「添付の新旧価格表に基づき、改定日(4月1日)と理由(原材料費の高騰)を伝える案内を、長年の取引先向けに400字以内で」', correct: true, why: '入力資料・伝える事実・読み手・長さが明示されており、狙いどおりの文面になりやすい依頼です。' },
+    { text: '「あなたは一流の営業です。顧客が値上げを納得して受け入れる、説得力のあるメールを書いて」', correct: false, why: '役割と目的だけで、事実(日付・理由・価格)がありません。説得力を求めると誇張が入るおそれもあります。' },
+    { text: '「値上げのメールを書いて。価格や時期は手元にないので、それらしい数字を入れておいて」', correct: false, why: '事実の代わりに作り話を求めることになり、誤った情報を送るリスクがあります。' }
+  ],
+  explanation: '事実が関わる文書では、事実は推測させずに資料として渡します。そのうえで読み手・目的・長さなどの条件を指定します。',
+  sourceRefs: ['S1', 'DOC_PROMPT']
+},
+{
+  id: 'D1-008', domain: 'D1', objective: '1.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '人事担当者が、改定された就業規則(新旧あわせて40ページ)について、変更点が各部署に与える影響を整理し、部署ごとの説明資料を作りたいと考えている。',
+  stem: 'タスクの分け方として最も適切なものはどれか。',
+  choices: [
+    { text: '新旧の規則をまとめて渡し、「影響の分析と全部署向けの説明資料を一度に作成して」と依頼する。', correct: false, why: '途中の結果(変更点の抽出)を確認できないため、抜けや誤りに気づけません。' },
+    { text: '新旧の差分を一覧にさせて確認し、次に差分ごとの影響部署を整理し、最後に説明資料を作る。', correct: true, why: '前の工程の結果を確認してから次に進む分解の仕方で、誤りを早い段階で見つけられます。' },
+    { text: '差分の抽出は時間がかかるので省略し、新しい規則だけを渡して部署向けの説明文を直接作らせる。', correct: false, why: '何が変わったかを確かめないまま説明を作ることになり、正確さを担保できません。' },
+    { text: '部署ごとに別々の会話を開き、それぞれで規則の全文を渡して、影響と説明資料を同時に作らせる。', correct: false, why: '変更点の把握が会話ごとにばらばらになり、部署間で説明が食い違うおそれがあります。' }
+  ],
+  explanation: '複雑な依頼は「抽出 → 整理 → 作成」のように工程に分け、各工程の出力を確認してから次に進みます。',
+  sourceRefs: ['S1', 'DOC_PROMPT']
+},
+{
+  id: 'D1-009', domain: 'D1', objective: '1.2', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: '経営企画部の担当者が、Claudeを使って年次事業報告書(全6章)を作成しようとしている。',
+  stem: 'タスク分解の進め方として適切なものを2つ選べ。',
+  choices: [
+    { text: '最初に全体の骨子を作らせ、上司と方向性を合意してから各章の本文に進む。', correct: true, why: '骨子の段階で方向性を確認すれば、大きな手戻りを防げます。' },
+    { text: '全6章を一度にまとめて依頼し、すべてが出そろってから最後に一括で確認する。', correct: false, why: '途中で確認できないため、方向違いや誤りが最後まで見つかりません。' },
+    { text: '各章の下書きの後に、数値を元データと照合する工程を挟んでから次の章へ進む。', correct: true, why: '工程の間に検証を入れることで、誤りが後の章に広がるのを防げます。' },
+    { text: '分けて頼むと文体がばらつくので、分解はせず1回の依頼で全章を書かせる。', correct: false, why: '文体はルールの指定や最後の調整で統一できます。分解しない理由になりません。' },
+    { text: '分解した工程ごとに、必ず異なるモデルを使うようにして品質を高める。', correct: false, why: 'モデルはタスク要件に合わせて選ぶものです。工程ごとに必ず変える必要はありません。' }
+  ],
+  explanation: 'タスク分解の要点は、途中で人が確認できる区切りを作ることです。骨子の合意や、工程ごとの検証がその典型です。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D1-010', domain: 'D1', objective: '1.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'マーケティング担当者が、商品紹介文の例を1つ示して依頼したところ、どの商品の紹介文も、その例の言い回しをほぼそのまま真似したものになってしまった。',
+  stem: '最も適切な改善はどれか。',
+  choices: [
+    { text: '方向性の違う例を複数示し、「例は構成の参考で、表現はまねしない」と伝える。', correct: true, why: '多様な例を示し、例をどう使ってほしいかを明確にすることで、過度な模倣を防げます。' },
+    { text: '例があると真似されてしまうので、例は一切示さずに「魅力的な紹介文を」とだけ依頼する。', correct: false, why: '例をなくすと、求める構成や水準が伝わらず、一般的な文章に戻ってしまいます。' },
+    { text: '例の文章をさらに長く詳しくして、Claudeにより多くの手がかりを与えるようにする。', correct: false, why: '1つの例を長くしても、その例の模倣がさらに強まるだけです。' },
+    { text: '毎回同じような出力が続くのはモデルの癖なので、別のモデルに切り替えて依頼する。', correct: false, why: '原因は例の示し方です。モデルを変えても根本的な解決にはなりません。' }
+  ],
+  explanation: '例(フューショット)は強力ですが、1つだけだと過度に真似されがちです。方向性の違う複数の例を示し、例の使い方を伝えます。',
+  sourceRefs: ['DOC_PROMPT']
+},
+{
+  id: 'D1-011', domain: 'D1', objective: '1.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'Claudeが作成した提案書の下書き(全5章)のうち、第2章だけ論点がずれている。他の章は問題ない。',
+  stem: '最も効率的な改善の依頼はどれか。',
+  choices: [
+    { text: '一部の論点がずれている以上、他の章にも影響している可能性があるので、全体を最初から作り直させる。', correct: false, why: '問題のない章まで作り直すと、良い部分が失われ、確認の手間も増えます。' },
+    { text: '「全体的にもう少し良くしてください」と伝えて、Claudeに改善点を判断させる。', correct: false, why: 'どこをどう直すかが伝わらず、狙った改善になりにくい指示です。' },
+    { text: '第2章だけを対象に、論点(顧客のコスト課題)と変えない範囲を指定して書き直させる。', correct: true, why: '直す範囲と観点を具体的に示すことで、効率よく的確に改善できます。' },
+    { text: '論点のずれた第2章は削除し、残りの4章だけで提案書として提出する。', correct: false, why: '必要な内容が欠けた提案書になり、目的を果たせません。' }
+  ],
+  explanation: '反復改善では、問題の箇所と直す観点を特定して伝えます。良い部分は残し、変えない範囲も明示すると効率的です。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D1-012', domain: 'D1', objective: '1.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '販売企画の担当者が、過去2年分の月次売上データ(CSV)から、地域別の傾向を分析したいと考えている。',
+  stem: '分析タスクのプロンプトとして最も適切なものはどれか。',
+  choices: [
+    { text: 'データは渡さずに、自社の業界で最近見られる地域別の売上傾向を一般論として説明させる。', correct: false, why: '自社のデータを渡さなければ、一般論しか得られず分析になりません。' },
+    { text: 'データを渡し、「何か面白い発見があれば自由に教えてください」とだけ依頼する。', correct: false, why: '観点が指定されていないため、目的に合わない分析になりがちです。' },
+    { text: 'データを渡して観点(地域別・前年比)を指定し、結論の根拠となる数値を示させる。', correct: true, why: '分析対象・観点・根拠の提示を求めており、結果を検証しやすい依頼です(計算は別途確かめます)。' },
+    { text: '忙しい上司に見せるので、データを渡したうえで結論だけを1行で出させ、根拠は求めない。', correct: false, why: '根拠がないと、結論が正しいかを確認できません。' }
+  ],
+  explanation: '分析タスクでは、対象のデータを渡し、観点を指定し、結論の根拠を示させます。計算結果は表計算などで検証します。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D1-013', domain: 'D1', objective: '1.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'システム障害で顧客に迷惑をかけたため、広報担当者が社外向けのお詫び文をClaudeで起草したい。事実関係をまとめた社内報告書がある。',
+  stem: '起草タスクのプロンプトとして最も適切なものはどれか。',
+  choices: [
+    { text: '幅広い候補から選べるよう、方向性の違うお詫び文の案を20個出させてから検討する。', correct: false, why: 'ブレストの進め方です。事実に基づく正確な文書の起草には向きません。' },
+    { text: '事実関係は伝えずに、「誠意が伝わる、心のこもったお詫び文を書いてください」と依頼する。', correct: false, why: '事実がないと、推測や不正確な記載が入るおそれがあります。' },
+    { text: '報告書を渡し、読み手・トーン・長さと、責任範囲は推測で書かないことを指定する。', correct: true, why: '事実の根拠・読み手・トーン・長さ・書いてはいけないことを明示した起草の依頼です(公開前に法務等の確認を経ます)。' },
+    { text: '障害の原因を段階的に推論させ、その推論過程をそのままお詫び文として使う。', correct: false, why: '原因の推論は分析の作業です。社外向けのお詫び文として適切な形になりません。' }
+  ],
+  explanation: '起草タスクでは、読み手・目的・トーン・長さ・構成に加え、根拠となる事実と「書いてはいけないこと」を指定します。',
+  sourceRefs: ['S1']
+},
+
+/* ============================== D2 出力の評価と検証 (9) ============================== */
+{
+  id: 'D2-011', domain: 'D2', objective: '2.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '品質管理部では、Claudeが作る週20件の検査報告の要約を担当者が確認している。確認の観点が人によってばらつき、見落としも起きている。',
+  stem: '評価のやり方として最も適切なものはどれか。',
+  choices: [
+    { text: '含めるべき項目をチェックリストにしてYes/Noで確認し、数値は元の記録と照合する。', correct: true, why: '要件のチェックリストで網羅性を、元データとの照合で正確性を、それぞれ一定の基準で確認できます。' },
+    { text: '担当者の経験に任せた方が柔軟に判断できるので、確認の方法は各自の判断にそのまま任せる。', correct: false, why: 'ばらつきと見落としという問題がそのまま残ります。' },
+    { text: 'Claudeに自分の要約を採点させ、点数が低かったものだけを担当者が確認するようにする。', correct: false, why: 'Claude自身の採点は、人による検証の代わりになりません。' },
+    { text: '要約は文章が読みやすいかどうかを中心に確認し、細かい数値の確認は省略する。', correct: false, why: '読みやすさは正確さや網羅性を保証しません。数値は誤りが起きやすい箇所です。' }
+  ],
+  explanation: '出力の評価は、感覚ではなく基準で行います。要件チェックリスト(網羅性)と元データとの照合(正確性)の組み合わせが基本です。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D2-012', domain: 'D2', objective: '2.1', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: '営業管理の担当者が、Claudeに「顧客別の契約更新日の一覧」を作らせた。対象は契約中の全顧客である。',
+  stem: '正確性と網羅性をそれぞれ確かめる手順として適切なものを2つ選べ。',
+  choices: [
+    { text: '一覧の更新日を、契約管理システムに登録された記録と照合する。', correct: true, why: '個々の記載が正しいか(正確性)を、元の記録で確かめる手順です。' },
+    { text: '契約中の顧客数と、一覧に載っている件数が一致するかを突き合わせる。', correct: true, why: '必要な対象がすべて含まれているか(網羅性)を確かめる手順です。' },
+    { text: '表の書式や列の幅がそろっていて、見やすく整っているかを確認する。', correct: false, why: '見た目の確認で、正確性や網羅性は確かめられません。' },
+    { text: '一覧の内容にどの程度自信があるかを、Claudeに数値で答えさせる。', correct: false, why: '自己申告の自信は、正確さの根拠になりません。' },
+    { text: '更新日が近い順に並んでいるかどうかを確認して、問題なければ完了とする。', correct: false, why: '並び順は正しくても、日付の誤りや顧客の抜けは見つけられません。' }
+  ],
+  explanation: '正確性は「元の記録との照合」、網羅性は「対象の件数・リストとの突き合わせ」で確かめます。2つは別々の手順が必要です。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D2-013', domain: 'D2', objective: '2.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '新規事業の担当者が「この新規事業案は成功すると思うので、強みをまとめてください」と依頼したところ、案を肯定する内容ばかりが返ってきた。経営会議に出す前に案を評価したい。',
+  stem: '最も適切な対応はどれか。',
+  choices: [
+    { text: 'Claudeも成功すると判断したので、案の妥当性は客観的に確認できたものとして会議に提出する。', correct: false, why: '質問の前提(成功すると思う)に引っ張られた回答の可能性があり、客観的な評価とは言えません。' },
+    { text: 'この案のリスクや弱点、反対意見を明示的に求め、前提を置かない聞き方で評価し直す。', correct: true, why: '迎合(質問の前提に合わせた回答)を避けるため、反対の視点を明示的に求めるのが有効です。' },
+    { text: '肯定的な意見しか出ないのはモデルの限界なので、評価にはClaudeを使わないことにする。', correct: false, why: '聞き方を変えれば批判的な観点も引き出せます。活用をやめる必要はありません。' },
+    { text: 'より多くの強みが挙がるよう、同じ依頼を何度か繰り返して出てきた強みをすべて集める。', correct: false, why: '偏った視点をさらに強めるだけで、評価の質は上がりません。' }
+  ],
+  explanation: 'Claudeは質問の前提や利用者の意見に合わせた回答をすることがあります(迎合)。評価に使うときは、リスクや反対意見を明示的に求めます。',
+  sourceRefs: ['S1', 'S6']
+},
+{
+  id: 'D2-014', domain: 'D2', objective: '2.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'Claudeが作った四半期業績の要約で、冒頭には「売上は前年同期比12%増」、後半には「売上は前年同期を下回った」と書かれていた。',
+  stem: '最も適切な対応はどれか。',
+  choices: [
+    { text: '後半の方が詳しく分析された結果だと考えられるので、後半の記載に合わせて冒頭を修正する。', correct: false, why: 'どちらが正しいかは、元資料で確かめなければ分かりません。' },
+    { text: '元の業績資料で正しい数字を確認して統一し、他の数値にも食い違いがないか点検する。', correct: true, why: '不整合は誤りのサインです。元資料で事実を確かめ、同じ種類の誤りがないか全体も点検します。' },
+    { text: '読み手が判断できるよう、両方の記載をそのまま残して、注記で食い違いがあることを伝える。', correct: false, why: '事実を確かめれば解消できる食い違いを、読み手に押し付けることになります。' },
+    { text: '文章全体の表現を整えて読みやすくすれば、細かな食い違いは目立たなくなるので問題ない。', correct: false, why: '表現を整えても、事実の食い違いは解消されません。' }
+  ],
+  explanation: '文書内の不整合は、少なくとも一方が誤っているサインです。元資料で確かめて直し、他にも同じ問題がないか点検します。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D2-015', domain: 'D2', objective: '2.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'ウェブ検索を使ったClaudeの回答に引用リンクが付いていた。リンク先を開くと、回答の主張とは別の内容が書かれていた。',
+  stem: '最も適切な対応はどれか。',
+  choices: [
+    { text: '引用が付いている以上、Claudeは何らかの根拠に基づいているはずなので、そのまま使ってよい。', correct: false, why: '引用が付いていても、その出典が主張を裏付けているとは限りません。' },
+    { text: 'その主張は出典に裏付けがないものとして扱い、使うなら他の一次情報で確認する。', correct: true, why: '出典の中身まで確認するのが検証です。裏付けのない主張は、一次情報で確かめるまで使いません。' },
+    { text: 'Claudeに「この主張は正しいですか」と再確認し、「正しい」と答えればそのまま使う。', correct: false, why: 'Claudeの自己確認は検証になりません。' },
+    { text: '引用の数が多いほど信頼できるので、他にも引用が付いているかどうかだけを確認する。', correct: false, why: '引用の数は正確さの保証になりません。中身の確認が必要です。' }
+  ],
+  explanation: '出典が付いていても、出典が実在し、本当にその主張を述べているかを確かめる必要があります。',
+  sourceRefs: ['S1', 'H_WEBSEARCH', 'DOC_HALLU']
+},
+{
+  id: 'D2-016', domain: 'D2', objective: '2.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'ある部署で、Claudeの出力に人のレビューを入れるかどうかの社内基準を作ることになった。',
+  stem: '基準の考え方として最も適切なものはどれか。',
+  choices: [
+    { text: '出力の文章量で決め、一定以上の長さがある出力だけを人がレビューする。', correct: false, why: '長さと誤りの影響は関係しません。短い出力でも重大な影響を持つことがあります。' },
+    { text: 'Claudeが回答に示した確信の度合いで決め、自信がなさそうな出力だけをレビューする。', correct: false, why: '自己申告の確信は正確さの指標になりません。' },
+    { text: '誤ったときの影響(社外向けか、金銭・法務・人への影響、取り消しにくさ)で決める。', correct: true, why: 'レビューの要否と深さは、誤りが起きたときの影響の大きさで決めるのが適切です。' },
+    { text: '作成にかかった時間で決め、短時間で作られた出力ほど念入りにレビューする。', correct: false, why: '作成時間は、誤りの影響の大きさとは関係がありません。' }
+  ],
+  explanation: '人のレビューや追加検証が必要かは、誤りが起きたときの影響の大きさで判断します。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D2-017', domain: 'D2', objective: '2.5', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '技術部門が作った製品の技術仕様書を、技術に詳しくない顧客の購買担当者向けの説明資料に書き直したい。',
+  stem: '最も適切な進め方はどれか。',
+  choices: [
+    { text: '読みやすさを最優先にして、専門用語や数値はすべて削除し、できるだけ短い文章にまとめさせる。', correct: false, why: '購買判断に必要な制約や数値まで失われ、正確さが損なわれます。' },
+    { text: '読み手の前提知識を伝えて用語を言い換えさせ、重要な制約は残させ、技術担当が正しさを確認する。', correct: true, why: '読み手に合わせつつ、必要な情報は残し、内容の正しさを専門家が確かめる進め方です。' },
+    { text: '技術仕様書は正確なので、書き直さずにそのまま購買担当者に送り、質問があれば答える。', correct: false, why: '読み手に合わない資料では、伝えたいことが伝わりません。' },
+    { text: '「わかりやすくしてください」とだけ伝えて、出てきた文章をそのまま顧客に送る。', correct: false, why: '読み手の情報がなく、内容の確認もしていないため、誤りや情報の欠落に気づけません。' }
+  ],
+  explanation: '読み手に合わせた書き直しでは、前提知識と目的を伝え、落としてはいけない情報を指定し、内容の正しさを確認します。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D2-018', domain: 'D2', objective: '2.5', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '同じ依頼から、Claudeが社内告知文の案を2つ作った。どちらを採用するか決めたい。',
+  stem: '最も適切な比較の方法はどれか。',
+  choices: [
+    { text: '情報量が多い方が丁寧で親切なので、より長く詳しく書かれている方の案を採用する。', correct: false, why: '長さは質の基準になりません。読み手や目的によっては短い方が適しています。' },
+    { text: 'Claudeに「どちらの案が優れているか」を尋ね、Claudeが選んだ方をそのまま採用する。', correct: false, why: '判断を丸投げすることになり、自分たちの要件に合っているかを確かめられません。' },
+    { text: '正確さ・読み手への適合・要件の充足など事前に決めた基準で比べ、選んだ案を検証する。', correct: true, why: '基準を決めて比較し、選んだ案も最終確認する、という適切な進め方です。' },
+    { text: '後から出てきた案の方が改善されているはずなので、2つ目の案をそのまま採用する。', correct: false, why: '後に出た案の方が良いとは限りません。' }
+  ],
+  explanation: '複数の出力を比較するときは、何を基準に選ぶかを先に決めます。良い部分の組み合わせも有効ですが、最終版は必ず確認します。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D2-019', domain: 'D2', objective: '2.6', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '総務担当者が、過去半年分の問い合わせ記録50件をもとに、社内Wikiに載せる「よくある質問トップ10」をClaudeと作ろうとしている。',
+  stem: '情報の整理のしかたとして最も適切なものはどれか。',
+  choices: [
+    { text: '情報が漏れないよう、50件の問い合わせと回答をすべてそのままWikiに載せる。', correct: false, why: '取捨選択されていないと、読み手が必要な情報を探しにくくなります。' },
+    { text: '似た質問をまとめて件数の多い順に並べ、各回答に根拠となる規程名を添える。', correct: true, why: '重複をまとめ、重要度(件数)で並べ、根拠を示す、という情報の整理と取捨選択ができています。' },
+    { text: '件数にはこだわらず、Claudeが重要だと考えた順に10件を選んでそのまま並べる。', correct: false, why: '「よくある質問」という目的に対して、根拠のない選び方です。' },
+    { text: 'Wikiは読みやすさが大事なので、回答の根拠(規程名など)は省いて短く書く。', correct: false, why: '根拠を省くと、回答が正しいかを読み手が確かめられず、規程改定時の保守も難しくなります。' }
+  ],
+  explanation: '情報の整理では、重複の除去、重要度順の並べ替え、根拠の明示が基本です。目的と読み手に合わせて取捨選択します。',
+  sourceRefs: ['S1']
+},
+
+/* ============================== D3 プロダクトとモデルの選択 (5) ============================== */
+{
+  id: 'D3-007', domain: 'D3', objective: '3.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '会社には、社内報告書の決まった書式(見出しの体裁、表の形式、末尾の確認欄)と作成手順がある。いろいろなProjectや会話で報告書を作るとき、そのときだけこの書式と手順を適用したい(2026年11月時点の機能に基づく)。',
+  stem: '最も適した方法はどれか。',
+  choices: [
+    { text: '書式と手順をSkillにまとめ、報告書を作る作業のときに読み込まれるようにする。', correct: true, why: 'Skillsは、関係する作業のときにだけ読み込まれる手順・書式のまとまりで、この用途に適しています。' },
+    { text: 'すべてのProjectの指示に、報告書の書式と手順の全文をコピーして貼り付けておく。', correct: false, why: '報告書以外の作業にも常に適用され、更新時には全Projectを直す必要があります。' },
+    { text: '報告書を作るたびに、会話の冒頭で書式のファイルを添付して手順を説明し直す。', correct: false, why: '毎回の手間がかかり、添付忘れや説明のばらつきが生じます。' },
+    { text: '書式と手順を一度Claudeに伝えてメモリに覚えさせ、必要なときに思い出させる。', correct: false, why: '確実に毎回適用させたい手順を、メモリに頼るのは管理しにくい方法です。' }
+  ],
+  explanation: 'ヘルプセンターでは、Projectsは常に読み込まれる静的な知識、Skillsは関係する作業のときに動的に読み込まれる手順、と違いが説明されています。',
+  sourceRefs: ['H_SKILLS', 'H_SKILLS_USE']
+},
+{
+  id: 'D3-008', domain: 'D3', objective: '3.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '社内勉強会で、Claudeのモデルの系統を応答の速さの順に説明することになった。',
+  stem: '応答が速い順に並べたものとして最も適切なものはどれか。',
+  choices: [
+    { text: 'Opus → Sonnet → Haiku', correct: false, why: '逆の順です。Opusは推論能力が高い分、3つの中では最も時間がかかります。' },
+    { text: 'Sonnet → Haiku → Opus', correct: false, why: 'Haikuが最も速い系統です。' },
+    { text: 'Haiku → Sonnet → Opus', correct: true, why: 'Haikuが最速・軽量、Sonnetがバランス型、Opusが高い推論能力を持ち最も時間がかかります。' },
+    { text: '3つとも速さは同じ', correct: false, why: '系統によって速さ・コスト・能力は異なります。' }
+  ],
+  explanation: '公式ドキュメントでも、速さはHaiku(最速)→ Sonnet → Opus の順に示されています(2026年11月時点では、さらに上位のFableが最も遅い)。',
+  sourceRefs: ['S1', 'DOC_MODELS']
+},
+{
+  id: 'D3-009', domain: 'D3', objective: '3.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '顧客サポート部で、問い合わせメールの(1)カテゴリ分類、(2)回答の下書き、(3)クレームや法的な論点を含む難しい案件の対応方針の検討、の3つの工程にClaudeを使っている。',
+  stem: 'モデルの使い方として最も適切なものはどれか。',
+  choices: [
+    { text: '品質を最優先にするため、3つの工程すべてで最も高性能なモデルを使う。', correct: false, why: '単純な分類まで最上位モデルを使うと、コストや使用量を無駄にします。' },
+    { text: 'コストを抑えるため、3つの工程すべてで最も軽量なモデルに統一する。', correct: false, why: '難しい案件の検討では、品質が不足するおそれがあります。' },
+    { text: '分類は軽量なモデル、難しい案件の検討は推論能力の高いモデルと、工程で使い分ける。', correct: true, why: '工程ごとのタスク要件(量・複雑さ・重要度)に合わせてモデルを選んでいます。' },
+    { text: 'モデルを切り替えると手間がかかるので、担当者の好みのモデルを1つ選んで使い続ける。', correct: false, why: 'タスク要件ではなく好みで選んでおり、コストや品質の最適化ができません。' }
+  ],
+  explanation: 'モデル選択はタスク単位で考えます。単純で大量の工程には速く安いモデル、複雑で重要な工程には高性能なモデルを使い分けます。',
+  sourceRefs: ['S1', 'H_MODEL']
+},
+{
+  id: 'D3-010', domain: 'D3', objective: '3.4', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: 'チーム内で、Claudeのコンテキストと会話の扱いについての理解をそろえたい。',
+  stem: '正しい説明を2つ選べ。',
+  choices: [
+    { text: '新しい会話は、メモリなどの機能を除き、別の会話の内容を覚えていない。', correct: true, why: '会話ごとにコンテキストは独立しています。引き継ぎたい前提は明示的に渡すか、Projectsなどに残します。' },
+    { text: 'コンテキストが大きいので、会話がどれだけ長くなっても品質は変わらない。', correct: false, why: '長い会話では、初めの指示が守られにくくなったり話題が混ざったりすることがあります。' },
+    { text: '長い会話では、初めに伝えた指示や前提が守られにくくなることがある。', correct: true, why: '話題が変わったら新しい会話にし、必要な経緯は要約して引き継ぐのが有効です。' },
+    { text: 'Projectのナレッジには容量の制限が一切なく、いくらでも資料を入れられる。', correct: false, why: 'ファイルのサイズなどに制約があります。有料プランでは、大きなナレッジは必要な部分を検索して使う方式に自動で切り替わります。' },
+    { text: 'シークレットチャットでは、直前の通常の会話の内容が自動で引き継がれる。', correct: false, why: 'シークレットチャットは履歴やメモリに保存されない会話で、内容を引き継ぐ機能ではありません。' }
+  ],
+  explanation: 'コンテキストは会話ごとの作業記憶です。長い会話の品質低下や、会話をまたぐと内容が引き継がれないことを前提に、やり直す・要約する・残すを使い分けます。',
+  sourceRefs: ['S6', 'H_PROJECTS', 'H_RAG', 'H_INCOGNITO']
+},
+{
+  id: 'D3-011', domain: 'D3', objective: '3.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '経理担当者が、海外送金の金額を見積もるため、今日の米ドルの為替レートを確認したい。',
+  stem: '最も適した機能はどれか。',
+  choices: [
+    { text: '複数の情報源を横断して引用付きのレポートを作るリサーチ機能を使い、詳しく調べさせる。', correct: false, why: '単純な事実の確認には過剰です。時間と使用量がかかります。' },
+    { text: '1〜2回の検索で済む最新の事実なので、ウェブ検索を使って確認する。', correct: true, why: '単純で最新の事実確認にはウェブ検索が適しています。重要な金額は公式の情報源でも確かめます。' },
+    { text: 'Claudeは大量のデータを学習しているので、ウェブを使わずに学習済みの知識で答えさせる。', correct: false, why: '今日の為替レートは学習データに含まれていません。' },
+    { text: '金額の計算を正確にするため、拡張思考をオンにして、じっくり推論させてから答えさせる。', correct: false, why: '最新の情報が必要な問題で、推論を深めても答えは得られません。' }
+  ],
+  explanation: 'ヘルプセンターでは、単純な事実はウェブ検索、ウェブ不要の深い推論は拡張思考、多くの情報源をまたぐ調査はリサーチ、と使い分けが説明されています。',
+  sourceRefs: ['H_WHICH', 'H_WEBSEARCH']
+},
+
+/* ============================== D4 ワークフロー統合 (7) ============================== */
+{
+  id: 'D4-008', domain: 'D4', objective: '4.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '業務部門の担当者が、新しい受発注システムを導入する前に、各部署へのヒアリングメモ(20件)から要件を整理したいと考えている。',
+  stem: 'Claudeの活用方法として最も適切なものはどれか。',
+  choices: [
+    { text: 'ヒアリングメモを渡して要件を分類させ、曖昧・矛盾する点と確認すべき質問を挙げさせる。', correct: true, why: '要件の整理と論点出しをClaudeに任せ、確認すべき点を明らかにする使い方です。確定は関係者と行います。' },
+    { text: 'Claudeに要件の優先順位まで決めさせ、その結果をそのまま正式な要件定義として確定する。', correct: false, why: '要件の確定は関係者の合意が必要な判断で、Claudeに任せきりにすべきではありません。' },
+    { text: 'ヒアリングメモは使わず、一般的な受発注システムの要件テンプレートを作らせて済ませる。', correct: false, why: '自社の実情が反映されず、要件の抜けや不要な要件が生じます。' },
+    { text: 'ヒアリングには時間がかかるので、今後はClaudeが想定した各部署のニーズで代用する。', correct: false, why: '実際の利用者の声を、推測で置き換えることになります。' }
+  ],
+  explanation: '要件分析では、実際の資料(ヒアリングメモなど)を渡して整理・論点出しをさせ、確定は人が関係者と行います。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D4-009', domain: 'D4', objective: '4.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '部門内で、Claudeを活用する業務の候補が15件集まった。どの順番で取り組むかを決めたい。',
+  stem: '優先順位を付ける観点の組み合わせとして最も適切なものはどれか。',
+  choices: [
+    { text: '提案した担当者の熱意と希望の強さ、および上司との調整のしやすさ', correct: false, why: '業務上の効果やリスクの観点が含まれていません。' },
+    { text: '頻度・所要時間・出力の検証のしやすさ・誤りの影響・データの機密性', correct: true, why: '効果(頻度・時間)とリスク(検証・影響・データ)の両面から評価できる組み合わせです。' },
+    { text: '最新の機能を試せるかどうかと、社内で話題になりそうかどうか', correct: false, why: '業務上の効果やリスクとは関係のない観点です。' },
+    { text: '重要度が高く、誤ったときの影響も大きい業務から順に取り組むことだけ', correct: false, why: '単一の観点で、しかも誤りの影響が大きい業務から始めるとリスクが大きくなります。効果とリスクの両面で評価すべきです。' }
+  ],
+  explanation: 'ユースケースの優先順位は、効果(頻度・時間)とリスク(検証のしやすさ・誤りの影響・データの機密性)の両面で評価します。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D4-010', domain: 'D4', objective: '4.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '総務担当者が、300人規模の社内イベント(予算200万円、会場は本社ホール)の計画を立てる。',
+  stem: 'Claudeの活用方法として最も適切なものはどれか。',
+  choices: [
+    { text: '予算と会場などの制約を伝えてタスクと日程案・リスクを出させ、実情に合わせて修正する。', correct: true, why: '制約を伝えて計画のたたき台を作らせ、人が実情に合わせて仕上げる使い方です。' },
+    { text: 'Claudeが作った計画は抜け漏れが少ないので、手を加えずにそのまま正式な計画として確定する。', correct: false, why: '社内の事情や関係者の都合を反映しないまま確定することになります。' },
+    { text: '予算や会場などの制約は伝えずに、一般的な社内イベントの計画を自由に作らせる。', correct: false, why: '制約が反映されず、実行できない計画になるおそれがあります。' },
+    { text: '社内の事情はClaudeには分からないので、イベントの計画づくりにはClaudeを使わない。', correct: false, why: '制約を伝えれば、たたき台やリスクの洗い出しに十分活用できます。' }
+  ],
+  explanation: '計画づくりでは、制約(予算・期限・場所など)を伝えてたたき台を作らせ、最終判断は実情を知る人が行います。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D4-011', domain: 'D4', objective: '4.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '経理担当者が、経費精算の申請内容が社内規程に沿っているかを確認する簡易チェックツールを、Claudeのアーティファクトで作りたいと考えている。',
+  stem: '最も適切な進め方はどれか。',
+  choices: [
+    { text: '便利なツールなので、完成したらすぐに全社員に配布し、全社の精算チェックに使わせる。', correct: false, why: '効果と精度を確かめずに全社展開すると、誤りの影響が大きくなります。' },
+    { text: '個人情報を伏せた過去の申請数件で試作を試し、結果を見て改善する。本格導入は情報システム部門へ。', correct: true, why: '小さく作って試し、評価して改善し、全社システム化などは専門部署に引き継ぐ、適切な進め方です。' },
+    { text: '試作はせず、要件を細かく文書にまとめることに時間をかけ、完成版を一度で作らせる。', correct: false, why: '試しながら改善するという、Claudeを使った開発の利点を生かせていません。' },
+    { text: '本番に近い条件で試すため、社員の個人情報を含む実データを大量に入れて動作を確かめる。', correct: false, why: '試作の段階で個人情報を大量に扱うのは、データの扱いの観点から不適切です。' }
+  ],
+  explanation: 'Associateは組み込み機能で解決策を小さく作り、試し、改善します。本格的なシステム化は専門部署に引き継ぎます。',
+  sourceRefs: ['S1', 'H_ARTIFACTS']
+},
+{
+  id: 'D4-012', domain: 'D4', objective: '4.4', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: '経理部が、請求書から取引先名・金額・支払期日を読み取って会計システムに入力する業務に、Claudeを組み込もうとしている。',
+  stem: '適切な設計を2つ選べ。',
+  choices: [
+    { text: '読み取った金額と取引先名を、担当者が元の請求書と照合する工程を入れる。', correct: true, why: '金銭に関わる工程では、出力を元の資料で検証する工程が欠かせません。' },
+    { text: '処理を速くするため、読み取り結果をそのまま会計システムに自動で登録する。', correct: false, why: '誤った金額がそのまま記帳されるリスクがあります。' },
+    { text: '取引の少ない取引先から試行し、誤りの割合を測ってから対象を広げる。', correct: true, why: '低リスクの範囲で試行し、効果と品質を測ってから広げる、段階的な導入です。' },
+    { text: '誤りがあったときの対応手順は、実際に問題が起きてから決めることにする。', correct: false, why: '問題が起きたときの対応は、導入前に決めておく必要があります。' },
+    { text: '担当者が慣れるよう、初日から全件の処理をClaudeの読み取りに切り替える。', correct: false, why: '効果と品質を確かめないまま全面切り替えをすると、問題の影響が大きくなります。' }
+  ],
+  explanation: '既存のワークフローへの組み込みでは、検証工程の明示、低リスクからの試行、問題発生時の手順の事前決定が重要です。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D4-013', domain: 'D4', objective: '4.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '営業部長から「今の会議の進め方は大きく変えずに、議事録づくりにかかる時間だけを短くしたい」と相談された。',
+  stem: 'この要望に最も合う組み込み方はどれか。',
+  choices: [
+    { text: '参加者の了承を得た録音の文字起こしから議事録の下書きを作らせ、確認と配信は従来どおり担当者が行う。', correct: true, why: '今の手順を保ったまま一部の作業を速くする「補強」で、要望に合っています。' },
+    { text: 'Claudeの活用を前提に、会議の目的・参加者・進行のルールまで含めて全面的に設計し直す。', correct: false, why: '「大きく変えたくない」という要望に反する、大がかりな再設計です。' },
+    { text: '議事録をなくし、会議の録音データだけを保存して、必要な人が後から聞き直すようにする。', correct: false, why: '議事録という成果物そのものをなくしてしまい、要望とずれています。' },
+    { text: '議事録の確認と配信の手間も省くため、Claudeの下書きを確認せずにそのまま全員に配信する。', correct: false, why: '確認の工程をなくすと、誤った議事録が共有されるリスクがあります。' }
+  ],
+  explanation: '既存の手順を保って一部を効率化するのが「補強」、Claudeを前提に手順自体を組み替えるのが「再設計」です。要望とリスクに応じて選びます。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D4-014', domain: 'D4', objective: '4.5', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '新たにClaudeを使い始める部署向けに、導入説明会を開くことになった。',
+  stem: '説明会で伝える内容として最も適切なものはどれか。',
+  choices: [
+    { text: 'AIの仕組みに関する技術的な詳細を中心に説明し、日々の使い方の注意点は各自に任せる。', correct: false, why: '業務で使う人に必要な、具体的な活用法と注意点が伝わりません。' },
+    { text: '活用例とあわせて、社内情報は資料が必要なこと、誤りの可能性、最終判断は人であることを伝える。', correct: true, why: '価値と限界、守るべきルールをバランスよく伝えています。' },
+    { text: '利用を広げたいので、良い点だけを紹介し、限界や注意点には触れないようにする。', correct: false, why: '限界を知らないまま使うと、誤った出力をそのまま使うリスクが高まります。' },
+    { text: 'トラブルを避けるため、禁止事項の一覧だけを説明し、活用の方法は紹介しない。', correct: false, why: '価値が伝わらず、活用が進みません。' }
+  ],
+  explanation: '関係者には、価値(何に役立つか)と限界(知らないこと・誤り・データの扱い・人の判断)をあわせて伝えます。',
+  sourceRefs: ['S1', 'S6']
+},
+
+/* ============================== D5 構成とナレッジ管理 (6) ============================== */
+{
+  id: 'D5-006', domain: 'D5', objective: '5.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'Team プランで、ある担当者が自分で作ったProjectを部署のメンバーと共有しようとしている。ナレッジには、部署内向けの資料のほか、人事評価の基準案(管理職限り)も入っている。',
+  stem: '共有の前に行うべきこととして最も適切なものはどれか。',
+  choices: [
+    { text: 'ナレッジの資料が共有相手に見せてよい範囲かを確認し、権限(閲覧/編集)も設定する。', correct: true, why: '共有するProjectのナレッジは共有相手も参照できます。資料の公開範囲と権限を確認してから共有します。' },
+    { text: 'メンバーがすぐに使いこなせるよう、全員に「編集可」の権限を付けて共有しておく。', correct: false, why: '誰でも指示や資料を変更できる状態になり、管理が難しくなります。機密資料の問題も残ります。' },
+    { text: '共有しても、各メンバーの権限に応じて見せてはいけない資料は自動的に隠されるので、そのまま共有する。', correct: false, why: 'Projectのナレッジは、共有されたメンバーが参照できる前提で扱う必要があります。' },
+    { text: '部署内のメンバーだけに共有するのであれば、資料の確認は特に必要ない。', correct: false, why: '部署内でも、管理職限りの資料は見せてよい範囲を超えています。' }
+  ],
+  explanation: 'Projectを共有する前に、ナレッジの資料が共有相手に見せてよいものかを確認し、権限を適切に設定します。',
+  sourceRefs: ['H_PROJECTS']
+},
+{
+  id: 'D5-007', domain: 'D5', objective: '5.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '在庫管理の担当者が、毎日更新されるGoogle Drive上の在庫表をもとに、Claudeと発注の相談をしたい。組織ではGoogle Driveのコネクタの利用が許可されている。',
+  stem: '最も適切な方法はどれか。',
+  choices: [
+    { text: '毎朝その日の在庫表をダウンロードしてProjectに追加アップロードし、過去の版も参考に残しておく。', correct: false, why: '新旧の版が混在し、古い在庫数で回答される原因になります。' },
+    { text: '在庫表を一度アップロードしておけば、元のファイルの更新が自動で反映されるので、そのまま使う。', correct: false, why: 'アップロードしたファイルは、その時点のコピーです。元のファイルの更新は反映されません。' },
+    { text: 'Google Driveのコネクタで、元の在庫表を参照して相談する。', correct: true, why: 'コネクタは元の保存場所の最新の情報を参照できるため、頻繁に更新される資料に向いています。' },
+    { text: '在庫表の内容を一度Claudeに読み込ませてメモリに覚えさせ、以後はその記憶をもとに相談する。', correct: false, why: '毎日変わる数値をメモリに頼ると、古い情報で判断することになります。' }
+  ],
+  explanation: 'アップロードは時点のコピー、コネクタは元の場所の情報を参照します。頻繁に更新される資料は、組織が許可していればコネクタが向いています。',
+  sourceRefs: ['H_CONNECTORS', 'H_GWS']
+},
+{
+  id: 'D5-008', domain: 'D5', objective: '5.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '顧客向けの回答文を作るProjectで、「親しみやすく短く書く」というトーンのルールと、「返金に関する回答には決められた注意書きを必ず入れる」というルールが、ときどき衝突している。',
+  stem: 'プロジェクトの指示の改善として最も適切なものはどれか。',
+  choices: [
+    { text: 'ルール同士がぶつかったときの判断は、文脈を理解できるClaudeにその都度任せる。', correct: false, why: '優先順位が決まっていないと、回答ごとに判断がぶれます。' },
+    { text: '「両者が衝突する場合は、注意書きのルールを優先する」と指示に明記する。', correct: true, why: '指示の中で優先順位を明示すると、衝突時の振る舞いが安定します。' },
+    { text: '衝突を避けるため、トーンのルールを指示から削除して、注意書きのルールだけを残す。', correct: false, why: 'トーンのルールが失われ、全体の回答の質が下がります。' },
+    { text: '返金に関する回答を作るときだけ、会話の中で「注意書きを入れて」と毎回伝える。', correct: false, why: '伝え忘れれば注意書きが抜けます。必須のルールは指示に置くべきです。' }
+  ],
+  explanation: 'システムレベルの指示では、ルール同士が衝突したときの優先順位や例外も明記します。',
+  sourceRefs: ['S1', 'DOC_PROMPT']
+},
+{
+  id: 'D5-009', domain: 'D5', objective: '5.3', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: '人事部が、社員からの福利厚生に関する質問に答えるProjectを作る。ナレッジには福利厚生規程を入れる予定である。',
+  stem: 'プロジェクトの指示に含めるべき内容を2つ選べ。',
+  choices: [
+    { text: '規程に記載がない質問には推測で答えず、人事部の窓口を案内すること。', correct: true, why: '資料にない場合の対応を決めておくと、推測による誤った回答を防げます。' },
+    { text: '毎年改定される各制度の補助金額の一覧(すべての数値)。', correct: false, why: '変わりやすい事実やデータは指示ではなく、ナレッジの資料として管理します。' },
+    { text: '回答の形式(結論を先に、根拠の条項名を添えて300字以内)。', correct: true, why: '出力の形式や長さのルールは、指示に書くべき内容です。' },
+    { text: '「絶対に正確に、間違えずに答えること」という強調の一文だけ。', correct: false, why: '強調だけでは具体的な行動につながらず、効果がありません。' },
+    { text: 'このProjectを作成した担当者の氏名と、作成した日付。', correct: false, why: 'Claudeの振る舞いに関係しない情報です。管理情報は別に記録します。' }
+  ],
+  explanation: '指示には、振る舞いのルール(形式・長さ・根拠の扱い・資料にないときの対応)を簡潔に書きます。変わりやすい事実はナレッジに置きます。',
+  sourceRefs: ['S1', 'H_PROJECTS']
+},
+{
+  id: 'D5-010', domain: 'D5', objective: '5.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '社内FAQ用のProjectで参照している「出張規程」が改定された。',
+  stem: '保守の手順として最も適切なものはどれか。',
+  choices: [
+    { text: '新版を追加するだけにとどめ、旧版も比較用にナレッジに残し、特に周知は行わない。', correct: false, why: '新旧が混在すると古い情報で回答される原因になり、利用者も変更に気づけません。' },
+    { text: '新版を追加し旧版を削除、指示の参照名を更新して周知し、代表的な質問で回答を確かめる。', correct: true, why: '差し替え・旧版削除・参照先の更新・周知・動作確認という、保守の手順がそろっています。' },
+    { text: '規程の改定内容を、利用者から質問を受けるたびに会話の中で補足して説明する。', correct: false, why: 'Projectの資料が古いままで、誤った回答の原因が残ります。' },
+    { text: '改定のたびに混乱しないよう、Projectを削除して新しく作り直し、URLを全員に配り直す。', correct: false, why: '手間が大きく、過去の会話も使えなくなります。差し替えで十分です。' }
+  ],
+  explanation: '資料の改定時は「新版の追加 → 旧版の削除 → 指示の参照先の更新 → 周知 → 動作確認」を行います。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D5-011', domain: 'D5', objective: '5.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '部署で共有しているProjectの回答が急に変わった。調べても、誰がいつ指示や資料を変えたのか分からなかった。',
+  stem: '再発を防ぐ対応として最も適切なものはどれか。',
+  choices: [
+    { text: '管理担当者を決め、変更時は日付・内容・理由を記録して利用者に周知するルールにする。', correct: true, why: '責任者と変更記録・周知のルールがあれば、問題の原因を追え、利用者も変更を把握できます。' },
+    { text: '自由に改善できる方がよいので、誰でもいつでも指示や資料を変更できる今の状態を保つ。', correct: false, why: '同じ問題が繰り返し起きます。' },
+    { text: '回答が変わらないよう、指示と資料の変更を一切禁止し、今後は更新しないことにする。', correct: false, why: '資料の改定などに追従できなくなり、古い情報で回答する原因になります。' },
+    { text: '問題が起きるたびにProjectを新しく作り直し、そのたびにメンバーに共有し直す。', correct: false, why: '原因を追えないままで、手間も大きくなります。' }
+  ],
+  explanation: '共有の構成を保守するには、管理担当者・変更記録・周知の仕組みが必要です。',
+  sourceRefs: ['S1']
+},
+
+/* ============================== D6 ガバナンス (6) ============================== */
+{
+  id: 'D6-008', domain: 'D6', objective: '6.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '研修担当者がClaudeの使い道を検討している。',
+  stem: '適切な用途として最も当てはまるものはどれか。',
+  choices: [
+    { text: '架空の会社であることを明示した、社内研修用のケーススタディを作る', correct: true, why: '架空であることを明示した教材づくりは、一般的に適切な活用です。' },
+    { text: '実在する同僚の評価コメントを、本人の知らないうちに作って人事資料に加える', correct: false, why: '本人の知らないところで人に影響する資料を作るのは、公正さと透明性の観点から不適切です。' },
+    { text: '実在する人物が言っていない発言を作り、本人の発言として社内報の記事に載せる', correct: false, why: '事実ではない発言を本人のものとして示すのは、人をだます不適切な用途です。' },
+    { text: '本人の同意なく顧客の氏名と購入履歴を使い、個別の宣伝メッセージを作って送る', correct: false, why: '個人情報の目的外利用にあたるおそれがあり、組織のポリシーにも反します。' }
+  ],
+  explanation: '適切な用途の判断では、事実と架空の区別、本人の同意、人への影響、データの扱いを確認します。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D6-009', domain: 'D6', objective: '6.2', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: '法務担当者が、取引先と秘密保持契約(NDA)を結んだうえで受け取った技術資料の要点を、Claudeで整理したいと考えている。',
+  stem: '適切な行動を2つ選べ。',
+  choices: [
+    { text: 'NDAの条項と社内ポリシー上、AIサービスへの入力が許されるかを確認する。', correct: true, why: '契約上の秘密保持義務とポリシーを確認するのが、最初に必要な手順です。' },
+    { text: '会社のアカウントでは記録が残るので、個人のアカウントを使って整理する。', correct: false, why: '未承認の環境に秘密情報を入れることになり、リスクがかえって大きくなります。' },
+    { text: '入力が許される場合も、承認された商用環境で、必要な範囲だけを入力する。', correct: true, why: '承認された環境の利用とデータの最小化は、データの扱いの基本です。' },
+    { text: 'Claudeに「この資料は秘密として扱って」と指示すれば、契約上の義務を果たせる。', correct: false, why: 'AIへの指示は、契約上の義務や管理策の代わりになりません。' },
+    { text: '取引先の会社名だけ伏せれば、資料のどの部分をそのまま入力しても問題ない。', correct: false, why: '社名を伏せても、技術資料の中身は秘密情報のままです。' }
+  ],
+  explanation: '他社の秘密情報は、契約(NDA)と社内ポリシーで扱いが決まります。入力の可否を確認し、許される場合も承認された環境で最小限にします。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D6-010', domain: 'D6', objective: '6.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '日本の本社の人事担当者が、EUにある子会社の従業員アンケート(個人が特定できる情報を含む)の分析にClaudeを使いたいと考えている。',
+  stem: '最も適切な対応はどれか。',
+  choices: [
+    { text: '本社の社内ポリシーで個人情報の入力が許されていれば、他の地域の規制は気にしなくてよい。', correct: false, why: 'データの対象者がいる地域の規制(EUのデータ保護規制など)が適用され得ます。' },
+    { text: '海外のデータは扱いが複雑なので、規制を確認するまでもなく、分析自体を行わないことにする。', correct: false, why: '確認すれば適切な方法で進められる可能性があるのに、最初から業務を止めています。' },
+    { text: '地域の規制について法務・プライバシーの担当に確認し、個人を特定できない形にして分析する。', correct: true, why: '規制の確認と、データの最小化・匿名化を組み合わせる適切な対応です。' },
+    { text: 'アンケートの回答者に分からないよう、分析が終わったらClaudeとの会話を削除しておく。', correct: false, why: '事後に会話を削除しても、規制やポリシーへの適合にはなりません。' }
+  ],
+  explanation: '個人データには、対象者がいる地域の規制が関わることがあります。担当部署に確認し、最小化・匿名化して扱います。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D6-011', domain: 'D6', objective: '6.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '会社の管理者は、Claudeの組織設定でGmailのコネクタを無効にしている。ある社員が「仕事のメールを個人のGmailに転送して、それをClaudeに読ませれば同じことができる」と考えている。',
+  stem: '最も適切な判断はどれか。',
+  choices: [
+    { text: '最終的にClaudeに読ませる内容は同じなので、転送してから読ませても問題はない。', correct: false, why: '管理者が意図的に制限している機能を、別の手段で回避することになります。' },
+    { text: '管理者の設定を回避せず、必要なら理由を添えて管理者に利用を相談する。', correct: true, why: '組織の管理設定はガバナンスの一部です。回避せず、正規の手続きで相談します。' },
+    { text: '個人のGmailは会社の管理の対象外なので、そこから先の使い方は社員の自由である。', correct: false, why: '業務メールを個人アカウントに転送すること自体が、情報管理上のリスクです。' },
+    { text: '管理者に知られないよう、転送するメールの件名や送信者名だけを書き換えてから読ませる。', correct: false, why: '意図的に管理を回避する行為で、問題をさらに大きくします。' }
+  ],
+  explanation: '管理者が無効にしている機能を別の手段で回避しないことは、組織のAIガバナンスの基本です。',
+  sourceRefs: ['S1', 'H_CONNECTORS']
+},
+{
+  id: 'D6-012', domain: 'D6', objective: '6.4', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: 'マーケティング部が、Claudeを使って社外向けのブログ記事を作成し、自社サイトに掲載しようとしている。',
+  stem: '倫理的な配慮として適切なものを2つ選べ。',
+  choices: [
+    { text: '記事中の事実関係を一次情報で確かめ、誤った情報を広めないようにする。', correct: true, why: '検証していない情報を公開しないことは、正確性と誠実さの基本です。' },
+    { text: '他社の人気記事をClaudeに言い換えさせ、出典を示さずに自社の記事として載せる。', correct: false, why: '他者の著作物を言い換えて自分のものとして示すのは、知的財産と誠実さの観点で不適切です。' },
+    { text: '組織のルールに従い、AIを使って作成したことを必要に応じて適切に開示する。', correct: true, why: '透明性の観点から、AIの関与の開示を組織のルールに沿って判断します。' },
+    { text: 'AIが書いた文章なので、著作権や引用のルールは気にしなくてよいと考える。', correct: false, why: 'AIを使っても、他者の権利の尊重や引用のルールは変わりません。' },
+    { text: '読者の反応が良ければ、内容の正確さはある程度犠牲にしても構わないとする。', correct: false, why: '正確さを犠牲にすることは、読者の信頼を損ないます。' }
+  ],
+  explanation: '社外に出すコンテンツでは、正確性(検証)・透明性(開示)・知的財産の尊重が重要です。',
+  sourceRefs: ['S1', 'S5']
+},
+{
+  id: 'D6-013', domain: 'D6', objective: '6.4', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '課長が、部下5人の人事評価コメントの下書きにClaudeを使おうとしている。',
+  stem: '最も適切な使い方はどれか。',
+  choices: [
+    { text: '各部下の業務記録を渡して評価点まで決めさせ、出てきたコメントと点数をそのまま提出する。', correct: false, why: '人に重大な影響を与える評価の判断を、AIに任せきりにしています。' },
+    { text: 'AIが書いたコメントなので、内容に問題があっても評価者である自分の責任にはならないと考える。', correct: false, why: 'AIを使っても、評価の責任は評価者にあります。' },
+    { text: '具体的な行動の事実を自分で入力し、偏った表現がないか確認して自分の評価として仕上げる。', correct: true, why: '事実に基づき、偏りを確認し、評価者として責任を持つ使い方です。' },
+    { text: '公平さを保つため、5人全員に同じ文面のコメントを作らせ、名前だけ差し替えて使う。', correct: false, why: '一人ひとりの実績を反映しないコメントは、公平な評価になりません。' }
+  ],
+  explanation: '人に影響する文書でAIを使うときは、事実に基づき、偏りを確認し、最終的な判断と責任は人が持ちます。',
+  sourceRefs: ['S1']
+},
+
+/* ============================== D7 トラブルシューティング (5) ============================== */
+{
+  id: 'D7-005', domain: 'D7', objective: '7.1', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '社内向けQ&AのProjectで、「SR」という社内用語(社内では「サービスリクエスト」の略)を、Claudeが別の意味で解釈した回答をすることがある。',
+  stem: '根本原因と対処として最も適切なものはどれか。',
+  choices: [
+    { text: '社内用語の意味が伝わっていない。用語集をナレッジに入れ、指示で参照させる。', correct: true, why: '社内固有の用語はClaudeが知らない情報です。定義を資料として渡すのが根本的な対処です。' },
+    { text: 'モデルの理解力が足りないことが原因なので、より高性能なモデルに切り替えて解決する。', correct: false, why: '社内固有の用語は、どのモデルでも定義を渡さなければ分かりません。' },
+    { text: '誤解した回答が出たら、その都度会話の中で正しい意味を伝えて回答を直してもらう。', correct: false, why: '会話での訂正はその会話にしか効かず、同じ問題が繰り返し起きます。' },
+    { text: '社内用語を使うと誤解されるので、今後は社員に社内用語を使わないよう周知する。', correct: false, why: '業務のやり方を不必要に変えることになり、根本的な解決になりません。' }
+  ],
+  explanation: '的外れな出力の原因が「知らない情報(社内固有の知識)」にある場合は、資料や定義を渡して直します。',
+  sourceRefs: ['S1', 'S6']
+},
+{
+  id: 'D7-006', domain: 'D7', objective: '7.2', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'ある担当者は、数百行の売上データの集計をClaudeとの会話の中で行わせている。プロンプトを何度工夫しても、合計値の誤りがなくならない。',
+  stem: 'アプローチの調整として最も適切なものはどれか。',
+  choices: [
+    { text: '「計算は特に慎重に、絶対に間違えないで」という指示をプロンプトにさらに追加する。', correct: false, why: '強調しても正確さは保証されません。これまでの改善が効いていない状況は変わりません。' },
+    { text: '集計はファイル作成・分析機能や表計算で行い、Claudeは結果の解釈や説明に使う。', correct: true, why: '結果を見て、作業の分担自体を見直しています。正確な計算は計算に適した手段で行い、検証もしやすくなります。' },
+    { text: '合計値が合わない部分は、全体の傾向に大きな影響はないと考えて、そのまま報告に使う。', correct: false, why: '誤りを知りながら使うことになり、報告の信頼性を損ないます。' },
+    { text: '同じ依頼を何度も繰り返し、最もよく出てくる合計値を正しい値として採用する。', correct: false, why: '多く出た値が正しいとは限りません。検証になっていません。' }
+  ],
+  explanation: 'フィードバックや結果を見て改善しないなら、プロンプトの微調整だけでなく、作業の分担や手段そのものを見直します。',
+  sourceRefs: ['S1', 'H_FILES']
+},
+{
+  id: 'D7-007', domain: 'D7', objective: '7.2', guideVersion: '1.0', type: 'multi', select: 2,
+  scenario: 'Claudeで作る提案書のテンプレートについて、営業部の30人からフィードバックを集めることにした。',
+  stem: 'フィードバックを改善に生かす方法として適切なものを2つ選べ。',
+  choices: [
+    { text: '指摘を種類別に集計し、繰り返し出てくるパターンを特定する。', correct: true, why: 'パターンを特定すれば、効果の大きい改善点から設定に反映できます。' },
+    { text: '1件でも強い不満があれば、それに合わせてテンプレートを全面的に作り替える。', correct: false, why: '一部の声だけで全体を変えると、他の利用者にとって悪化するおそれがあります。' },
+    { text: '変更の前後で同じ評価基準を使い、改善したかどうかを比べて確かめる。', correct: true, why: '同じ基準で比べることで、変更の効果を正しく判断できます。' },
+    { text: '指摘はその都度、各自が会話の中で直すことにして、テンプレートは変えない。', correct: false, why: '同じ問題が繰り返し起き、改善が組織に定着しません。' },
+    { text: '改善の方向を見失わないよう、好意的なフィードバックだけを集めて参考にする。', correct: false, why: '問題点の情報が集まらず、改善につながりません。' }
+  ],
+  explanation: 'フィードバックは、パターンとして集計して設定に反映し、同じ基準で効果を測ります。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D7-008', domain: 'D7', objective: '7.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: '担当者は毎週、Claudeが文章で出力した取引先別の実績を、手作業で表計算ソフトの表に転記・整形しており、毎回1時間かかっている。',
+  stem: '最も効果的な最適化はどれか。',
+  choices: [
+    { text: '最初から必要な列で表(CSV)を出力させ、その形式を指示やテンプレートに残す。', correct: true, why: '後工程で使う形式で最初から出力させることで、手作業の整形という無駄な工程をなくせます。' },
+    { text: '転記ミスを減らすため、整形した表をもう1人の担当者がダブルチェックする工程を追加する。', correct: false, why: '手作業の工程そのものは残り、さらに手間が増えます。' },
+    { text: 'より速く出力されるよう、使っているモデルを最も高速なモデルに切り替える。', correct: false, why: '時間がかかっているのは手作業の整形で、モデルの速さとは関係がありません。' },
+    { text: '整形作業は慣れれば速くなるので、担当者が作業の手順を工夫して時間を短くする。', correct: false, why: '手作業が残るため、根本的な効率化になりません。' }
+  ],
+  explanation: '効率化では、出力を手で直している工程に注目します。最初から後工程に合った形式で出力させ、その設定を定着させます。',
+  sourceRefs: ['S1']
+},
+{
+  id: 'D7-009', domain: 'D7', objective: '7.3', guideVersion: '1.0', type: 'single', select: 1,
+  scenario: 'あるチームは、問い合わせの簡単な分類も含めて、すべての作業を最上位のモデルと最も高いeffortの設定で行っている。そのため、週の途中で使用量の上限に達してしまう。',
+  stem: '最も適切な最適化はどれか。',
+  choices: [
+    { text: '使用量の上限に達したら、週の残りの期間はClaudeを使わずに手作業で対応する。', correct: false, why: '原因であるモデルと設定の選び方を見直しておらず、毎週同じ問題が起きます。' },
+    { text: '品質を落とさないことが最優先なので、作業量自体を減らし、重要な作業だけにClaudeを使う。', correct: false, why: '軽い作業に適した設定で使えば、作業量を減らさずに済みます。' },
+    { text: '簡単な分類などは軽いモデルや低めのeffortに切り替え、上位の設定は難しい作業に使う。', correct: true, why: 'タスク要件に合わせてモデルとeffortを選ぶことで、品質を保ちながら使用量を抑えられます。' },
+    { text: '上限に早く達するのはプロンプトが長いせいなので、すべてのプロンプトを短く削る。', correct: false, why: '主な原因はモデルと設定の選び方です。必要な文脈まで削ると品質が下がります。' }
+  ],
+  explanation: '最適化では、タスクごとにモデルとeffortを選び分けます。高性能・高effortは使用量を多く消費するため、難しい作業に使います。',
+  sourceRefs: ['H_MODEL', 'H_USAGE']
+}
+
+);
 
 </script>
 <!-- アプリ -->
@@ -1700,7 +2997,28 @@ CCAOF.questions = CCAOF.questions || [];
     if (!data || !Array.isArray(data.attempts) || typeof data.qstats !== 'object') {
       throw new Error('形式が正しくありません');
     }
-    save({ version: 1, attempts: data.attempts, qstats: data.qstats, inProgress: null });
+    // 読み込むファイルは信頼できない入力として扱い、想定した型・形式だけを取り込む
+    const int = v => (Number.isInteger(Number(v)) ? Number(v) : 0);
+    const str = (v, max) => String(v == null ? '' : v).slice(0, max || 200);
+    const idOk = v => /^[A-Za-z0-9_-]{1,40}$/.test(String(v));
+    const intArr = v => (Array.isArray(v) ? v.map(int).filter(n => n >= 0 && n < 10).slice(0, 10) : []);
+    const attempts = data.attempts.slice(0, 2000).map(a => ({
+      id: idOk(a.id) ? String(a.id) : 'a' + Math.random().toString(36).slice(2),
+      mode: a.mode === 'mock' ? 'mock' : 'practice',
+      kind: str(a.kind, 20), label: str(a.label, 120), param: idOk(a.param) ? String(a.param) : null,
+      startedAt: str(a.startedAt, 40), finishedAt: str(a.finishedAt, 40),
+      durationSec: int(a.durationSec), timeUp: !!a.timeUp,
+      total: int(a.total), correct: int(a.correct),
+      byDomain: Object.fromEntries(Object.entries(a.byDomain || {}).filter(([k]) => /^D[1-9]$/.test(k))
+        .map(([k, v]) => [k, { correct: int(v && v.correct), total: int(v && v.total) }])),
+      items: (Array.isArray(a.items) ? a.items : []).filter(it => it && idOk(it.qid) && /^D[1-9]$/.test(it.domain)).slice(0, 200)
+        .map(it => ({ qid: String(it.qid), domain: String(it.domain), correct: !!it.correct, selected: intArr(it.selected), order: intArr(it.order) }))
+    })).filter(a => a.total > 0 && a.items.length);
+    const qstats = {};
+    Object.entries(data.qstats || {}).forEach(([k, v]) => {
+      if (idOk(k) && v) qstats[k] = { seen: int(v.seen), correct: int(v.correct), lastCorrect: v.lastCorrect === true ? true : v.lastCorrect === false ? false : null, lastAt: str(v.lastAt, 40) };
+    });
+    save({ version: 1, attempts, qstats, inProgress: null });
   }
 
   function reset() { save(empty()); }
@@ -1716,11 +3034,601 @@ CCAOF.questions = CCAOF.questions || [];
 <script>/* js/quiz.js */
 /*
  * 出題・採点エンジン
- * フェーズ2-Aで実装予定(章別/自由演習・ミニ模試・苦手ドメイン・復習)。
- * フェーズ2-Bで60問模試(タイマー・見直しマーク)を追加予定。
+ *   練習モード: 章別 / 自由演習 / 苦手ドメイン / 間違えた問題の復習(回答ごとに解説を表示)
+ *   模試モード: 30問ミニ模試(60分) / 60問模試(120分・本番配分)(最後にまとめて採点)
+ * セッションは localStorage に保存し、再読み込みしても続きから再開できる。
  */
-window.CCAOF = window.CCAOF || {};
-CCAOF.quiz = CCAOF.quiz || { ready: false };
+(function () {
+  const C = window.CCAOF;
+  const S = C.store;
+  const U = () => C.ui; // app.js 読み込み後に参照
+
+  const PASS = C.exam.passLinePct;
+  let lastResult = null;     // 直近の結果(結果画面用)
+  let timerHandle = null;
+
+  /* ---------- 基本ユーティリティ ---------- */
+  const qById = id => C.questions.find(q => q.id === id);
+  const byDomain = id => C.questions.filter(q => q.domain === id);
+  function shuffle(a) {
+    const r = a.slice();
+    for (let i = r.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [r[i], r[j]] = [r[j], r[i]];
+    }
+    return r;
+  }
+  const sameSet = (a, b) => a.length === b.length && a.every(x => b.includes(x));
+  const correctIdx = q => q.choices.map((c, i) => c.correct ? i : -1).filter(i => i >= 0);
+  const isCorrect = (q, sel) => !!sel && sameSet(sel, correctIdx(q));
+  const fmtTime = sec => {
+    sec = Math.max(0, Math.round(sec));
+    const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60;
+    return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(s).padStart(2, '0');
+  };
+  const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+  /* 出題の選び方: ドメインごとに、回答回数の少ない問題を優先してランダムに選ぶ */
+  function pickFromDomain(domainId, n, exclude) {
+    const qs = S.load().qstats;
+    const pool = byDomain(domainId).filter(q => !(exclude && exclude.has(q.id)));
+    const ranked = shuffle(pool).sort((a, b) => ((qs[a.id] || {}).seen || 0) - ((qs[b.id] || {}).seen || 0));
+    return ranked.slice(0, n).map(q => q.id);
+  }
+
+  function poolEnough(key) {
+    return C.exam.domains.every(d => byDomain(d.id).length >= d[key]);
+  }
+
+  /* ---------- セッション ---------- */
+  function newSession(opts) {
+    const orders = {};
+    opts.qids.forEach(id => { orders[id] = shuffle(qById(id).choices.map((c, i) => i)); });
+    const s = {
+      v: 1,
+      mode: opts.mode,              // 'practice' | 'mock'
+      kind: opts.kind,              // 'domain' | 'free' | 'weak' | 'wrong' | 'mini' | 'full'
+      label: opts.label,
+      param: opts.param || null,
+      qids: opts.qids,
+      orders,
+      answers: {},                  // qid -> 元の選択肢インデックス配列
+      revealed: {},                 // 練習: 回答済み(解説表示)
+      flags: {},                    // 模試: 見直しマーク
+      index: 0,
+      startedAt: Date.now(),
+      deadline: opts.minutes ? Date.now() + opts.minutes * 60000 : null,
+      minutes: opts.minutes || null,
+      palette: false
+    };
+    return s;
+  }
+  const getSession = () => S.loadInProgress();
+  const saveSession = s => S.saveInProgress(s);
+
+  function startSession(opts) {
+    const cur = getSession();
+    if (cur && !confirm(`中断中の「${cur.label}」があります。破棄して新しく始めますか?`)) {
+      location.hash = '#/quiz';
+      return;
+    }
+    if (!opts.qids.length) { alert('出題できる問題がありません。'); location.hash = '#/practice'; return; }
+    saveSession(newSession(opts));
+    location.replace('#/quiz');
+  }
+
+  /* 開始ルート: #/practice/<kind>/<param> */
+  function startFromRoute(kind, param, query) {
+    const d = param ? U().domainById(param) : null;
+    if (kind === 'domain' && d) {
+      return startSession({ mode: 'practice', kind, param, label: `章別演習: ${d.no}. ${d.nameJa}`, qids: shuffle(byDomain(d.id)).map(q => q.id) });
+    }
+    if (kind === 'free') {
+      const n = Number(query.n) || 20;
+      const dom = query.d || '';
+      const onlyNew = query.u === '1';
+      const qs = S.load().qstats;
+      let pool = C.questions.filter(q => (!dom || q.domain === dom) && (!onlyNew || !qs[q.id]));
+      let qids;
+      if (!dom && !onlyNew && n < pool.length) {
+        // 全ドメインからなら配分比率に沿って抽出
+        qids = proportional(n);
+      } else {
+        qids = shuffle(pool).slice(0, n).map(q => q.id);
+      }
+      const label = `自由演習: ${dom ? U().domainById(dom).nameJa : '全ドメイン'}${onlyNew ? '(未回答のみ)' : ''} ${qids.length}問`;
+      return startSession({ mode: 'practice', kind, label, qids: shuffle(qids) });
+    }
+    if (kind === 'weak') {
+      const weak = S.weakDomains(5, PASS / 100);
+      if (!weak.length) { alert('苦手ドメインの判定には、各ドメイン5問以上の回答履歴が必要です。'); location.hash = '#/practice'; return; }
+      const ids = new Set(weak.map(w => w.id));
+      const wrong = new Set(S.wrongIds());
+      // 苦手ドメインの問題を、間違えた問題→未回答→その他 の順に優先して最大20問
+      const qs = S.load().qstats;
+      const pool = shuffle(C.questions.filter(q => ids.has(q.domain)))
+        .sort((a, b) => rank(a) - rank(b));
+      function rank(q) { return wrong.has(q.id) ? 0 : !qs[q.id] ? 1 : 2; }
+      const names = weak.map(w => U().domainById(w.id).short).join('・');
+      return startSession({ mode: 'practice', kind, label: `苦手ドメイン演習: ${names}`, qids: shuffle(pool.slice(0, 20).map(q => q.id)) });
+    }
+    if (kind === 'wrong') {
+      const ids = S.wrongIds().filter(id => qById(id));
+      return startSession({ mode: 'practice', kind, label: `間違えた問題の復習 ${ids.length}問`, qids: shuffle(ids) });
+    }
+    if (kind === 'mini' && poolEnough('mini')) {
+      const qids = C.exam.domains.flatMap(d => pickFromDomain(d.id, d.mini));
+      return startSession({ mode: 'mock', kind, label: '30問ミニ模試', qids: shuffle(qids), minutes: 60 });
+    }
+    if (kind === 'full' && poolEnough('mock')) {
+      const qids = C.exam.domains.flatMap(d => pickFromDomain(d.id, d.mock));
+      return startSession({ mode: 'mock', kind, label: '60問模試(本番形式)', qids: shuffle(qids), minutes: C.exam.minutes });
+    }
+    location.replace('#/practice');
+  }
+
+  /* 全ドメインから配分比率で n 問 */
+  function proportional(n) {
+    const doms = C.exam.domains;
+    const raw = doms.map(d => ({ d, x: d.weight / 100 * n }));
+    raw.forEach(r => { r.k = Math.min(Math.floor(r.x), byDomain(r.d.id).length); });
+    let left = n - raw.reduce((s, r) => s + r.k, 0);
+    raw.slice().sort((a, b) => (b.x - b.k) - (a.x - a.k)).forEach(r => {
+      if (left > 0 && r.k < byDomain(r.d.id).length) { r.k++; left--; }
+    });
+    return raw.flatMap(r => pickFromDomain(r.d.id, r.k));
+  }
+
+  /* ---------- 演習メニュー ---------- */
+  function renderMenu(app) {
+    const u = U();
+    const total = C.questions.length;
+    const st = S.load();
+    const wrong = S.wrongIds().filter(id => qById(id)).length;
+    const weak = S.weakDomains(5, PASS / 100);
+    const cur = getSession();
+    const miniOk = poolEnough('mini');
+    const fullOk = poolEnough('mock');
+
+    const resume = cur ? `<div class="card accent">
+        <div class="badge-row"><span class="pill">中断中</span></div>
+        <p><strong>${u.esc(cur.label)}</strong> — ${Object.keys(cur.answers).length} / ${cur.qids.length}問 回答済み${cur.deadline ? `・残り ${fmtTime((cur.deadline - Date.now()) / 1000)}` : ''}</p>
+        <div class="btn-row"><a class="btn primary" href="#/quiz">続きから再開</a><button class="btn danger" id="discard">破棄する</button></div>
+        ${cur.deadline ? '<p class="note">模試のタイマーは中断中も進みます(本番と同じく、開始からの経過時間で計測)。</p>' : ''}
+      </div>` : '';
+
+    const domRows = C.exam.domains.map(d => {
+      const n = byDomain(d.id).length;
+      return `<a class="btn ${n ? '' : 'disabled'}" ${n ? `href="#/practice/domain/${d.id}"` : 'aria-disabled="true"'} style="justify-content:space-between">
+        <span>${d.no}. ${u.esc(d.nameJa)}</span><span class="badge">${n}問</span></a>`;
+    }).join('');
+
+    const domOpts = ['<option value="">全ドメイン(配分比率で抽出)</option>']
+      .concat(C.exam.domains.map(d => `<option value="${d.id}">${d.no}. ${u.esc(d.nameJa)}</option>`)).join('');
+
+    app.innerHTML = `
+      <div class="page-head">
+        <h1>✍️ 演習</h1>
+        <div class="sub">オリジナル問題 ${total}問(実際の試験問題ではありません)。単一選択と複数選択(選ぶ数を明示)があります。</div>
+      </div>
+      ${resume}
+      <div class="grid-2">
+        <div class="card">
+          <h2>📝 模試</h2>
+          <p class="note">最後にまとめて採点します。見直しマーク・問題一覧から移動できます。</p>
+          <div class="btn-row" style="flex-direction:column;align-items:stretch">
+            <a class="btn ${miniOk ? 'primary' : 'disabled'}" ${miniOk ? 'href="#/practice/mini"' : 'aria-disabled="true"'}>30問ミニ模試(60分)</a>
+            <a class="btn ${fullOk ? 'primary' : 'disabled'}" ${fullOk ? 'href="#/practice/full"' : 'aria-disabled="true"'}>60問模試(120分・本番配分)</a>
+          </div>
+          ${fullOk ? '' : '<p class="note">60問模試は問題が90問そろうフェーズ2-Bで有効になります。</p>'}
+          <p class="note">60問模試の配分: ${C.exam.domains.map(d => `D${d.no}=${d.mock}`).join(' / ')}</p>
+        </div>
+        <div class="card">
+          <h2>🎯 弱点対策</h2>
+          <div class="btn-row" style="flex-direction:column;align-items:stretch">
+            <a class="btn ${weak.length ? '' : 'disabled'}" ${weak.length ? 'href="#/practice/weak"' : 'aria-disabled="true"'}>苦手ドメイン演習${weak.length ? `(${weak.map(w => 'D' + u.domainById(w.id).no).join('・')})` : ''}</a>
+            <a class="btn ${wrong ? '' : 'disabled'}" ${wrong ? 'href="#/practice/wrong"' : 'aria-disabled="true"'}>間違えた問題の復習(${wrong}問)</a>
+          </div>
+          <p class="note">苦手ドメイン = 5問以上回答し、正答率が${PASS}%未満のドメイン。間違えた問題 = 直近の回答が不正解の問題(正解すると外れます)。</p>
+        </div>
+      </div>
+      <div class="card">
+        <h2>📖 章別(ドメイン別)演習</h2>
+        <p class="note">1問ごとに正誤と、選択肢ごとの解説を表示します。</p>
+        <div style="display:grid;gap:8px">${domRows}</div>
+      </div>
+      <div class="card">
+        <h2>🔀 自由演習</h2>
+        <div class="filter-row" style="grid-template-columns:1fr 1fr">
+          <label>問題数<select id="f-n"><option>10</option><option selected>20</option><option>30</option><option value="999">全問</option></select></label>
+          <label>ドメイン<select id="f-d">${domOpts}</select></label>
+        </div>
+        <label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="f-u"> まだ解いていない問題だけ</label>
+        <div class="btn-row"><button class="primary" id="f-go">開始</button></div>
+      </div>
+      <p class="note">回答の記録はこのブラウザにのみ保存されます。これまでの演習: ${st.attempts.length}回。<a href="#/stats">成績を見る</a></p>`;
+
+    const dis = document.getElementById('discard');
+    if (dis) dis.onclick = () => { if (confirm('中断中の演習を破棄しますか?(回答は記録されません)')) { S.clearInProgress(); renderMenu(app); } };
+    document.getElementById('f-go').onclick = () => {
+      const n = document.getElementById('f-n').value;
+      const d = document.getElementById('f-d').value;
+      const uo = document.getElementById('f-u').checked ? '1' : '0';
+      location.hash = `#/practice/free?n=${n}&d=${d}&u=${uo}`;
+    };
+  }
+
+  /* ---------- 問題画面 ---------- */
+  function renderQuiz(app) {
+    const u = U();
+    const s = getSession();
+    if (!s) { location.replace('#/practice'); return; }
+    // 既に削除された問題IDを除外(データ更新への備え)
+    s.qids = s.qids.filter(id => qById(id));
+    if (!s.qids.length) { S.clearInProgress(); location.replace('#/practice'); return; }
+    s.index = Math.min(s.index, s.qids.length - 1);
+
+    if (s.mode === 'mock' && s.deadline && Date.now() >= s.deadline) { finish(true); return; }
+
+    const qid = s.qids[s.index];
+    const q = qById(qid);
+    const d = u.domainById(q.domain);
+    const order = s.orders[qid] || q.choices.map((c, i) => i);
+    const sel = s.answers[qid] || [];
+    const revealed = s.mode === 'practice' && s.revealed[qid];
+    const multi = q.type === 'multi';
+    const answeredCount = Object.keys(s.answers).filter(k => (s.answers[k] || []).length).length;
+
+    const choices = order.map((orig, pos) => {
+      const c = q.choices[orig];
+      const on = sel.includes(orig);
+      let cls = 'choice';
+      if (on) cls += ' selected';
+      if (revealed) cls += c.correct ? ' correct' : (on ? ' incorrect' : ' muted');
+      return `<button class="${cls}" data-orig="${orig}" role="${multi ? 'checkbox' : 'radio'}" aria-checked="${on}" ${revealed ? 'disabled' : ''}>
+        <span class="key">${LETTERS[pos]}</span>
+        <span class="ctext">${c.text}</span>
+        ${revealed ? `<span class="verdict-icon">${c.correct ? '✓' : (on ? '✗' : '')}</span>` : ''}
+      </button>
+      ${revealed ? `<div class="why ${c.correct ? 'ok' : 'ng'}"><strong>${c.correct ? '正解の理由' : '誤りの理由'}:</strong> ${c.why}</div>` : ''}`;
+    }).join('');
+
+    let feedback = '';
+    if (revealed) {
+      const ok = isCorrect(q, sel);
+      feedback = `<div class="callout ${ok ? 'good' : 'bad'}"><strong>${ok ? '✓ 正解' : '✗ 不正解'}</strong>
+        ${!ok ? `正解は ${order.map((o, p) => q.choices[o].correct ? LETTERS[p] : null).filter(Boolean).join('・')} です。` : ''}</div>
+        ${q.explanation ? `<div class="explain"><strong>解説</strong><p>${q.explanation}</p>
+          <p class="note">関連: ${u.objTag(q.objective)}<a href="#/textbook/${d.no}">第${d.no}章 ${u.esc(d.nameJa)}</a>${q.sourceRefs && q.sourceRefs.length ? ' · ' + u.srcLinks(q.sourceRefs) : ''}</p></div>` : ''}`;
+    }
+
+    const need = q.select;
+    const canSubmit = multi ? sel.length === need : sel.length === 1;
+    const isLast = s.index === s.qids.length - 1;
+
+    let actions;
+    if (s.mode === 'practice') {
+      actions = !revealed
+        ? `<button class="primary" id="submit" ${canSubmit ? '' : 'disabled'}>回答する</button>`
+        : (isLast ? `<button class="primary" id="finish">結果を見る</button>` : `<button class="primary" id="next">次の問題へ →</button>`);
+      actions += `<button class="ghost" id="quit">${revealed && !isLast ? 'ここで終了して結果を見る' : '中断'}</button>`;
+    } else {
+      actions = `${s.index > 0 ? '<button id="prev">← 前へ</button>' : ''}
+        ${!isLast ? '<button class="primary" id="next">次へ →</button>' : '<button class="primary" id="finish">採点する</button>'}
+        <button class="ghost" id="flag">${s.flags[qid] ? '🚩 見直しマークを外す' : '🏳 見直しマーク'}</button>`;
+    }
+
+    const palette = s.mode === 'mock' ? `<details class="fold" ${s.palette ? 'open' : ''} id="palette-wrap">
+        <summary>問題一覧(回答済み ${answeredCount}/${s.qids.length}・見直し ${Object.values(s.flags).filter(Boolean).length})</summary>
+        <div class="fold-body"><div class="palette">${s.qids.map((id, i) => {
+          const a = (s.answers[id] || []).length;
+          return `<button class="pal ${i === s.index ? 'cur' : ''} ${a ? 'ans' : ''} ${s.flags[id] ? 'flag' : ''}" data-go="${i}" aria-label="問${i + 1}${a ? ' 回答済み' : ' 未回答'}${s.flags[id] ? ' 見直し' : ''}">${i + 1}</button>`;
+        }).join('')}</div>
+        <p class="note">■ 回答済み ・ 🚩 見直し ・ 枠 = 表示中</p>
+        <div class="btn-row"><button class="primary small" id="finish2">採点する</button><button class="ghost small" id="suspend">中断してメニューへ</button></div></div>
+      </details>` : '';
+
+    app.innerHTML = `
+      <div class="quiz-bar">
+        <span class="ql">${u.esc(s.label)}</span>
+        <span class="qn">${s.index + 1} / ${s.qids.length}</span>
+        ${s.deadline ? `<span class="timer" id="timer">⏱ ${fmtTime((s.deadline - Date.now()) / 1000)}</span>` : ''}
+      </div>
+      <div class="progress"><div style="width:${(s.mode === 'mock' ? answeredCount : s.index + (revealed ? 1 : 0)) / s.qids.length * 100}%"></div></div>
+      <div class="card">
+        <div class="badge-row">
+          <span class="badge domain">D${d.no} ${u.esc(d.short)}</span>
+          ${multi ? `<span class="badge check">複数選択: ${need}つ選ぶ</span>` : '<span class="badge">単一選択</span>'}
+          ${s.flags[qid] ? '<span class="badge">🚩 見直し</span>' : ''}
+        </div>
+        ${q.scenario ? `<div class="scenario">${q.scenario}</div>` : ''}
+        <div class="stem">${q.stem}</div>
+        <div class="choices" role="${multi ? 'group' : 'radiogroup'}">${choices}</div>
+        ${multi && !revealed ? `<p class="note">${sel.length} / ${need} 選択中</p>` : ''}
+        ${feedback}
+        <div class="btn-row">${actions}</div>
+      </div>
+      ${palette}
+      ${s.mode === 'mock' ? '<p class="note">模試では採点まで正誤は表示されません。本番と同じく、各問で選ぶ数が明示されています。</p>' : ''}`;
+
+    /* イベント */
+    app.querySelectorAll('.choice').forEach(btn => btn.onclick = () => choose(Number(btn.dataset.orig)));
+    const on = (id, fn) => { const el = document.getElementById(id); if (el) el.onclick = fn; };
+    on('submit', () => { s.revealed[qid] = true; saveSession(s); renderQuiz(app); });
+    on('next', () => { s.index++; saveSession(s); renderQuiz(app); window.scrollTo(0, 0); });
+    on('prev', () => { s.index--; saveSession(s); renderQuiz(app); window.scrollTo(0, 0); });
+    on('flag', () => { s.flags[qid] = !s.flags[qid]; saveSession(s); renderQuiz(app); });
+    on('finish', () => confirmFinish(s));
+    on('finish2', () => confirmFinish(s));
+    on('suspend', () => { location.hash = '#/practice'; });
+    on('quit', () => {
+      const answered = Object.keys(s.revealed).length;
+      if (answered && confirm(`ここまでの ${answered}問で採点して終了しますか?\n(キャンセルすると中断して、あとで再開できます)`)) finish(false);
+      else if (!answered || confirm('中断してメニューに戻りますか?(あとで再開できます)')) location.hash = '#/practice';
+    });
+    app.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { s.index = Number(b.dataset.go); s.palette = true; saveSession(s); renderQuiz(app); });
+    const pw = document.getElementById('palette-wrap');
+    if (pw) pw.addEventListener('toggle', () => { s.palette = pw.open; saveSession(s); });
+
+    function choose(orig) {
+      if (revealed) return;
+      let cur = (s.answers[qid] || []).slice();
+      if (multi) {
+        if (cur.includes(orig)) cur = cur.filter(x => x !== orig);
+        else if (cur.length < need) cur.push(orig);
+        else { cur.shift(); cur.push(orig); } // 上限に達したら古い選択と入れ替え
+      } else {
+        cur = [orig];
+      }
+      s.answers[qid] = cur;
+      saveSession(s);
+      renderQuiz(app);
+    }
+
+    startTimer(s);
+  }
+
+  function confirmFinish(s) {
+    const un = s.qids.filter(id => !(s.answers[id] || []).length).length;
+    const fl = Object.values(s.flags).filter(Boolean).length;
+    let msg = '採点しますか?';
+    if (un) msg += `\n未回答が ${un}問あります(不正解として扱います)。`;
+    if (fl) msg += `\n見直しマークが ${fl}問あります。`;
+    if (confirm(msg)) finish(false);
+  }
+
+  function startTimer(s) {
+    stopTimer();
+    if (!s.deadline) return;
+    timerHandle = setInterval(() => {
+      const el = document.getElementById('timer');
+      const left = (s.deadline - Date.now()) / 1000;
+      if (!el || location.hash !== '#/quiz') { stopTimer(); return; }
+      el.textContent = '⏱ ' + fmtTime(left);
+      el.classList.toggle('low', left <= 600);
+      if (left <= 0) { stopTimer(); alert('制限時間になりました。採点します。'); finish(true); }
+    }, 1000);
+  }
+  function stopTimer() { if (timerHandle) { clearInterval(timerHandle); timerHandle = null; } }
+
+  /* ---------- 採点 ---------- */
+  function finish(timeUp) {
+    stopTimer();
+    const s = getSession();
+    if (!s) return;
+    const targets = s.mode === 'practice' ? s.qids.filter(id => s.revealed[id]) : s.qids;
+    const items = targets.map(id => {
+      const q = qById(id);
+      const sel = s.answers[id] || [];
+      return { qid: id, domain: q.domain, correct: isCorrect(q, sel), selected: sel, order: s.orders[id] };
+    });
+    if (!items.length) { S.clearInProgress(); location.hash = '#/practice'; return; }
+    const byDom = {};
+    items.forEach(it => {
+      const b = byDom[it.domain] || (byDom[it.domain] = { correct: 0, total: 0 });
+      b.total++; if (it.correct) b.correct++;
+    });
+    const now = Date.now();
+    const attempt = {
+      id: 'a' + now,
+      mode: s.mode, kind: s.kind, label: s.label,
+      startedAt: new Date(s.startedAt).toISOString(),
+      finishedAt: new Date(now).toISOString(),
+      durationSec: Math.round((Math.min(now, s.deadline || now) - s.startedAt) / 1000),
+      timeUp: !!timeUp,
+      total: items.length,
+      correct: items.filter(i => i.correct).length,
+      byDomain: byDom,
+      items
+    };
+    S.recordAttempt(attempt);
+    S.clearInProgress();
+    lastResult = attempt;
+    location.hash = '#/results';
+  }
+
+  /* ---------- 結果画面 ---------- */
+  function renderResults(app, attemptId) {
+    const u = U();
+    const st = S.load();
+    const a = attemptId ? st.attempts.find(x => x.id === attemptId) : (lastResult || st.attempts[st.attempts.length - 1]);
+    if (!a) { location.replace('#/practice'); return; }
+    const pct = Math.round(a.correct / a.total * 100);
+    const pass = pct >= PASS;
+    const bars = u.domainBars(C.exam.domains.filter(d => a.byDomain[d.id]).map(d => {
+      const b = a.byDomain[d.id];
+      const p = Math.round(b.correct / b.total * 100);
+      return { name: `${d.no}. ${d.nameJa}`, title: d.nameEn, pct: p, cls: p >= PASS ? 'good' : 'bad', label: `${b.correct}/${b.total}` };
+    }));
+
+    const reviewItems = a.items.map((it, i) => {
+      const q = qById(it.qid);
+      if (!q) return '';
+      const d = u.domainById(q.domain);
+      const valid = Array.isArray(it.order) && it.order.length === q.choices.length && it.order.every(o => q.choices[o]);
+      const order = valid ? it.order : q.choices.map((c, k) => k);
+      const ch = order.map((orig, pos) => {
+        const c = q.choices[orig];
+        const on = (it.selected || []).includes(orig);
+        return `<div class="rv-choice ${c.correct ? 'ok' : (on ? 'ng' : '')}">
+          <span class="key">${LETTERS[pos]}</span><div><div>${c.text} ${c.correct ? '<span class="badge ok">正解</span>' : ''} ${on ? '<span class="badge">あなたの回答</span>' : ''}</div>
+          <div class="note">${c.why}</div></div></div>`;
+      }).join('');
+      return `<details class="fold rv ${it.correct ? 'rv-ok' : 'rv-ng'}" data-ok="${it.correct}">
+        <summary>${it.correct ? '✓' : '✗'} 問${i + 1} <span class="badge domain">D${d.no}</span> ${q.type === 'multi' ? `<span class="badge">${q.select}つ選ぶ</span>` : ''} <span class="rv-stem">${u.esc(stripTags(q.stem)).slice(0, 60)}</span></summary>
+        <div class="fold-body">
+          ${q.scenario ? `<div class="scenario">${q.scenario}</div>` : ''}
+          <div class="stem">${q.stem}</div>
+          ${(it.selected || []).length ? '' : '<div class="callout bad">未回答</div>'}
+          ${ch}
+          ${q.explanation ? `<div class="explain"><strong>解説</strong><p>${q.explanation}</p></div>` : ''}
+          <p class="note">${u.objTag(q.objective)}<a href="#/textbook/${d.no}">第${d.no}章 ${u.esc(d.nameJa)}を読む</a></p>
+        </div></details>`;
+    }).join('');
+
+    const wrongN = a.items.filter(i => !i.correct).length;
+    const retry = a.kind === 'domain' ? `#/practice/domain/${a.param || ''}` : a.kind === 'mini' ? '#/practice/mini' : a.kind === 'full' ? '#/practice/full' : '#/practice';
+
+    app.innerHTML = `
+      <div class="page-head"><h1>結果 — ${u.esc(a.label)}</h1>
+        <div class="sub">${new Date(a.finishedAt).toLocaleString('ja-JP')}${a.mode === 'mock' ? ` · 所要 ${fmtTime(a.durationSec)}` : ''}${a.timeUp ? ' · 時間切れ' : ''}</div></div>
+      <div class="card">
+        <div class="score">
+          <div class="big ${pass ? 'pass' : 'fail'}">${pct}%</div>
+          <div>${a.correct} / ${a.total} 問正解<br><strong>${pass ? `目安の${PASS}%に届いています` : `目安の${PASS}%まであと ${Math.max(0, Math.ceil(PASS / 100 * a.total) - a.correct)}問`}</strong></div>
+        </div>
+        <p class="note">※ 本番はスケールスコア(100〜1,000、合格720)で採点されます。ここでの${PASS}%は本サイト独自の簡易的な目安で、公式の換算ではありません。</p>
+      </div>
+      <div class="card"><h2>ドメイン別の正答率</h2>${bars}
+        <p class="note">本番のスコアレポートにも、ドメイン別の正答率が表示されます(合否判定には使われません)。</p></div>
+      <div class="card">
+        <h2>全問の解説</h2>
+        <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="only-ng" ${wrongN ? '' : 'disabled'}> 間違えた問題だけ表示(${wrongN}問)</label>
+        <div id="rv-list">${reviewItems}</div>
+      </div>
+      <div class="btn-row">
+        <a class="btn primary" href="${retry}">もう一度</a>
+        ${wrongN ? '<a class="btn" href="#/practice/wrong">間違えた問題を復習</a>' : ''}
+        <a class="btn" href="#/stats">成績を見る</a>
+        <a class="btn ghost" href="#/practice">演習メニュー</a>
+      </div>`;
+    const cb = document.getElementById('only-ng');
+    cb.onchange = () => app.querySelectorAll('.rv').forEach(el => { el.style.display = cb.checked && el.dataset.ok === 'true' ? 'none' : ''; });
+  }
+  const stripTags = s => String(s).replace(/<[^>]+>/g, '');
+
+  /* ---------- 成績画面 ---------- */
+  function renderStats(app) {
+    const u = U();
+    const st = S.load();
+    const ds = S.domainStats();
+    const qs = st.qstats;
+    const seen = C.questions.filter(q => qs[q.id]).length;
+    const wrong = S.wrongIds().filter(id => qById(id)).length;
+    const weak = S.weakDomains(5, PASS / 100);
+
+    const bars = u.domainBars(C.exam.domains.map(d => {
+      const b = ds[d.id];
+      const p = b ? Math.round(b.correct / b.total * 100) : 0;
+      return { name: `${d.no}. ${d.nameJa}`, title: d.nameEn, pct: p, cls: !b ? '' : p >= PASS ? 'good' : 'bad', label: b ? `${p}%` : '—' };
+    }));
+    const detail = C.exam.domains.map(d => {
+      const b = ds[d.id];
+      const pool = byDomain(d.id);
+      const seenD = pool.filter(q => qs[q.id]).length;
+      return `<tr><td>${d.no}. ${u.esc(d.nameJa)}</td><td>${d.weight}%</td><td>${b ? `${b.correct}/${b.total}` : '—'}</td><td>${seenD}/${pool.length}</td></tr>`;
+    }).join('');
+
+    const hist = st.attempts.slice().reverse().slice(0, 30).map(a => {
+      const p = Math.round(a.correct / a.total * 100);
+      return `<tr><td>${new Date(a.finishedAt).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+        <td><a href="#/results/${encodeURIComponent(a.id)}">${u.esc(a.label)}</a></td><td>${a.correct}/${a.total}</td>
+        <td class="${p >= PASS ? 'pass' : 'fail'}">${p}%</td></tr>`;
+    }).join('');
+
+    const mocks = st.attempts.filter(a => a.mode === 'mock');
+    const best = mocks.length ? Math.max(...mocks.map(a => Math.round(a.correct / a.total * 100))) : null;
+
+    app.innerHTML = `
+      <div class="page-head"><h1>📊 成績</h1><div class="sub">このブラウザに保存された記録です。</div></div>
+      ${!S.canPersist ? '<div class="callout warn"><strong>注意</strong>このブラウザでは記録を保存できない設定になっています。ページを閉じると記録は消えます。</div>' : ''}
+      <div class="grid-2">
+        <div class="card"><h2>概要</h2>
+          <div class="kv">
+            <div class="k">演習・模試</div><div>${st.attempts.length}回(うち模試 ${mocks.length}回${best !== null ? `・最高 ${best}%` : ''})</div>
+            <div class="k">解いた問題</div><div>${seen} / ${C.questions.length}問</div>
+            <div class="k">復習待ち</div><div>${wrong}問 ${wrong ? '<a href="#/practice/wrong">復習する</a>' : ''}</div>
+            <div class="k">苦手ドメイン</div><div>${weak.length ? weak.map(w => `D${u.domainById(w.id).no} ${u.esc(u.domainById(w.id).short)}(${Math.round(w.acc * 100)}%)`).join('、') + ' <a href="#/practice/weak">演習する</a>' : '該当なし(各ドメイン5問以上の回答で判定)'}</div>
+          </div>
+        </div>
+        <div class="card"><h2>ドメイン別 累積正答率</h2>${bars}<p class="note">緑 = ${PASS}%以上、赤 = ${PASS}%未満</p></div>
+      </div>
+      <div class="card"><h2>ドメイン別の内訳</h2>
+        <div class="table-wrap"><table class="simple"><tr><th>ドメイン</th><th>配分</th><th>正解/回答</th><th>解いた問題</th></tr>${detail}</table></div></div>
+      <div class="card"><h2>履歴(新しい順・最大30件)</h2>
+        ${hist ? `<div class="table-wrap"><table class="simple"><tr><th>日時</th><th>内容</th><th>正解</th><th>正答率</th></tr>${hist}</table></div>` : '<div class="empty">まだ記録がありません。<a href="#/practice">演習を始める</a></div>'}</div>
+      <div class="card"><h2>記録の書き出し・読み込み</h2>
+        <p class="note">別のブラウザや端末に記録を移すときに使います(JSONファイル)。</p>
+        <div class="btn-row">
+          <button id="exp">書き出し</button>
+          <label class="btn">読み込み<input type="file" id="imp" accept="application/json,.json" style="display:none"></label>
+          <button class="danger" id="rst">記録をすべて消去</button>
+        </div>
+      </div>`;
+
+    document.getElementById('exp').onclick = () => {
+      const blob = new Blob([S.exportJson()], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `ccaof-history-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    };
+    document.getElementById('imp').onchange = e => {
+      const f = e.target.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        try {
+          if (!confirm('現在の記録を、読み込んだファイルの内容で置き換えます。よろしいですか?')) return;
+          S.importJson(r.result); alert('読み込みました。'); renderStats(app);
+        } catch (err) { alert('読み込めませんでした: ' + err.message); }
+      };
+      r.readAsText(f);
+    };
+    document.getElementById('rst').onclick = () => {
+      if (confirm('このブラウザの演習記録をすべて消去します。元に戻せません。よろしいですか?')) { S.reset(); renderStats(app); }
+    };
+  }
+
+  /* ---------- ルーティング(app.js から呼ばれる) ---------- */
+  function parseQuery(str) {
+    const o = {};
+    (str || '').split('&').filter(Boolean).forEach(kv => { const [k, v] = kv.split('='); o[decodeURIComponent(k)] = decodeURIComponent(v || ''); });
+    return o;
+  }
+
+  C.quiz = {
+    ready: true,
+    keepScroll: false,
+    handles: top => ['practice', 'quiz', 'results', 'stats'].includes(top),
+    render(top, rest, app) {
+      if (top !== 'quiz') stopTimer();
+      if (top === 'practice') {
+        if (!rest.length) return renderMenu(app);
+        const [kindRaw, param] = rest;
+        const [kind, q1] = kindRaw.split('?');
+        const [p, q2] = (param || '').split('?');
+        return startFromRoute(kind, p || null, parseQuery(q1 || q2));
+      }
+      if (top === 'quiz') return renderQuiz(app);
+      if (top === 'results') return renderResults(app, rest[0] ? decodeURIComponent(rest[0]) : null);
+      if (top === 'stats') return renderStats(app);
+    },
+    // テスト・検証用
+    _internal: { proportional, poolEnough, isCorrect }
+  };
+})();
 
 </script>
 <script>/* js/app.js */
